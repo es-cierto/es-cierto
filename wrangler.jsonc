@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "escierto",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Bluesky no tiene webhooks: se revisan las menciones cada minuto.
+  "triggers": { "crons": ["* * * * *"] },
+
+  "vars": {
+    "BSKY_HANDLE": "escierto.bsky.social",
+    "PUBLIC_URL": "https://escierto.org",
+    "REPO_URL": "https://github.com/es-cierto/es-cierto"
+  },
+  "secrets": {
+    "required": ["ANTHROPIC_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"]
+  },
+
+  "d1_databases": [{ "binding": "DB", "database_name": "escierto", "database_id": "REEMPLAZAR_CON_wrangler_d1_create" }],
+  "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones" }],
+  "ai": { "binding": "AI" },
+  "workflows": [{ "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" }]
+}
