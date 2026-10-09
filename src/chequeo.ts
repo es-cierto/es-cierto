@@ -2,7 +2,7 @@ import { WorkflowEntrypoint, type WorkflowEvent, type WorkflowStep } from "cloud
 import { z } from "zod";
 import { responder, sesionBluesky, textoDePost, type Mencion } from "./bluesky.ts";
 import { extraerAfirmacion, investigar, redactarVeredicto, type Veredicto } from "./claude.ts";
-import { decidir } from "./decidir.ts";
+import { decidir, exigirEvidencia } from "./decidir.ts";
 
 export interface ParamsChequeo {
   mencion: Mencion;
@@ -122,8 +122,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       const redactado = await step.do("redactar veredicto", CON_REINTENTOS, () =>
         redactarVeredicto(env.ANTHROPIC_API_KEY, extraida.afirmacion, informe),
       );
-      const veredicto: Veredicto =
-        redactado.fuentes.length === 0 ? { ...redactado, veredicto: "no_verificable", confianza: "baja" } : redactado;
+      const veredicto = exigirEvidencia(redactado);
 
       analisisId = await step.do("nuevo id", async () => crypto.randomUUID());
       await step.do("guardar análisis", async () => {

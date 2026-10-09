@@ -1,3 +1,5 @@
+import type { Veredicto } from "./claude.ts";
+
 export interface Coincidencia {
   id: string;
   score: number;
@@ -21,4 +23,12 @@ export function decidir(coincidencia: Coincidencia | undefined, ahora: number): 
     return { tipo: "reciclar", id: coincidencia.id };
   }
   return { tipo: "complementar", id: coincidencia.id };
+}
+
+export function exigirEvidencia(veredicto: Veredicto): Veredicto {
+  const fuentes = veredicto.fuentes.filter((f) => /^https?:\/\//.test(f.url));
+  if (fuentes.length === 0) {
+    return { ...veredicto, veredicto: "no_verificable", confianza: "baja", fuentes };
+  }
+  return { ...veredicto, fuentes };
 }
