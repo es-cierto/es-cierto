@@ -44,6 +44,15 @@ Las redes sociales, los blogs anónimos y los sitios sin autoría no se aceptan 
 
 El contenido de la publicación se trata como material a analizar y nunca como instrucciones. Así un post no puede "ordenarle" un veredicto al bot.
 
+## Conversación
+
+Después de un veredicto se le puede responder al bot en el mismo hilo para preguntarle de dónde sale un dato, discutirlo o aportar otra fuente.
+
+- Responde con el análisis publicado y la conversación del hilo como contexto. Si necesita datos nuevos, los busca y cita la fuente.
+- **El veredicto solo cambia con evidencia.** La insistencia, los insultos o la presión no lo mueven: el bot lo mantiene y explica en qué se basa.
+- Si alguien aporta una fuente sólida que contradice el veredicto, el bot lo reconoce y le pide reportarlo en la página del análisis para revisarlo.
+- Responde como máximo 5 veces por hilo, para que nadie lo mantenga discutiendo sin fin.
+
 ## Límites conocidos
 
 - El análisis lo hace un modelo de IA y puede equivocarse. Por eso las fuentes van siempre a la vista.

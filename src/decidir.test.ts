@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { decidir, exigirEvidencia } from "./decidir.ts";
+import { analisisDelHilo, decidir, exigirEvidencia, puedeSeguirConversando } from "./decidir.ts";
 
 const ahora = Date.parse("2026-10-09T12:00:00Z");
 const hace = (dias: number) => ahora - dias * 24 * 60 * 60 * 1000;
@@ -41,4 +41,28 @@ test("fuentes que no son http(s) no cuentan como evidencia", () => {
 test("con una fuente web el veredicto se mantiene", () => {
   const fuente = { titulo: "BCN", url: "https://www.bcn.cl/leychile" };
   assert.deepEqual(exigirEvidencia({ ...redactado, fuentes: [fuente] }), { ...redactado, fuentes: [fuente] });
+});
+
+const id = "11111111-2222-3333-4444-555555555555";
+const bot = (texto: string) => ({ deBot: true, texto });
+const persona = (texto: string) => ({ deBot: false, texto });
+
+test("el bot deja de responder al llegar a 5 respuestas en el hilo", () => {
+  const cuatro = [persona("?"), bot("a"), persona("?"), bot("b"), persona("?"), bot("c"), persona("?"), bot("d")];
+  assert.equal(puedeSeguirConversando([...cuatro, persona("?")]), true);
+  assert.equal(puedeSeguirConversando([...cuatro, bot("e"), persona("?")]), false);
+});
+
+test("el análisis del hilo sale del último link del bot, no de lo que pegue una persona", () => {
+  const otro = "99999999-8888-7777-6666-555555555555";
+  const hilo = [
+    persona("¿es cierto?"),
+    bot(`❌ Falso\n→ https://escierto.org/a/${id}`),
+    persona(`mira https://escierto.org/a/${otro}`),
+  ];
+  assert.equal(analisisDelHilo(hilo), id);
+});
+
+test("sin link del bot no hay análisis", () => {
+  assert.equal(analisisDelHilo([persona("hola"), bot("parece opinión")]), null);
 });

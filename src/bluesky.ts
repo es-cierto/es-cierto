@@ -13,6 +13,7 @@ export interface Sesion {
 const Ref = z.object({ uri: z.string(), cid: z.string() });
 
 export const Mencion = z.object({
+  razon: z.enum(["mention", "reply"]),
   uri: z.string(),
   cid: z.string(),
   autorDid: z.string(),
@@ -44,10 +45,15 @@ const RespuestaPosts = z.object({
   posts: z.array(z.object({ record: z.object({ text: z.string().default("") }) })),
 });
 
-async function xrpc(metodo: string, init: { sesion?: Sesion; query?: Record<string, string>; body?: unknown }) {
+async function xrpc(
+  metodo: string,
+  init: { sesion?: Sesion; query?: Record<string, string | string[]>; body?: unknown },
+) {
   const url = new URL(`${XRPC}/${metodo}`);
-  for (const [clave, valor] of Object.entries(init.query ?? {})) {
-    url.searchParams.set(clave, valor);
+  for (const [clave, valores] of Object.entries(init.query ?? {})) {
+    for (const valor of [valores].flat()) {
+      url.searchParams.append(clave, valor);
+    }
   }
   const headers: Record<string, string> = {};
   if (init.sesion) {
@@ -90,18 +96,28 @@ export async function sesionBluesky(env: Env): Promise<Sesion> {
 
 export async function mencionesSinLeer(sesion: Sesion): Promise<Mencion[]> {
   const { notifications } = RespuestaNotificaciones.parse(
-    await xrpc("app.bsky.notification.listNotifications", { sesion, query: { limit: "50", reasons: "mention" } }),
+    await xrpc("app.bsky.notification.listNotifications", {
+      sesion,
+      query: { limit: "50", reasons: ["mention", "reply"] },
+    }),
   );
-  return notifications
-    .filter((n) => n.reason === "mention" && !n.isRead)
-    .map((n) => ({
+  const porUri = new Map<string, Mencion>();
+  for (const n of notifications) {
+    const razon = Mencion.shape.razon.safeParse(n.reason);
+    if (n.isRead || !razon.success || porUri.get(n.uri)?.razon === "reply") {
+      continue;
+    }
+    porUri.set(n.uri, {
+      razon: razon.data,
       uri: n.uri,
       cid: n.cid,
       autorDid: n.author.did,
       texto: n.record.text,
       padre: n.record.reply?.parent,
       raiz: n.record.reply?.root,
-    }));
+    });
+  }
+  return [...porUri.values()];
 }
 
 export async function marcarLeidas(sesion: Sesion, hasta: string) {
@@ -111,6 +127,30 @@ export async function marcarLeidas(sesion: Sesion, hasta: string) {
 export async function textoDePost(sesion: Sesion, uri: string): Promise<string> {
   const { posts } = RespuestaPosts.parse(await xrpc("app.bsky.feed.getPosts", { sesion, query: { uris: uri } }));
   return posts[0]?.record.text ?? "";
+}
+
+const NodoHilo = z.object({
+  post: z.object({ author: z.object({ did: z.string() }), record: z.object({ text: z.string().default("") }) }),
+  parent: z.unknown().optional(),
+});
+
+export interface Turno {
+  deBot: boolean;
+  texto: string;
+}
+
+// ponytail: solo la cadena de padres (hasta 20); las ramas laterales del hilo no son parte de la conversación.
+export async function leerHilo(sesion: Sesion, uri: string): Promise<Turno[]> {
+  const { thread } = z
+    .object({ thread: z.unknown() })
+    .parse(await xrpc("app.bsky.feed.getPostThread", { sesion, query: { uri, depth: "0", parentHeight: "20" } }));
+  const turnos: Turno[] = [];
+  let nodo = NodoHilo.safeParse(thread);
+  while (nodo.success) {
+    turnos.unshift({ deBot: nodo.data.post.author.did === sesion.did, texto: nodo.data.post.record.text });
+    nodo = NodoHilo.safeParse(nodo.data.parent);
+  }
+  return turnos;
 }
 
 function recortar(texto: string, maximo: number): string {

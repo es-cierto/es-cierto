@@ -18,7 +18,7 @@ Su mascota es un **queltehue**, el ave que da la alarma cuando se acerca un intr
 
 ## Cómo funciona
 
-1. Cada minuto revisa sus menciones en Bluesky.
+1. Cada minuto revisa sus menciones y las respuestas que recibe en Bluesky.
 2. Por cada mención inicia un flujo durable (Cloudflare Workflow):
    - lee la publicación etiquetada y extrae la afirmación verificable;
    - busca en la base si ya se analizó algo muy parecido (Vectorize):
@@ -27,6 +27,8 @@ Su mascota es un **queltehue**, el ave que da la alarma cuando se acerca un intr
    - consulta verificaciones profesionales ya publicadas (Google Fact Check Tools);
    - investiga en la web y redacta el veredicto **con fuentes obligatorias**;
    - guarda el análisis (D1) y responde en el hilo.
+
+Si le respondes en el hilo, **conversa**: explica de dónde salen los datos, responde dudas y busca evidencia nueva si hace falta. El veredicto solo cambia con evidencia, nunca por insistencia. Responde como máximo 5 veces por hilo.
 
 La metodología completa está en [METODOLOGIA.md](METODOLOGIA.md).
 

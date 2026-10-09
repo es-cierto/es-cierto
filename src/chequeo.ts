@@ -1,8 +1,8 @@
 import { WorkflowEntrypoint, type WorkflowEvent, type WorkflowStep } from "cloudflare:workers";
 import { z } from "zod";
-import { responder, sesionBluesky, textoDePost, type Mencion } from "./bluesky.ts";
-import { extraerAfirmacion, investigar, redactarVeredicto, type Veredicto } from "./claude.ts";
-import { decidir, exigirEvidencia } from "./decidir.ts";
+import { leerHilo, responder, sesionBluesky, textoDePost, type Mencion } from "./bluesky.ts";
+import { conversar, extraerAfirmacion, investigar, redactarVeredicto, type Veredicto } from "./claude.ts";
+import { analisisDelHilo, decidir, exigirEvidencia, puedeSeguirConversando } from "./decidir.ts";
 
 export interface ParamsChequeo {
   mencion: Mencion;
@@ -50,16 +50,51 @@ async function verificacionesPublicadas(apiKey: string, afirmacion: string): Pro
   return claims
     .flatMap((c) =>
       c.claimReview.map(
-        (r) => `- "${c.text ?? ""}" → ${r.textualRating ?? "?"} (${r.publisher?.name ?? "?"}, ${r.reviewDate ?? "sin fecha"}) ${r.url}`,
+        (r) =>
+          `- "${c.text ?? ""}" → ${r.textualRating ?? "?"} (${r.publisher?.name ?? "?"}, ${r.reviewDate ?? "sin fecha"}) ${r.url}`,
       ),
     )
     .join("\n");
 }
 
 export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
+  private async conversar(mencion: Mencion, step: WorkflowStep) {
+    const env = this.env;
+    const hilo = await step.do("leer hilo", async () => leerHilo(await sesionBluesky(env), mencion.uri));
+    if (!puedeSeguirConversando(hilo)) {
+      return;
+    }
+
+    const analisis = await step.do("cargar análisis del hilo", async () => {
+      const id = analisisDelHilo(hilo);
+      if (!id) {
+        return null;
+      }
+      const fila = await env.DB.prepare(
+        "SELECT afirmacion, veredicto, confianza, resumen, fuentes, creado_en FROM analisis WHERE id = ?",
+      )
+        .bind(id)
+        .first();
+      return fila ? JSON.stringify({ ...fila, pagina: `${env.PUBLIC_URL}/a/${id}` }) : null;
+    });
+
+    const respuesta = await step.do("conversar", CON_REINTENTOS, () =>
+      conversar(env.ANTHROPIC_API_KEY, hilo, analisis),
+    );
+
+    await step.do("responder en el hilo", async () => {
+      await responder(await sesionBluesky(env), mencion, respuesta);
+    });
+  }
+
   async run(evento: WorkflowEvent<ParamsChequeo>, step: WorkflowStep) {
     const { mencion } = evento.payload;
     const env = this.env;
+
+    if (mencion.razon === "reply") {
+      await this.conversar(mencion, step);
+      return;
+    }
 
     const publicacion = await step.do("leer publicación", async () =>
       mencion.padre ? textoDePost(await sesionBluesky(env), mencion.padre.uri) : "",
@@ -104,7 +139,9 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       const anterior =
         decision.tipo === "complementar"
           ? await step.do("cargar análisis anterior", async () => {
-              const fila = await env.DB.prepare("SELECT veredicto, resumen, fuentes, creado_en FROM analisis WHERE id = ?")
+              const fila = await env.DB.prepare(
+                "SELECT veredicto, resumen, fuentes, creado_en FROM analisis WHERE id = ?",
+              )
                 .bind(decision.id)
                 .first();
               return JSON.stringify(fila);

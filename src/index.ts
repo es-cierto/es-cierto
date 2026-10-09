@@ -9,7 +9,10 @@ const MENCIONES_POR_HORA = 5;
 
 async function idDeInstancia(uri: string): Promise<string> {
   const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(uri));
-  return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 64);
+  return [...new Uint8Array(hash)]
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 64);
 }
 
 async function existeInstancia(env: Env, id: string): Promise<boolean> {
