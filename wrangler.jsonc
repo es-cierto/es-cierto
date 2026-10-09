@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "escierto",
-  "main": "src/index.ts",
+  "main": "bot/index.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
@@ -12,14 +12,16 @@
   "vars": {
     "BSKY_HANDLE": "escierto.bsky.social",
     "PUBLIC_URL": "https://escierto.org",
-    "REPO_URL": "https://github.com/es-cierto/es-cierto"
+    "REPO_URL": "https://github.com/es-cierto/es-cierto",
+    // "si" activa /probar, un chat de prueba sin Bluesky. Solo en .dev.vars.
+    "PRUEBA_WEB": "no"
   },
   "secrets": {
-    "required": ["ANTHROPIC_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"]
+    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"]
   },
 
   "d1_databases": [{ "binding": "DB", "database_name": "escierto", "database_id": "REEMPLAZAR_CON_wrangler_d1_create" }],
-  "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones" }],
-  "ai": { "binding": "AI" },
+  "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones", "remote": true }],
+  "ai": { "binding": "AI", "remote": true },
   "workflows": [{ "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" }]
 }
