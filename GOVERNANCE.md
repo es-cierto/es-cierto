@@ -35,7 +35,7 @@ Las decisiones se toman en issues, PR o Discussions, nunca en privado. Si hubo u
 
 ## Cómo se llega a mantenedor
 
-Una persona de colaboradores que lleva al menos tres meses contribuyendo, conoce la metodología y no tiene conflictos de interés puede ser propuesta en un issue. Entra si lo aprueban todas las personas de mantenedores.
+Una persona de colaboradores que lleva al menos tres meses contribuyendo, conoce la metodología y no tiene conflictos de interés puede ser propuesta en un issue. Entra si lo aprueban todas las personas de mantenedores. La única excepción al requisito de tres meses son los fundadores (ver arriba): no se aplica a nadie más, ni siquiera por acuerdo de mantenedores, salvo que se cambie este documento.
 
 Se deja de ser mantenedor por decisión propia, por seis meses sin actividad (se puede volver), o si el resto de mantenedores lo decide por romper esta gobernanza o el [código de conducta](CODE_OF_CONDUCT.md).
 
