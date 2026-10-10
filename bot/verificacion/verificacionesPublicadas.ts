@@ -18,8 +18,11 @@ const RespuestaFactCheck = z.object({
     .default([]),
 });
 
+// "ninguna" es lo que guarda scripts/secretos.sh cuando no hay clave: un secreto de Cloudflare no puede quedar vacío.
+const SIN_CLAVE = "ninguna";
+
 export async function verificacionesPublicadas(apiKey: string, afirmacion: string): Promise<string> {
-  if (!apiKey) {
+  if (!apiKey.trim() || apiKey.trim() === SIN_CLAVE) {
     return "";
   }
   const url = new URL("https://factchecktools.googleapis.com/v1alpha1/claims:search");
