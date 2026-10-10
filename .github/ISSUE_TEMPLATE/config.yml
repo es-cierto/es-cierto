@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Vulnerabilidad de seguridad
+    url: https://github.com/es-cierto/es-cierto/security/advisories/new
+    about: Repórtala en privado, nunca en un issue público (ver SECURITY.md).
+  - name: Ideas y preguntas
+    url: https://github.com/es-cierto/es-cierto/discussions
+    about: Para conversar algo que todavía no es una tarea concreta.

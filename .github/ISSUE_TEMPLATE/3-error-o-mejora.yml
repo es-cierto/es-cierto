@@ -1,0 +1,23 @@
+name: Error o mejora
+description: Algo del bot o de la página no funciona, o se puede hacer mejor.
+body:
+  - type: dropdown
+    id: donde
+    attributes:
+      label: Dónde
+      options:
+        [
+          "El bot (respuestas en Bluesky)",
+          "La página pública",
+          "La página de una investigación",
+          "El código o las herramientas del repo",
+        ]
+    validations:
+      required: true
+  - type: textarea
+    id: que
+    attributes:
+      label: Qué pasa y qué esperabas
+      description: Si es un error, los pasos para reproducirlo. Si es en la página, el navegador y si es escritorio o celular.
+    validations:
+      required: true

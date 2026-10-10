@@ -1,0 +1,33 @@
+name: Propuesta de metodología
+description: Cambiar cómo verifica el bot (prompts, escala de veredictos, umbrales, fuentes).
+labels: ["metodología"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Un cambio a la metodología afecta todos los veredictos, así que se discute antes de escribir código. Lee primero [METODOLOGIA.md](https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md).
+  - type: textarea
+    id: problema
+    attributes:
+      label: Qué problema resuelve
+      description: Idealmente con casos reales (enlaces a investigaciones) donde la metodología actual falla.
+    validations:
+      required: true
+  - type: textarea
+    id: propuesta
+    attributes:
+      label: Propuesta
+    validations:
+      required: true
+  - type: textarea
+    id: neutralidad
+    attributes:
+      label: Cómo afecta la neutralidad
+      description: ¿Podría tratar distinto a un sector político, aunque sea sin querer?
+    validations:
+      required: true
+  - type: textarea
+    id: medir
+    attributes:
+      label: Cómo se mediría
+      description: Qué escenario de `evals/promptfooconfig.yaml` mostraría que mejora.
