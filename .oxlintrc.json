@@ -41,7 +41,7 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "evals/**", "landing/revisar-clip.sh"],
+      "files": ["**/*.test.ts", "evals/**", "landing/revisar-clip.sh", "scripts/**", "perfiles/imagenes.mjs"],
       "rules": {
         "no-console": "off",
         "typescript/no-floating-promises": "off"
