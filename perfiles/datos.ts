@@ -13,7 +13,7 @@ export const bluesky = {
     "Respuestas automáticas con IA. Abierto y no partidista. Imágenes generadas con IA.",
     "es.cierto.workers.dev",
   ].join("\n"),
-  avatar: "perfiles/avatar.png",
+  avatar: "perfiles/avatar.jpg",
   portada: "perfiles/portada.jpg",
 };
 

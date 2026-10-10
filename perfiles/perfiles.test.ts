@@ -3,6 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { createRequire } from "node:module";
 import { bluesky, github } from "./datos.ts";
 
 const raiz = join(import.meta.dirname, "..");
@@ -43,9 +44,28 @@ test("una palabra para cada cosa: mencionar (no etiquetar) y publicación (no po
   }
 });
 
-test("el avatar no tiene rojo: los colores son los de la landing", () => {
-  const colores = readFileSync(join(raiz, "perfiles/avatar.svg"), "utf8").match(/#[0-9a-fA-F]{6}\b/g) ?? [];
-  assert.deepEqual([...new Set(colores.map((c) => c.toLowerCase()))].sort(), ["#131209", "#d6b27c", "#f3eadb"]);
+test("el avatar no tiene rojo: menos de 0,5% de píxeles rojizos saturados", async () => {
+  // sharp lo instala la landing; se carga desde ahí para no sumar dependencias a la raíz.
+  const sharp = createRequire(join(raiz, "landing/package.json"))("sharp") as (ruta: string) => {
+    resize(
+      ancho: number,
+      alto: number,
+    ): { raw(): { toBuffer(o: { resolveWithObject: true }): Promise<{ data: Buffer }> } };
+  };
+  const { data } = await sharp(join(raiz, bluesky.avatar)).resize(100, 100).raw().toBuffer({ resolveWithObject: true });
+  let rojos = 0;
+  for (let i = 0; i < data.length; i += 3) {
+    const [r, g, b] = [data[i] / 255, data[i + 1] / 255, data[i + 2] / 255];
+    const max = Math.max(r, g, b);
+    const d = max - Math.min(r, g, b);
+    const tono =
+      d === 0 ? 0 : max === r ? (((g - b) / d) % 6) * 60 : max === g ? ((b - r) / d + 2) * 60 : ((r - g) / d + 4) * 60;
+    const rojo = (tono + 360) % 360 < 15 || (tono + 360) % 360 > 335;
+    if (rojo && max > 0.25 && d / max > 0.45) {
+      rojos++;
+    }
+  }
+  assert.ok(rojos / (data.length / 3) < 0.005, `${rojos} píxeles rojizos`);
 });
 
 test("las imágenes tienen la forma y el peso que aceptan las redes", () => {
