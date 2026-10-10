@@ -79,7 +79,7 @@ Cada afirmación de los `AGENTS.md` está atada a algo que falla si deja de ser 
 
 Una afirmación nueva llega con su mecanismo. Para que un test pase, se arregla el código, no se debilita el test.
 
-Sin mecanismo todavía (se revisan a mano): la durabilidad del Workflow y el escape de las páginas públicas.
+Sin mecanismo todavía (se revisan a mano): la durabilidad del Workflow, el escape de las páginas públicas y las reglas de `GOVERNANCE.md` que GitHub no puede exigir por carpeta (7 días de discusión y dos aprobaciones para la metodología). El DCO sí tiene mecanismo: el check `DCO` de cada PR.
 
 Los tests usan el runner nativo de Node (`node --test`), con imports `.ts` explícitos. No agregues un framework de tests. Cómo se escribe un test:
 

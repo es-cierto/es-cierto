@@ -114,7 +114,7 @@ Si el reporte no se confirma, se responde en el issue explicando por qué, con l
 
 - **Reportes, preguntas y propuestas:** [issues en GitHub](https://github.com/es-cierto/es-cierto/issues).
 - **Vulnerabilidades:** en privado, según [SECURITY.md](SECURITY.md).
-- **Cambios a la metodología:** se discuten en un issue antes de enviarse, y todo cambio a los prompts, la escala o los umbrales actualiza este documento en el mismo commit.
+- **Cambios a la metodología:** se discuten en público al menos 7 días y necesitan la aprobación de dos personas que mantienen el proyecto, según [GOVERNANCE.md](GOVERNANCE.md). Todo cambio a los prompts, la escala o los umbrales actualiza este documento en el mismo commit.
 
 ## Financiamiento
 
