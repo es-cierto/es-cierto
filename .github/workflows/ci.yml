@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Un push nuevo al mismo PR cancela la corrida anterior.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # El test de METODOLOGIA.md compara contra la base del PR (o el commit anterior del push), no contra HEAD.
+      METODOLOGIA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            landing/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm install --frozen-lockfile
+        working-directory: landing
+      - run: pnpm types
+      - run: pnpm --dir landing exec astro sync
+
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: npx wrangler deploy --dry-run --outdir /tmp/escierto-dist
+
+      - run: pnpm typecheck
+        working-directory: landing
+      - run: pnpm test
+        working-directory: landing
+      - run: pnpm build
+        working-directory: landing

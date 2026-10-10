@@ -1,9 +1,9 @@
-@import "tailwindcss";
-@import "lenis/dist/lenis.css";
-@import "@fontsource-variable/manrope";
+@import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
+@import '@fontsource-variable/manrope';
 
 @theme {
-  --font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
   /* Paleta sacada de las imágenes: madera, papel y luz ámbar. Sin rojo (en Chile se lee como color de un sector). */
   --color-fondo: #131209;
   --color-papel: #f3eadb;

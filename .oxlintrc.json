@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import", "node"],
+  "categories": {
+    "correctness": "error"
+  },
+  "ignorePatterns": ["landing/dist/**", "worker-configuration.d.ts", ".claude/**"],
+  "rules": {
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/await-thenable": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/restrict-template-expressions": "error",
+    "typescript/no-base-to-string": "error",
+    "curly": ["error", "multi-line"],
+    "eqeqeq": "error",
+    "no-console": [
+      "error",
+      {
+        "allow": ["warn", "error"]
+      }
+    ],
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "node:crypto",
+            "message": "No existe en el runtime de Workers sin nodejs_compat. Usa crypto.subtle / crypto.randomUUID()."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "evals/**", "landing/revisar-clip.sh"],
+      "rules": {
+        "no-console": "off",
+        "typescript/no-floating-promises": "off"
+      }
+    }
+  ]
+}

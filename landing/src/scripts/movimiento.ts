@@ -10,7 +10,7 @@ const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Scroll suave sincronizado con ScrollTrigger. Con movimiento reducido, el scroll nativo.
 if (!reducir) {
   const lenis = new Lenis({ autoRaf: false, anchors: true });
-  lenis.on('scroll', ScrollTrigger.update);
+  lenis.on('scroll', () => ScrollTrigger.update());
   gsap.ticker.add((tiempo) => lenis.raf(tiempo * 1000));
   gsap.ticker.lagSmoothing(0);
 }
@@ -52,6 +52,14 @@ document.querySelectorAll<HTMLElement>('[data-palabras]').forEach((bloque) => {
 // "Nada atado": el hilo suelto baja apenas mientras se lee, como si colgara.
 if (!reducir) {
   gsap.utils.toArray<HTMLElement>('[data-colgar]').forEach((imagen) => {
-    gsap.fromTo(imagen, { yPercent: -6 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: imagen, start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.fromTo(
+      imagen,
+      { yPercent: -6 },
+      {
+        yPercent: 4,
+        ease: 'none',
+        scrollTrigger: { trigger: imagen, start: 'top bottom', end: 'bottom top', scrub: true },
+      },
+    );
   });
 }

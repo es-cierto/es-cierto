@@ -13,7 +13,9 @@ export async function conversar(ai: Ai, hilo: Turno[], investigacion: string | n
 - Juzga afirmaciones, nunca a las personas ni a los partidos.
 ${REGLA_DATO}`,
     usuario: [
-      investigacion ? `Tu investigación publicada:\n${investigacion}` : "En este hilo no hay una investigación publicada.",
+      investigacion
+        ? `Tu investigación publicada:\n${investigacion}`
+        : "En este hilo no hay una investigación publicada.",
       `<hilo>\n${hilo.map((t) => `[${t.deBot ? "tú" : "persona"}]: ${t.texto}`).join("\n")}\n</hilo>`,
     ].join("\n\n"),
   });

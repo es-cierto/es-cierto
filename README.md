@@ -37,11 +37,11 @@ La metodología completa, con la escala de veredictos y los límites conocidos, 
 
 ## Estructura del repo
 
-| Carpeta | Qué es |
-|---|---|
-| `bot/` | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`. |
-| `landing/` | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll. |
-| `evals/` | Escenarios de calidad del modelo con promptfoo. |
+| Carpeta    | Qué es                                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| `bot/`     | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`. |
+| `landing/` | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll.                        |
+| `evals/`   | Escenarios de calidad del modelo con promptfoo.                                                                      |
 
 Cada carpeta tiene su `AGENTS.md` con sus reglas. El repo sigue [context architecture](https://context-architecture.dev/): cada regla que el repo afirma sobre sí mismo está atada a un test que falla si deja de cumplirse.
 
@@ -64,8 +64,7 @@ curl "http://localhost:8787/__scheduled"   # simula el cron
 Para la cuenta del bot en Bluesky usa una **contraseña de aplicación** (Ajustes → Privacidad y seguridad → Contraseñas de aplicación), nunca la contraseña principal. Para probar, usa una cuenta aparte y pon su handle en `BSKY_HANDLE=` dentro de `.dev.vars`.
 
 ```bash
-pnpm typecheck
-pnpm test
+pnpm check     # formato, lint, tipos y tests (lo mismo que el CI)
 pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily
 ```
 
@@ -76,6 +75,7 @@ pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily
 ```bash
 cd landing
 pnpm install
+pnpm typecheck # tipos (astro sync + tsc)
 pnpm test      # cálculo del recorrido y reglas de la página
 pnpm deploy    # astro build + wrangler deploy
 ```
@@ -100,7 +100,7 @@ pnpm deploy
 - **Cuenta del bot en Bluesky.** `escierto.bsky.social` es de otra persona (creada en 2024, miles de publicaciones). Hay que crear la propia y ponerla en `BSKY_HANDLE` (`wrangler.jsonc`) y en `cuentaBluesky` (`landing/src/data/sitio.ts`).
 - **Dominio propio.** `escierto.dev`, `escierto.org` y `escierto.cl` estaban libres el 10 de octubre de 2026. Al comprar uno, va en `PUBLIC_URL` del bot y en `site` de la landing.
 - **Financiamiento.** Se publicará quién financia el proyecto y con qué condiciones.
-- **Detector de cuentas coordinadas.** Diseño en revisión; no forma parte del bot todavía.
+- **Registro de cuentas que publican falsedades.** Subproducto de las verificaciones, no el foco del bot: anota quién publicó cada afirmación verificada. Aplica a cualquier cuenta (personas, medios, figuras públicas o bots), con la misma regla. Diseño en revisión; no forma parte del bot todavía.
 
 ## Contribuir
 

@@ -68,7 +68,8 @@ ${REGLA_DATO}`,
     usuario: [
       `<afirmacion>${afirmacion}</afirmacion>`,
       `<resultados>\n${resultados || "(sin resultados)"}\n</resultados>`,
-      verificaciones && `Verificaciones profesionales ya publicadas sobre temas parecidos:\n<resultados>\n${verificaciones}\n</resultados>`,
+      verificaciones &&
+        `Verificaciones profesionales ya publicadas sobre temas parecidos:\n<resultados>\n${verificaciones}\n</resultados>`,
       anterior &&
         `Ya investigamos esta afirmación antes. Indica si los resultados nuevos confirman, matizan o cambian esa investigación:\n<informe>${anterior}</informe>`,
     ]

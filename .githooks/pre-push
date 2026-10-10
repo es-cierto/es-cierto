@@ -1,0 +1,5 @@
+#!/bin/sh
+# Lo mismo que corre el CI, menos el build de la landing.
+set -e
+pnpm -s check
+pnpm -s --dir landing test

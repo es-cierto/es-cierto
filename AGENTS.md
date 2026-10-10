@@ -53,11 +53,12 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 ## Verificar
 
 ```bash
-pnpm typecheck
-pnpm test
+pnpm check     # formato (oxfmt), lint con tipos (oxlint), typecheck y tests: lo mismo que el CI
 npx wrangler deploy --dry-run --outdir /tmp/escierto-dist   # el bundle se arma
 pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily, no corre en cada cambio
 ```
+
+El CI (`.github/workflows/ci.yml`) corre todo eso y además el typecheck, los tests y el build de la landing, en cada PR y en cada push a `main`. Los hooks de `.githooks/` (se activan con `pnpm install`) corren formato, lint y tipos antes de cada commit, y `pnpm check` antes de cada push. Las reglas del lint están en `.oxlintrc.json`; si una regla molesta, se discute en el PR, no se apaga en la línea.
 
 Cada afirmación de los `AGENTS.md` está atada a algo que falla si deja de ser cierta:
 
@@ -69,7 +70,12 @@ Una afirmación nueva llega con su mecanismo. Para que un test pase, se arregla 
 
 Sin mecanismo todavía (se revisan a mano): la durabilidad del Workflow y el escape de las páginas públicas.
 
-Los tests usan el runner nativo de Node (`node --test`), con imports `.ts` explícitos. No agregues un framework de tests. Los evals usan promptfoo: el proveedor (`evals/proveedor.ts`) corre el mismo código de `bot/`, y un escenario nuevo va en `evals/promptfooconfig.yaml`.
+Los tests usan el runner nativo de Node (`node --test`), con imports `.ts` explícitos. No agregues un framework de tests. Cómo se escribe un test:
+
+- El valor esperado es un literal o un ejemplo resuelto a mano, nunca recalculado como lo calcula el código.
+- Se prueban funciones puras con datos reales del dominio (una publicación, una URL de verdad); lo que toca la red se deja fuera del test, no se mockea.
+- Un test que solo comprueba que algo "existe" no prueba nada: cada test afirma un valor.
+- Una regla nueva del repo se prueba haciéndola fallar una vez (mutación) antes de darla por buena. Los evals usan promptfoo: el proveedor (`evals/proveedor.ts`) corre el mismo código de `bot/`, y un escenario nuevo va en `evals/promptfooconfig.yaml`.
 
 ## Idioma
 

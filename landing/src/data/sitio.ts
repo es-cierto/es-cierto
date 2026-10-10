@@ -53,11 +53,13 @@ export const escala = [
 export const pasos = [
   {
     titulo: 'Mencionas al bot',
-    texto: 'Respondes a la publicación donde viste el dato y escribes la cuenta del bot. No necesitas registrarte en ningún lado.',
+    texto:
+      'Respondes a la publicación donde viste el dato y escribes la cuenta del bot. No necesitas registrarte en ningún lado.',
   },
   {
     titulo: 'El bot investiga',
-    texto: 'Separa el dato de las opiniones y lo busca en leyes, datos oficiales, estudios y verificaciones profesionales.',
+    texto:
+      'Separa el dato de las opiniones y lo busca en leyes, datos oficiales, estudios y verificaciones profesionales.',
   },
   {
     titulo: 'Te responde',
@@ -68,17 +70,30 @@ export const pasos = [
 export const lema = ['Que muchos lo repitan', 'no lo hace cierto.'];
 
 export const preguntas = [
-  { pregunta: '¿Qué verifica?', respuesta: 'Datos que se pueden comprobar: cifras, fechas, citas y hechos. No opiniones ni chistes.' },
+  {
+    pregunta: '¿Qué verifica?',
+    respuesta: 'Datos que se pueden comprobar: cifras, fechas, citas y hechos. No opiniones ni chistes.',
+  },
   { pregunta: '¿Es neutral?', respuesta: 'Revisa lo que se dice, nunca quién lo dice. La misma regla para todos.' },
-  { pregunta: '¿Puede equivocarse?', respuesta: 'Sí, lo investiga una inteligencia artificial. Por eso siempre muestra sus fuentes.' },
+  {
+    pregunta: '¿Puede equivocarse?',
+    respuesta: 'Sí, lo investiga una inteligencia artificial. Por eso siempre muestra sus fuentes.',
+  },
   {
     pregunta: '¿Qué fuentes usa?',
     respuesta: 'Leyes, datos oficiales, estudios y verificadores profesionales. Una publicación en redes nunca basta.',
   },
-  { pregunta: '¿Y si muchos lo repiten?', respuesta: 'No cambia nada. Cuentan las fuentes, no las veces que se repite algo.' },
+  {
+    pregunta: '¿Y si muchos lo repiten?',
+    respuesta: 'No cambia nada. Cuentan las fuentes, no las veces que se repite algo.',
+  },
   {
     pregunta: '¿Cómo reporto un error?',
     respuesta: 'Desde la página de cada investigación o en GitHub. Las correcciones quedan publicadas.',
   },
-  { pregunta: '¿Quién lo financia?', respuesta: 'Todavía no está definido. Se publicará con sus condiciones.', pendiente: true },
+  {
+    pregunta: '¿Quién lo financia?',
+    respuesta: 'Todavía no está definido. Se publicará con sus condiciones.',
+    pendiente: true,
+  },
 ];

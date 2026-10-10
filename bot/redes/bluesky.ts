@@ -150,8 +150,11 @@ export async function leerHilo(sesion: Sesion, uri: string): Promise<Turno[]> {
   return turnos;
 }
 
+const grafemasDe = (texto: string) =>
+  [...new Intl.Segmenter("es", { granularity: "grapheme" }).segment(texto)].map((s) => s.segment);
+
 function recortar(texto: string, maximo: number): string {
-  const grafemas = [...new Intl.Segmenter("es", { granularity: "grapheme" }).segment(texto)].map((s) => s.segment);
+  const grafemas = grafemasDe(texto);
   if (grafemas.length <= maximo) {
     return texto;
   }
@@ -160,7 +163,7 @@ function recortar(texto: string, maximo: number): string {
 
 export async function responder(sesion: Sesion, mencion: Mencion, cuerpo: string, enlace?: string) {
   const sufijo = enlace ? `\n→ ${enlace}` : "";
-  const texto = recortar(cuerpo, LARGO_MAXIMO - [...sufijo].length) + sufijo;
+  const texto = recortar(cuerpo, LARGO_MAXIMO - grafemasDe(sufijo).length) + sufijo;
   const bytes = new TextEncoder();
   const facets = enlace
     ? [

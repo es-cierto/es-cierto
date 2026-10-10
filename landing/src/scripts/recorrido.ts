@@ -49,7 +49,11 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
   clips.forEach((clip, i) => clip.addEventListener('seeked', () => i === activo && sincronizar()));
 
   const pintar = (self: ScrollTrigger) => {
-    w = posicion(self.scroll(), marcas.map((m) => m.start), self.end);
+    w = posicion(
+      self.scroll(),
+      marcas.map((m) => m.start),
+      self.end,
+    );
     marcarParada(paradaActual(w));
 
     // Foco del recorte en pantallas verticales, interpolado entre paradas.
@@ -72,7 +76,13 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
     sincronizar();
   };
 
-  const recorrido = ScrollTrigger.create({ trigger: seccion, start: 'top top', end: 'bottom bottom', onUpdate: pintar, onRefresh: pintar });
+  const recorrido = ScrollTrigger.create({
+    trigger: seccion,
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: pintar,
+    onRefresh: pintar,
+  });
   pintar(recorrido);
 
   const conexion = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
@@ -80,7 +90,8 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
 
   const movil = matchMedia('(max-width: 860px), (pointer: coarse)').matches;
   const webm = clips[0].canPlayType('video/webm; codecs="vp9"') !== '';
-  const fuente = (clip: HTMLVideoElement) => (movil ? clip.dataset.movil : webm ? clip.dataset.webm : clip.dataset.mp4) ?? '';
+  const fuente = (clip: HTMLVideoElement) =>
+    (movil ? clip.dataset.movil : webm ? clip.dataset.webm : clip.dataset.mp4) ?? '';
 
   let pendientes = clips.map((_, i) => i);
   const cargarSiguiente = async () => {
@@ -109,9 +120,9 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
       listo[i] = true;
       pintar(recorrido);
     }
-    cargarSiguiente();
+    void cargarSiguiente();
   };
 
-  if (document.readyState === 'complete') cargarSiguiente();
-  else addEventListener('load', cargarSiguiente, { once: true });
+  if (document.readyState === 'complete') void cargarSiguiente();
+  else addEventListener('load', () => void cargarSiguiente(), { once: true });
 }

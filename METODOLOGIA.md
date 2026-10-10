@@ -5,8 +5,8 @@
 ## Principios
 
 1. **No partidismo.** Se verifican afirmaciones, no personas ni partidos. La misma regla se aplica a todos.
-2. **Evidencia obligatoria.** Ningún veredicto sale sin fuentes enlazadas. Si el modelo no entrega fuentes, el código fuerza el veredicto a *No verificable*.
-3. **Abstenerse antes que adivinar.** *No verificable* es una respuesta válida y preferible a una conclusión débil.
+2. **Evidencia obligatoria.** Ningún veredicto sale sin fuentes enlazadas. Si el modelo no entrega fuentes, el código fuerza el veredicto a _No verificable_.
+3. **Abstenerse antes que adivinar.** _No verificable_ es una respuesta válida y preferible a una conclusión débil.
 4. **Transparencia.** Este código, los prompts y cada investigación son públicos.
 5. **Correcciones abiertas.** Cualquiera puede reportar un error y la corrección queda registrada.
 
@@ -22,7 +22,7 @@ Solo **afirmaciones de hecho**: cifras, fechas, citas, eventos, datos comprobabl
 - ❌ **Falso**: la evidencia la contradice.
 - ❔ **No verificable**: no hay evidencia suficiente, es contradictoria o el hecho no se puede comprobar con fuentes públicas.
 
-Se juzga lo esencial de la afirmación. Un error en un detalle secundario (una fecha cercana, una cifra redondeada) la deja en *Mayormente verdadero*, no en *Falso*. Y no encontrar evidencia de algo no lo hace falso: *Falso* exige una fuente que lo contradiga.
+Se juzga lo esencial de la afirmación. Un error en un detalle secundario (una fecha cercana, una cifra redondeada) la deja en _Mayormente verdadero_, no en _Falso_. Y no encontrar evidencia de algo no lo hace falso: _Falso_ exige una fuente que lo contradiga.
 
 Cada veredicto incluye una **confianza** (baja, media o alta) según la calidad y concordancia de las fuentes.
 
@@ -43,7 +43,7 @@ Las redes sociales, los blogs anónimos y los sitios sin autoría no se aceptan 
 3. Se consultan verificaciones profesionales ya publicadas.
 4. Se busca en la web (Tavily) por rondas: el modelo propone hasta 3 búsquedas, revisa lo encontrado y decide si basta o si hacen falta búsquedas distintas. Como máximo 3 rondas; las búsquedas repetidas se descartan.
 5. Con esos resultados, y sin agregar datos de memoria, se escribe un informe de evidencia con la URL de cada dato. El informe describe qué confirma y qué contradice la evidencia, pero no da veredicto.
-6. Un segundo paso emite el veredicto usando solo las fuentes del informe. El código descarta toda fuente cuya URL no haya aparecido en los resultados de búsqueda; si no queda ninguna, el veredicto es *No verificable*.
+6. Un segundo paso emite el veredicto usando solo las fuentes del informe. El código descarta toda fuente cuya URL no haya aparecido en los resultados de búsqueda; si no queda ninguna, el veredicto es _No verificable_.
 
 Todos los pasos usan el modelo abierto `gpt-oss-120b` en Cloudflare Workers AI.
 
@@ -66,7 +66,7 @@ Después de un veredicto se le puede responder al bot en el mismo hilo para preg
 ## Límites conocidos
 
 - La investigación la hace un modelo de IA abierto y de tamaño medio, que puede equivocarse más que los modelos comerciales grandes. Por eso las fuentes van siempre a la vista y el código solo acepta fuentes que realmente aparecieron en la búsqueda.
-- La búsqueda se limita a 3 rondas de 3 consultas por afirmación: un tema que necesite más evidencia puede terminar como *No verificable*.
+- La búsqueda se limita a 3 rondas de 3 consultas por afirmación: un tema que necesite más evidencia puede terminar como _No verificable_.
 - Por ahora solo se lee texto. Las imágenes, los videos y los posts citados todavía no se analizan.
 - Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el bot se use para acosar.
 

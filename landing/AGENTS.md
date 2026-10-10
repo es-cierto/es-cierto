@@ -13,7 +13,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 - **Movimiento reducido y ahorro de datos:** no se descarga ningún video; quedan las imágenes de cada parada.
 - **Las imágenes y el video se declaran como generados con IA**, en el recorrido y en el pie.
 - **Pocas palabras.** Quien llega lee en diagonal: cada pantalla es un titular de pocas palabras y, como mucho, una línea de apoyo (unas 12 palabras). Si una sección repite lo que ya contó el recorrido, se saca.
-- **Redacción clara.** Primero lo literal y después la metáfora del hilo, que aparece una sola vez como imagen ("Tira del hilo", la búsqueda). Una palabra para cada cosa: *mencionar* (no etiquetar), *publicación* (no post), *el bot*, *fuentes*, *veredicto* o *respuesta*. Nada de jerga: si aparece una sigla (IFCN), se explica. Titulares de las pantallas en `text-5xl`/`lg:text-7xl`; texto de apoyo en 20 px; nada bajo 14 px salvo la nota de IA.
+- **Redacción clara.** Primero lo literal y después la metáfora del hilo, que aparece una sola vez como imagen ("Tira del hilo", la búsqueda). Una palabra para cada cosa: _mencionar_ (no etiquetar), _publicación_ (no post), _el bot_, _fuentes_, _veredicto_ o _respuesta_. Nada de jerga: si aparece una sigla (IFCN), se explica. Titulares de las pantallas en `text-5xl`/`lg:text-7xl`; texto de apoyo en 20 px; nada bajo 14 px salvo la nota de IA.
 - **Peso:** cada clip pesa menos de 4 MB en cada variante y cada imagen de parada menos de 300 KB.
 
 ## Archivos
@@ -35,6 +35,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 ## Verificar
 
 ```bash
+pnpm typecheck # tipos (astro sync + tsc)
 pnpm test      # cálculo del recorrido y arquitectura
 pnpm build
 pnpm deploy    # build + wrangler deploy

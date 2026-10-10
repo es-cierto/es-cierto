@@ -16,14 +16,16 @@
     "PUBLIC_URL": "https://escierto.org",
     "REPO_URL": "https://github.com/es-cierto/es-cierto",
     // "si" activa /probar, un chat de prueba sin Bluesky. Solo en .dev.vars.
-    "PRUEBA_WEB": "no"
+    "PRUEBA_WEB": "no",
   },
   "secrets": {
-    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"]
+    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"],
   },
 
-  "d1_databases": [{ "binding": "DB", "database_name": "escierto", "database_id": "REEMPLAZAR_CON_wrangler_d1_create" }],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "escierto", "database_id": "REEMPLAZAR_CON_wrangler_d1_create" },
+  ],
   "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones", "remote": true }],
   "ai": { "binding": "AI", "remote": true },
-  "workflows": [{ "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" }]
+  "workflows": [{ "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" }],
 }

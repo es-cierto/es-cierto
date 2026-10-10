@@ -33,7 +33,10 @@ test("un veredicto sin fuentes queda como no verificable", () => {
 });
 
 test("fuentes que no son http(s) no cuentan como evidencia", () => {
-  const resultado = exigirEvidencia({ ...redactado, fuentes: [{ titulo: "x", url: "javascript:alert(1)" }] }, "javascript:alert(1)");
+  const resultado = exigirEvidencia(
+    { ...redactado, fuentes: [{ titulo: "x", url: "javascript:alert(1)" }] },
+    "javascript:alert(1)",
+  );
   assert.equal(resultado.veredicto, "no_verificable");
   assert.deepEqual(resultado.fuentes, []);
 });
@@ -41,7 +44,10 @@ test("fuentes que no son http(s) no cuentan como evidencia", () => {
 test("con una fuente web el veredicto se mantiene", () => {
   const fuente = { titulo: "BCN", url: "https://www.bcn.cl/leychile" };
   const evidencia = "- Ley 21.578 (https://www.bcn.cl/leychile/)\n  texto";
-  assert.deepEqual(exigirEvidencia({ ...redactado, fuentes: [fuente] }, evidencia), { ...redactado, fuentes: [fuente] });
+  assert.deepEqual(exigirEvidencia({ ...redactado, fuentes: [fuente] }, evidencia), {
+    ...redactado,
+    fuentes: [fuente],
+  });
 });
 
 test("una fuente que no apareció en la búsqueda no cuenta", () => {

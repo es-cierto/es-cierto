@@ -40,7 +40,10 @@ test('sin emojis de color: los íconos son Phosphor', () => {
 });
 
 test('la cuenta del bot no es la de otra persona', () => {
-  assert.ok(!/['"]escierto\.bsky\.social['"]/.test(leer('src/data/sitio.ts')), 'escierto.bsky.social es de otra persona');
+  assert.ok(
+    !/['"]escierto\.bsky\.social['"]/.test(leer('src/data/sitio.ts')),
+    'escierto.bsky.social es de otra persona',
+  );
 });
 
 test('solo se enlazan URLs https o anclas internas', () => {
@@ -61,7 +64,10 @@ test('el video y las imágenes se declaran como generados con IA', () => {
 
 test('hay un clip por tramo, con sus tres variantes, y cada uno pesa menos de 4 MB', () => {
   const paradas = (leer('src/data/sitio.ts').match(/\{ id: '/g) ?? []).length;
-  const clips = leer('src/components/Recorrido.astro').match(/const clips = \[([^\]]+)\]/)?.[1].match(/'(\w)'/g) ?? [];
+  const clips =
+    leer('src/components/Recorrido.astro')
+      .match(/const clips = \[([^\]]+)\]/)?.[1]
+      .match(/'(\w)'/g) ?? [];
   assert.equal(clips.length, paradas - 1, 'tiene que haber un clip entre cada par de paradas');
   for (const clip of clips.map((c) => c.slice(1, -1))) {
     for (const variante of ['1080.webm', '1080.mp4', '720.mp4']) {
@@ -80,12 +86,17 @@ test('cada imagen de parada pesa menos de 300 KB', () => {
 });
 
 test('con movimiento reducido o ahorro de datos no se descarga ningún video', () => {
-  assert.match(leer('src/scripts/recorrido.ts'), /if \(!clips\.length \|\| reducir \|\| conexion\?\.saveData\) return;/);
+  assert.match(
+    leer('src/scripts/recorrido.ts'),
+    /if \(!clips\.length \|\| reducir \|\| conexion\?\.saveData\) return;/,
+  );
 });
 
 test('una palabra para cada cosa: mencionar (no etiquetar) y publicación (no post)', () => {
   for (const ruta of fuentes) {
-    const texto = leer(ruta).replace(/class="[^"]*"/g, '').replace(/\/\/.*$/gm, '');
+    const texto = leer(ruta)
+      .replace(/class="[^"]*"/g, '')
+      .replace(/\/\/.*$/gm, '');
     for (const prohibida of [/\betiquet(a|á|ar|as|o|alo|arlo)\b/i, /\bposts?\b/i]) {
       assert.ok(!prohibida.test(texto), `${ruta} usa ${prohibida}`);
     }
