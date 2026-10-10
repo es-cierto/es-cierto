@@ -21,7 +21,7 @@ jobs:
       # El test de METODOLOGIA.md compara contra la base del PR (o el commit anterior del push), no contra HEAD.
       METODOLOGIA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v6
