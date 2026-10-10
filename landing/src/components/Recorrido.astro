@@ -1,0 +1,214 @@
+---
+import { Picture } from 'astro:assets';
+import Parada from './Parada.astro';
+import Icono from './Icono.astro';
+import { cuentaBluesky, ejemplo, enlaces, recorrido } from '../data/sitio';
+import inicio from '../assets/recorrido/0-inicio.webp';
+import tirar from '../assets/recorrido/1-tirar.webp';
+import fuentes from '../assets/recorrido/2-fuentes.webp';
+import algoAtado from '../assets/recorrido/3-algo-atado.webp';
+
+// La imagen de cada parada es un cuadro real del video (el primero de su clip; la última, el último del clip C),
+// así el clip entra encima sin que se note el cambio.
+const imagenes = [inicio, tirar, fuentes, algoAtado];
+// Un clip por tramo: el clip k va de la parada k a la k+1.
+const clips = ['A', 'B', 'C'];
+const titulo = 'mt-4 max-w-xl text-4xl lg:text-5xl xl:text-6xl';
+const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
+---
+
+<section id="recorrido" data-recorrido aria-label="Cómo trabaja: tirar del hilo" class="relative">
+  <div data-escenario class="sticky top-0 h-lvh overflow-hidden bg-fondo" style="--foco: 50%">
+    <div aria-hidden="true" class="absolute inset-0">
+      {
+        imagenes.map((imagen, i) => (
+          <div data-cuadro class="absolute inset-0" style={i === 0 ? undefined : 'opacity: 0'}>
+            <Picture
+              src={imagen}
+              alt=""
+              formats={['avif', 'webp']} fallbackFormat="webp"
+              widths={[828, 1280, 1920]}
+              sizes="(min-aspect-ratio: 16/9) 100vw, 178vh"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'low'}
+              decoding="async"
+              pictureAttributes={{ class: 'block size-full' }}
+              class="size-full object-cover"
+              style="object-position: var(--foco) 50%"
+            />
+          </div>
+        ))
+      }
+      <div class="clips absolute inset-0">
+        {
+          clips.map((clip) => (
+            <video
+              data-clip
+              data-webm={`/video/clip-${clip}-1080.webm`}
+              data-mp4={`/video/clip-${clip}-1080.mp4`}
+              data-movil={`/video/clip-${clip}-720.mp4`}
+              muted
+              playsinline
+              preload="none"
+              disablepictureinpicture
+              disableremoteplayback
+              tabindex="-1"
+              class="clip absolute inset-0 size-full object-cover"
+            />
+          ))
+        }
+      </div>
+    </div>
+
+    <div aria-hidden="true" class="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-fondo/70 to-transparent"></div>
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 bg-linear-to-t from-fondo from-10% via-fondo/50 via-45% to-transparent to-75% lg:bg-linear-to-r lg:from-fondo/90 lg:via-fondo/40 lg:via-35% lg:to-transparent lg:to-65%"
+    >
+    </div>
+
+    <nav aria-label="Paradas del recorrido" class="absolute top-1/2 right-6 hidden -translate-y-1/2 lg:block xl:right-10">
+      <ol class="relative flex flex-col items-end gap-4">
+        <span aria-hidden="true" class="absolute top-3 right-1 bottom-3 w-px translate-x-1/2 bg-papel/20">
+          <span data-riel class="absolute inset-0 origin-top scale-y-0 bg-lino"></span>
+        </span>
+        {
+          recorrido.map((parada, i) => (
+            <li>
+              <a href={`#${parada.id}`} data-ir aria-current={i === 0 ? 'true' : 'false'} class="riel group flex h-6 items-center gap-3">
+                <span class="etiqueta rounded-full bg-fondo/60 px-3 py-1 text-xs whitespace-nowrap ring-1 ring-papel/10 backdrop-blur-xl">
+                  {parada.etiqueta}
+                </span>
+                <span class="punto size-2 rounded-full bg-papel/50" />
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <p data-pista aria-hidden="true" class="absolute right-10 bottom-8 hidden items-center gap-3 text-xs tracking-widest text-papel/70 uppercase lg:flex">
+      Baja para tirar del hilo
+      <span class="pista relative block h-8 w-px overflow-hidden bg-papel/20"></span>
+    </p>
+    <p class="absolute top-24 right-4 text-[11px] text-papel/50 lg:top-auto lg:right-auto lg:bottom-3 lg:left-12 xl:left-24">Imágenes generadas con IA</p>
+  </div>
+
+  <div class="relative z-10 -mt-[100lvh]">
+    <Parada indice={0}>
+      <h1 class="mt-4">
+        <span class="block text-xs font-semibold tracking-widest text-lino uppercase">¿Es Cierto? · Verificador de datos abierto</span>
+        <span class="mt-4 block max-w-[680px] text-balance bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-4xl text-transparent lg:text-6xl">
+          Toda afirmación<br /> cuelga de un&nbsp;hilo.
+        </span>
+      </h1>
+      <p class={cuerpo}>
+        Lo etiquetas en una publicación, tira del hilo hasta encontrar de dónde sale el dato y te responde con la
+        evidencia. O te dice que no la hay.
+      </p>
+      {
+        cuentaBluesky ? (
+          <a href={cuentaBluesky.url} class="boton boton-principal mt-6">Etiqueta a @{cuentaBluesky.handle}</a>
+        ) : (
+          <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-fondo/50 px-3 py-1 text-xs text-papel/80 ring-1 ring-papel/20 backdrop-blur-md">
+            <span aria-hidden="true" class="size-1.5 rounded-full bg-lino"></span>
+            El bot está en preparación: todavía no responde en Bluesky.
+          </p>
+        )
+      }
+    </Parada>
+
+    <Parada indice={1}>
+      <h2 class={titulo}>Etiquetas al bot. Él tira del hilo.</h2>
+      <p class={cuerpo}>
+        Primero separa el dato de la opinión: las opiniones no se verifican. Después sigue el hilo entre todo lo que se
+        comparte, sin importar cuántas veces se repita.
+      </p>
+    </Parada>
+
+    <Parada indice={2}>
+      <h2 class={titulo}>Lo sigue hasta las fuentes.</h2>
+      <p class={cuerpo}>
+        Busca en la web por rondas: leyes, datos oficiales, estudios y verificadores profesionales. Si con una vuelta no
+        alcanza, da otra. Solo cuenta lo que de verdad encontró.
+      </p>
+    </Parada>
+
+    <Parada indice={3}>
+      <h2 class={titulo}>A veces hay algo atado al otro extremo.</h2>
+      <figure class="mt-6 w-full max-w-md rounded-2xl bg-fondo/60 p-5 ring-1 ring-papel/15 backdrop-blur-md">
+        <figcaption class="text-xs tracking-widest text-papel/60 uppercase">Ejemplo de respuesta</figcaption>
+        <blockquote class="mt-3 text-sm text-papel/80">«{ejemplo.afirmacion}»</blockquote>
+        <p class="mt-4 flex items-center gap-2 text-xl font-semibold"><Icono nombre={ejemplo.icono} class="size-6 text-lino" /> {ejemplo.veredicto}</p>
+        <p class="mt-2 text-sm text-papel/80">{ejemplo.resumen}</p>
+        <p class="mt-4 text-xs text-papel/60">
+          Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
+        </p>
+      </figure>
+    </Parada>
+  </div>
+</section>
+
+<style>
+  .clips {
+    opacity: 0;
+    transition: opacity 1200ms var(--ease-fluido);
+  }
+
+  :global([data-modo='video']) .clips {
+    opacity: 1;
+  }
+
+  /* Solo se ve el clip del tramo actual; el cambio es instantáneo porque comparten cuadro. */
+  .clip {
+    object-position: var(--foco) 50%;
+    visibility: hidden;
+  }
+
+  .clip:global(.visible) {
+    visibility: visible;
+  }
+
+  .etiqueta {
+    opacity: 0;
+    transform: translateX(0.5rem);
+    transition:
+      opacity 700ms var(--ease-fluido),
+      transform 700ms var(--ease-fluido);
+  }
+
+  .riel:hover .etiqueta,
+  .riel:focus-visible .etiqueta,
+  .riel[aria-current='true'] .etiqueta {
+    opacity: 1;
+    transform: none;
+  }
+
+  .punto {
+    transition:
+      background-color 700ms var(--ease-fluido),
+      transform 700ms var(--ease-fluido);
+  }
+
+  .riel[aria-current='true'] .punto {
+    background-color: var(--color-lino);
+    transform: scale(1.5);
+  }
+
+  .pista::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-papel);
+    animation: pista 2400ms var(--ease-fluido) infinite;
+  }
+
+  @keyframes pista {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pista::after { animation: none; }
+  }
+</style>

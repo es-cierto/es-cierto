@@ -1,0 +1,16 @@
+---
+// Íconos de Phosphor (los que recomienda el skill de diseño), en línea y pintados con currentColor.
+const svgs = import.meta.glob<string>('/node_modules/@phosphor-icons/core/assets/regular/*.svg', { query: '?raw', import: 'default', eager: true });
+
+interface Props {
+  nombre: string;
+  class?: string;
+}
+
+const { nombre, class: clase } = Astro.props;
+const svg = svgs[`/node_modules/@phosphor-icons/core/assets/regular/${nombre}.svg`];
+if (!svg) throw new Error(`No existe el ícono ${nombre}`);
+const conClase = svg.replace('<svg ', `<svg aria-hidden="true" focusable="false" class="${clase ?? ''}" `);
+---
+
+<Fragment set:html={conClase} />

@@ -1,0 +1,21 @@
+---
+import { Picture } from 'astro:assets';
+import nadaAtado from '../assets/recorrido/nada-atado.webp';
+---
+
+<section id="nada-atado" aria-labelledby="titulo-nada" class="relative isolate flex min-h-[110svh] items-end overflow-hidden px-4 pb-24 md:px-12 xl:px-24">
+  <div class="absolute inset-0 -z-10" aria-hidden="true">
+    <div data-colgar class="absolute inset-x-0 -top-[8%] h-[116%]">
+      <Picture src={nadaAtado} alt="" formats={['avif', 'webp']} fallbackFormat="webp" widths={[828, 1280, 1920]} sizes="100vw" loading="lazy" class="size-full object-cover object-[60%_50%]" />
+    </div>
+    <div class="absolute inset-0 bg-linear-to-t from-fondo via-fondo/40 to-transparent"></div>
+  </div>
+  <div data-revelar class="max-w-xl">
+    <p class="text-xs font-semibold tracking-widest text-lino uppercase">Y a veces</p>
+    <h2 id="titulo-nada" class="mt-4 text-4xl lg:text-6xl">Tiras del hilo y no hay nada atado.</h2>
+    <p class="mt-4 max-w-md text-base text-papel/80 lg:text-lg">
+      Cero sustento. Eso no lo vuelve falso: falso exige una fuente que lo contradiga. El veredicto es{' '}
+      <strong class="font-semibold text-papel">No verificable</strong>, y te lo dice así de claro.
+    </p>
+  </div>
+</section>

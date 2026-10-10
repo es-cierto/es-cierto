@@ -50,6 +50,17 @@ curl "http://localhost:8787/__scheduled"   # simula el cron
 
 Para la cuenta del bot en Bluesky usa una **contraseña de aplicación** (Ajustes → Privacidad y seguridad → Contraseñas de aplicación), nunca la contraseña principal. Para probar, usa una cuenta aparte y pon su handle en `BSKY_HANDLE=` dentro de `.dev.vars`.
 
+## La página pública
+
+`landing/` es la landing (Astro estático en un Worker de Cloudflare propio). El scroll avanza un video que sigue un hilo hasta su fuente; las imágenes y los clips se generaron con IA (Higgsfield, MiniMax H3) y los prompts están en `landing/PROMPTS.md`.
+
+```bash
+cd landing
+pnpm install
+pnpm test
+pnpm deploy   # astro build + wrangler deploy
+```
+
 ## Desplegar
 
 ```bash

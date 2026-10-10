@@ -10,6 +10,8 @@
   "triggers": { "crons": ["* * * * *"] },
 
   "vars": {
+    // PENDIENTE: escierto.bsky.social es la cuenta de otra persona (creada en 2024, miles de publicaciones).
+    // Hay que crear la cuenta propia del bot y poner aquí su handle antes de desplegar.
     "BSKY_HANDLE": "escierto.bsky.social",
     "PUBLIC_URL": "https://escierto.org",
     "REPO_URL": "https://github.com/es-cierto/es-cierto",

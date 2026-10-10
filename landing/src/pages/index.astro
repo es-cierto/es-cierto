@@ -1,0 +1,54 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Recorrido from '../components/Recorrido.astro';
+import NadaAtado from '../components/NadaAtado.astro';
+import Escala from '../components/Escala.astro';
+import Lema from '../components/Lema.astro';
+import ComoFunciona from '../components/ComoFunciona.astro';
+import Transparencia from '../components/Transparencia.astro';
+import Preguntas from '../components/Preguntas.astro';
+import Cierre from '../components/Cierre.astro';
+import { enlaces, preguntas, seo } from '../data/sitio';
+
+const inicio = new URL('/', Astro.site).href;
+const datos = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${inicio}#sitio`,
+      url: inicio,
+      name: '¿Es Cierto?',
+      description: seo.descripcion,
+      inLanguage: 'es',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: '¿Es Cierto?',
+      applicationCategory: 'UtilitiesApplication',
+      description: seo.descripcion,
+      isAccessibleForFree: true,
+      codeRepository: enlaces.repo,
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: preguntas
+        .filter((p) => !p.pendiente)
+        .map((p) => ({ '@type': 'Question', name: p.pregunta, acceptedAnswer: { '@type': 'Answer', text: p.respuesta } })),
+    },
+  ],
+};
+const jsonLd = JSON.stringify(datos).replaceAll('<', '\\u003c');
+---
+
+<Layout titulo={seo.titulo} descripcion={seo.descripcion}>
+  <script slot="head" type="application/ld+json" set:html={jsonLd} />
+  <Recorrido />
+  <NadaAtado />
+  <Escala />
+  <Lema />
+  <ComoFunciona />
+  <Transparencia />
+  <Preguntas />
+  <Cierre />
+</Layout>

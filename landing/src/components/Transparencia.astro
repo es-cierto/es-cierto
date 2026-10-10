@@ -1,0 +1,32 @@
+---
+import { enlaces } from '../data/sitio';
+
+const puntos = [
+  { titulo: 'Código abierto', texto: 'El código, los prompts y cada investigación son públicos. Cualquiera puede auditar cómo llega a un veredicto.' },
+  { titulo: 'Solo fuentes reales', texto: 'El código descarta toda fuente que no apareció en la búsqueda. Sin evidencia, no hay veredicto.' },
+  { titulo: 'Puede equivocarse', texto: 'Lo investiga un modelo de IA. Por eso muestra todas sus fuentes, y los errores se corrigen a la vista.' },
+];
+---
+
+<section id="transparencia" aria-labelledby="titulo-transparencia" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto max-w-6xl">
+    <div data-revelar class="max-w-[680px]">
+      <p class="text-xs font-semibold tracking-widest text-lino uppercase">A la vista</p>
+      <h2 id="titulo-transparencia" class="mt-4 text-4xl lg:text-5xl">Un verificador tiene que poder verificarse.</h2>
+    </div>
+    <ul class="mt-12 grid gap-4 md:grid-cols-3">
+      {
+        puntos.map((punto, i) => (
+          <li data-revelar style={`transition-delay: ${i * 100}ms`} class="rounded-2xl bg-papel/[0.04] p-6 ring-1 ring-papel/10">
+            <h3 class="text-lg">{punto.titulo}</h3>
+            <p class="mt-2 text-sm text-papel/70">{punto.texto}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <div data-revelar class="mt-10 flex flex-wrap gap-3">
+      <a href={enlaces.metodologia} class="boton boton-principal">Leer la metodología</a>
+      <a href={enlaces.repo} class="boton boton-secundario">Ver el código</a>
+    </div>
+  </div>
+</section>

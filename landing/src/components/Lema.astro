@@ -1,0 +1,35 @@
+---
+import { lema } from '../data/sitio';
+
+const texto = lema.join(' ');
+---
+
+<section aria-label="Lema" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto flex min-h-[60svh] max-w-[680px] items-center">
+    <p class="sr-only">{texto}</p>
+    <p data-palabras aria-hidden="true" class="text-4xl font-semibold tracking-tight lg:text-6xl">
+      {
+        lema.map((linea) => (
+          <span class="block">
+            {linea.split(' ').map((palabra) => (
+              <>
+                <span data-palabra class="palabra">{palabra}</span>{' '}
+              </>
+            ))}
+          </span>
+        ))
+      }
+    </p>
+  </div>
+</section>
+
+<style>
+  .palabra {
+    color: color-mix(in oklab, var(--color-papel) 45%, transparent);
+    transition: color 700ms var(--ease-fluido);
+  }
+
+  .palabra:global(.encendida) {
+    color: var(--color-papel);
+  }
+</style>

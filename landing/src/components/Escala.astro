@@ -1,0 +1,28 @@
+---
+import Icono from './Icono.astro';
+import { escala } from '../data/sitio';
+---
+
+<section id="escala" aria-labelledby="titulo-escala" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto max-w-6xl">
+    <div data-revelar class="max-w-[680px]">
+      <p class="text-xs font-semibold tracking-widest text-lino uppercase">Los veredictos</p>
+      <h2 id="titulo-escala" class="mt-4 text-4xl lg:text-5xl">Lo que hay al final del hilo es el veredicto.</h2>
+      <p class="mt-4 text-base text-papel/80 lg:text-lg">
+        Se juzga lo esencial de la afirmación. Un error en un detalle menor no la vuelve falsa, y cada veredicto lleva su
+        nivel de confianza según la calidad de las fuentes.
+      </p>
+    </div>
+    <ol class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+      {
+        escala.map((paso, i) => (
+          <li data-revelar style={`transition-delay: ${i * 80}ms`} class="flex flex-col gap-3 rounded-2xl bg-papel/[0.04] p-5 ring-1 ring-papel/10">
+            <Icono nombre={paso.icono} class="size-7 text-lino" />
+            <h3 class="text-lg">{paso.nombre}</h3>
+            <p class="text-sm text-papel/70">{paso.hilo}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

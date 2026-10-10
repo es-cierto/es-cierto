@@ -1,0 +1,25 @@
+---
+import { enlaces } from '../data/sitio';
+---
+
+<footer class="border-t border-papel/10 px-4 py-16 md:px-12 xl:px-24">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:justify-between">
+    <div class="max-w-md">
+      <p class="font-semibold">¿Es Cierto?</p>
+      <p class="mt-2 text-sm text-papel/70">
+        Verificador de datos abierto y no partidista. Juzga afirmaciones, nunca personas ni partidos.
+      </p>
+      <p class="mt-4 text-xs text-papel/50">
+        Las imágenes y el video del recorrido están generados con IA (Higgsfield, GPT Image y MiniMax H3). Son una
+        ilustración: ningún documento que aparece en ellos es real.
+      </p>
+    </div>
+    <nav aria-label="Pie de página">
+      <ul class="flex flex-col gap-3 text-sm">
+        <li><a class="enlace" href={enlaces.metodologia}>Metodología</a></li>
+        <li><a class="enlace" href={enlaces.repo}>Código abierto</a></li>
+        <li><a class="enlace" href={enlaces.issues}>Reportar un error</a></li>
+      </ul>
+    </nav>
+  </div>
+</footer>
