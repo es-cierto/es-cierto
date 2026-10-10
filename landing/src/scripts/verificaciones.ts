@@ -1,6 +1,7 @@
 // Lo que el bot ha respondido, tal como lo entrega /api/investigaciones. Funciones puras, con tests al lado.
 // La respuesta viene de otro servicio por la red: se valida con zod antes de mostrar nada.
-import { z } from 'zod';
+// zod/mini: la misma validación con una fracción del peso (la página solo valida este esquema).
+import { z } from 'zod/mini';
 
 const Item = z.object({
   id: z.uuid(),
@@ -8,13 +9,13 @@ const Item = z.object({
   veredicto: z.enum(['verdadero', 'mayormente_verdadero', 'enganoso', 'falso', 'no_verificable']),
   confianza: z.enum(['baja', 'media', 'alta']),
   resumen: z.string(),
-  fuentes: z.number().int().nonnegative(),
+  fuentes: z.int().check(z.nonnegative()),
   corregida: z.boolean(),
   creadoEn: z.number(),
 });
 export type Item = z.infer<typeof Item>;
 
-export const Respuesta = z.object({ items: z.array(Item), siguiente: z.number().nullable() });
+export const Respuesta = z.object({ items: z.array(Item), siguiente: z.nullable(z.number()) });
 export type Respuesta = z.infer<typeof Respuesta>;
 
 /** La dirección de una página de /api/investigaciones; `antes` pide la siguiente. */
