@@ -119,3 +119,24 @@ test('Bluesky es la primera red, no la única', () => {
     assert.ok(!exclusivo, `${ruta} dice "${exclusivo?.[0]}": el bot es para redes sociales y la web`);
   }
 });
+
+test('llms.txt sigue el formato de llmstxt.org y llms-full.txt trae la metodología entera', async () => {
+  const { resumenParaModelos, completoParaModelos } = await import('./data/llms.ts');
+  const { escala } = await import('./data/sitio.ts');
+  const inicio = 'https://es.cierto.workers.dev/';
+  const resumen = resumenParaModelos(inicio);
+  const lineas = resumen.split('\n');
+  assert.equal(lineas[0], '# ¿Es Cierto?', 'empieza con un solo título');
+  assert.match(lineas[2], /^> .{40,}/, 'sigue un resumen en cita');
+  assert.equal(resumen.match(/^# /gm)?.length, 1, 'un solo título de nivel 1');
+  for (const { nombre } of escala) assert.ok(resumen.includes(`- ${nombre}:`), `falta el veredicto ${nombre}`);
+  for (const [, url] of resumen.matchAll(/\]\(([^)]+)\)/g)) assert.ok(url.startsWith('https://'), `enlace ${url}`);
+  assert.ok(resumen.includes('https://es.cierto.workers.dev/llms-full.txt'), 'el resumen enlaza la versión completa');
+
+  const metodologia = readFileSync(join(raiz, '../METODOLOGIA.md'), 'utf8');
+  const completo = completoParaModelos(inicio, metodologia);
+  assert.equal(completo.match(/^# /gm)?.length, 1, 'la metodología no agrega otro título de nivel 1');
+  for (const [, titulo] of metodologia.matchAll(/^#{2,} (.+)$/gm)) {
+    assert.ok(completo.includes(titulo), `llms-full.txt no trae la sección «${titulo}»`);
+  }
+});

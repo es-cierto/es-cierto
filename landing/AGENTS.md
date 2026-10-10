@@ -20,6 +20,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 ## Archivos
 
 - `src/data/sitio.ts`: todo el texto, los enlaces y las paradas. Un dato nuevo va aquí, no suelto en un componente.
+- `src/data/llms.ts`: `/llms.txt` (resumen, formato llmstxt.org) y `/llms-full.txt` (resumen más `METODOLOGIA.md` entera). Salen de los mismos datos que la página; el test revisa el formato y que no falte ninguna sección de la metodología.
 - `src/components/Recorrido.astro`: el recorrido (escenario fijo, imágenes de las paradas, clips y texto de cada parada).
 - `src/components/Parada.astro`: una parada; su texto aparece cuando la cámara está quieta en ella.
 - `src/scripts/tramos.ts`: el cálculo puro del recorrido (posición de la cámara, tramo, orden de carga), con sus tests.
