@@ -57,3 +57,16 @@ test("las imágenes tienen la forma y el peso que aceptan las redes", () => {
     assert.ok(statSync(join(raiz, ruta)).size < 1_000_000, `${ruta} pesa 1 MB o más`);
   }
 });
+
+test("el prompt del avatar no pide símbolos de un sector: solo el nudo del proyecto", () => {
+  const prompt = readFileSync(join(raiz, "perfiles/avatar-prompt.md"), "utf8").match(/```\n([\s\S]*?)```/)?.[1] ?? "";
+  const [pedido, evitar = ""] = prompt.split("Avoid:");
+  assert.ok(pedido.length > 0, "no encontré el prompt");
+  assert.doesNotMatch(
+    pedido,
+    /\b(star|flag|shield|crest|eagle|laurel|check ?mark)s?\b/i,
+    "el prompt pide un símbolo que alguien puede leer como de un sector",
+  );
+  assert.match(pedido, /knot/i, "el sello lleva el nudo del proyecto");
+  assert.match(evitar, /stars/i, "la lista Avoid excluye las estrellas");
+});
