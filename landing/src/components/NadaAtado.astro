@@ -1,0 +1,17 @@
+---
+import { Picture } from 'astro:assets';
+import nadaAtado from '../assets/recorrido/nada-atado.webp';
+---
+
+<section id="nada-atado" aria-labelledby="titulo-nada" class="relative isolate flex min-h-[110svh] items-end overflow-hidden px-4 pb-24 md:px-12 xl:px-24">
+  <div class="absolute inset-0 -z-10" aria-hidden="true">
+    <div data-colgar class="absolute inset-x-0 -top-[8%] h-[116%]">
+      <Picture src={nadaAtado} alt="" formats={['avif', 'webp']} fallbackFormat="webp" widths={[828, 1280, 1920]} sizes="100vw" loading="lazy" class="size-full object-cover object-[60%_50%]" />
+    </div>
+    <div class="absolute inset-0 bg-linear-to-t from-fondo via-fondo/40 to-transparent"></div>
+  </div>
+  <div class="max-w-xl">
+    <h2 id="titulo-nada" data-titular class="text-5xl text-balance lg:text-7xl">¿Sin fuentes? Te lo&nbsp;dice.</h2>
+    <p data-revelar class="mt-4 max-w-md text-xl text-papel/90">No encontrar pruebas no lo vuelve falso: es <strong class="font-semibold text-papel">No&nbsp;verificable</strong>.</p>
+  </div>
+</section>

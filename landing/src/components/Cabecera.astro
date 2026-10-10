@@ -1,0 +1,35 @@
+---
+import { cuentaBluesky, enlaces } from '../data/sitio';
+
+const navegacion = [
+  { href: '#recorrido', texto: 'Cómo funciona' },
+  { href: '#escala', texto: 'Veredictos' },
+  { href: '#preguntas', texto: 'Preguntas' },
+];
+---
+
+<header class="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-6 lg:justify-start lg:px-12">
+  <div class="pointer-events-auto flex w-max items-center gap-4 rounded-full bg-fondo/60 p-2 pl-5 ring-1 ring-papel/10 backdrop-blur-xl">
+    <a href="#inicio" class="text-sm font-semibold tracking-tight" aria-label="¿Es Cierto?, volver al inicio">¿Es Cierto?</a>
+    <nav aria-label="Principal" class="hidden md:block">
+      <ul class="flex items-center text-sm">
+        {
+          navegacion.map((item) => (
+            <li>
+              <a href={item.href} class="flex h-9 items-center rounded-full px-3 text-papel/70 transition-colors duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-papel">
+                {item.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    {
+      cuentaBluesky ? (
+        <a href={cuentaBluesky.url} class="boton boton-principal min-h-9 px-4 text-sm">Mencionar al bot</a>
+      ) : (
+        <a href={enlaces.metodologia} class="boton boton-principal min-h-9 px-4 text-sm">Cómo verifica</a>
+      )
+    }
+  </div>
+</header>

@@ -37,7 +37,7 @@ export async function planificarBusquedas(
   const crudo = await completar(ai, {
     esfuerzo: "medium",
     json: PlanBusqueda,
-    system: `Eres el investigador de ¿Es Cierto?, un verificador de datos abierto y no partidista. Decide si la evidencia reunida basta para confirmar o desmentir la afirmación. Si no basta, propón búsquedas web nuevas que llenen lo que falta: fuentes primarias (datos oficiales, leyes, estudios), verificaciones profesionales, la fecha o el contexto del dato. No repitas búsquedas ya hechas; si una no sirvió, cambia el enfoque (otras palabras, otro idioma, la fuente oficial directa). ${REGLA_DATO}`,
+    system: `Eres el investigador de ¿Es Cierto?, un verificador de datos abierto y no partidista. Decide si la evidencia reunida basta para confirmar o desmentir la afirmación. Si no basta, propón búsquedas web nuevas que llenen lo que falta: fuentes primarias (datos oficiales, leyes, estudios), verificaciones profesionales, la fecha o el contexto del dato. Un dato clave confirmado por un solo sitio todavía no basta: busca una segunda fuente independiente. No repitas búsquedas ya hechas; si una no sirvió, cambia el enfoque (otras palabras, otro idioma, la fuente oficial directa). ${REGLA_DATO}`,
     usuario: [
       `<afirmacion>${afirmacion}</afirmacion>`,
       hechas.length ? `Búsquedas ya hechas:\n${hechas.map((c) => `- ${c}`).join("\n")}` : "Todavía no hay búsquedas.",
@@ -60,6 +60,8 @@ export async function investigar(
 - Usa SOLO la información de los resultados. No agregues datos de memoria.
 - Prioriza fuentes primarias (datos oficiales, documentos, estudios) y verificadores profesionales (firmantes de la IFCN). Desconfía de redes sociales, blogs anónimos y sitios sin autoría.
 - Cada dato del informe lleva la URL de donde sale, tal como aparece en los resultados.
+- Para cada dato clave, indica cuántas fuentes independientes (sitios distintos) lo respaldan.
+- Incluye tanto la evidencia que respalda la afirmación como la que la contradice.
 - Si la evidencia es insuficiente o contradictoria, dilo: "no verificable" es una conclusión válida y preferible a adivinar. Que no aparezca evidencia de algo no prueba que sea falso.
 - Juzga la afirmación, nunca a las personas ni a los partidos.
 - Distingue entre falso, sacado de contexto y desactualizado.
@@ -68,7 +70,8 @@ ${REGLA_DATO}`,
     usuario: [
       `<afirmacion>${afirmacion}</afirmacion>`,
       `<resultados>\n${resultados || "(sin resultados)"}\n</resultados>`,
-      verificaciones && `Verificaciones profesionales ya publicadas sobre temas parecidos:\n<resultados>\n${verificaciones}\n</resultados>`,
+      verificaciones &&
+        `Verificaciones profesionales ya publicadas sobre temas parecidos:\n<resultados>\n${verificaciones}\n</resultados>`,
       anterior &&
         `Ya investigamos esta afirmación antes. Indica si los resultados nuevos confirman, matizan o cambian esa investigación:\n<informe>${anterior}</informe>`,
     ]
@@ -81,7 +84,7 @@ export async function redactarVeredicto(ai: Ai, afirmacion: string, informe: str
   const crudo = await completar(ai, {
     esfuerzo: "medium",
     json: Veredicto,
-    system: `Eres el editor de ¿Es Cierto?. A partir del informe de evidencia, emite el veredicto sobre la afirmación. Usa solo fuentes que aparecen en el informe, con su URL exacta.
+    system: `Eres el editor de ¿Es Cierto?. A partir del informe de evidencia, emite el veredicto sobre la afirmación. Usa solo fuentes que aparecen en el informe, con su URL exacta. Cita todas las fuentes independientes que respaldan el veredicto: con un solo sitio, la confianza no puede ser alta.
 Escala (juzga lo esencial de la afirmación, no cada detalle):
 - verdadero: la evidencia confirma la afirmación.
 - mayormente_verdadero: lo esencial es correcto, pero tiene imprecisiones menores (una fecha cercana, una cifra redondeada, un detalle secundario).

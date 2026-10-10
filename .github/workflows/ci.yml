@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Un push nuevo al mismo PR cancela la corrida anterior.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # El test de METODOLOGIA.md compara contra la base del PR (o el commit anterior del push), no contra HEAD.
+      METODOLOGIA_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      # Un solo lockfile para todo el workspace (bot y landing).
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm types
+      - run: pnpm --dir landing exec astro sync
+
+      - run: pnpm check
+      - run: pnpm db:migrar -- --local
+      - run: npx wrangler deploy --dry-run --outdir /tmp/escierto-dist
+      - run: pnpm --filter escierto-landing build

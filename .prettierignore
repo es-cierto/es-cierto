@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+landing/pnpm-lock.yaml
+landing/dist/
+worker-configuration.d.ts
+.claude/

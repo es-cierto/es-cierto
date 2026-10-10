@@ -1,0 +1,42 @@
+---
+import { lema } from '../data/sitio';
+
+const texto = lema.join(' ');
+---
+
+<section aria-label="Lema" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto flex min-h-[60svh] max-w-[780px] items-center">
+    <p class="sr-only">{texto}</p>
+    <p data-palabras aria-hidden="true" class="text-5xl font-semibold tracking-tight lg:text-7xl">
+      {
+        lema.map((linea) => (
+          <span class="block">
+            {linea.split(' ').map((palabra) => (
+              <>
+                <span data-palabra class="palabra">{palabra}</span>{' '}
+              </>
+            ))}
+          </span>
+        ))
+      }
+      <!-- El hilo se tensa bajo la frase y se corta al final: repetirlo no lo ata a nada. -->
+      <svg data-corte viewBox="0 0 600 24" preserveAspectRatio="none" class="mt-6 block h-6 w-full overflow-visible text-lino">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path data-mitad="izquierda" d="M0 12 C100 5 200 19 300 12 C340 9 368 14 388 12" />
+          <path data-mitad="derecha" d="M388 12 C430 10 465 16 500 12 C540 8 572 15 600 12" />
+        </g>
+      </svg>
+    </p>
+  </div>
+</section>
+
+<style>
+  .palabra {
+    color: color-mix(in oklab, var(--color-papel) 45%, transparent);
+    transition: color 700ms var(--ease-fluido);
+  }
+
+  .palabra:global(.encendida) {
+    color: var(--color-papel);
+  }
+</style>

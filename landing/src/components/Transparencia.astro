@@ -1,0 +1,32 @@
+---
+import { enlaces } from '../data/sitio';
+
+const puntos = [
+  { titulo: 'Código público', texto: 'Cualquiera puede revisar cómo decide.' },
+  { titulo: 'Solo fuentes reales', texto: 'Si no la encontró, no la usa.' },
+  { titulo: 'Puede equivocarse', texto: 'Y corrige sus errores a la vista.' },
+];
+---
+
+<section id="transparencia" aria-labelledby="titulo-transparencia" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto max-w-6xl">
+    <div class="max-w-[680px]">
+      <p data-revelar class="text-sm font-semibold tracking-wider text-lino uppercase">Transparencia</p>
+      <h2 id="titulo-transparencia" data-titular class="mt-4 text-4xl text-balance lg:text-6xl">Abierto y&nbsp;revisable.</h2>
+    </div>
+    <ul class="mt-12 grid gap-4 md:grid-cols-3">
+      {
+        puntos.map((punto, i) => (
+          <li data-revelar style={`transition-delay: ${i * 100}ms`} class="rounded-2xl bg-papel/[0.04] p-6 ring-1 ring-papel/10">
+            <h3 class="text-xl">{punto.titulo}</h3>
+            <p class="mt-2 text-lg text-papel/80">{punto.texto}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <div data-revelar class="mt-10 flex flex-wrap gap-3">
+      <a href={enlaces.metodologia} class="boton boton-principal">Leer cómo verifica</a>
+      <a href={enlaces.repo} class="boton boton-secundario">Ver el código</a>
+    </div>
+  </div>
+</section>

@@ -1,25 +1,37 @@
 {
   "name": "escierto",
   "private": true,
-  "type": "module",
   "license": "AGPL-3.0-only",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev --test-scheduled",
     "deploy": "wrangler deploy",
     "types": "wrangler types --strict-vars=false",
     "typecheck": "tsc --noEmit",
     "test": "node --test 'bot/**/*.test.ts'",
-    "db:init": "wrangler d1 execute escierto --file schema.sql",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
-    "eval:ver": "promptfoo view"
+    "eval:ver": "promptfoo view",
+    "prepare": "git config core.hooksPath .githooks || true",
+    "lint": "oxlint --type-aware",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm --filter escierto-landing typecheck && pnpm --filter escierto-landing test",
+    "db:migrar": "wrangler d1 migrations apply escierto"
   },
   "dependencies": {
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.0",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
+    "oxlint-tsgolint": "7.0.2003",
     "promptfoo": "^0.124.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.149.0"
-  }
+  },
+  "engines": {
+    "node": ">=24.17.0"
+  },
+  "packageManager": "pnpm@10.25.0"
 }

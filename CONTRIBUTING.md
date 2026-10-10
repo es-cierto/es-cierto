@@ -9,8 +9,8 @@ Gracias por sumarte. Hay varias formas de ayudar:
 ## Flujo
 
 1. Haz un fork y crea una rama.
-2. `pnpm install && pnpm types`
-3. Antes del PR, verifica que pasen `pnpm typecheck` y `pnpm test`.
+2. `pnpm install && pnpm types` (instala también los hooks de git).
+3. Antes del PR, verifica que pase `pnpm check` (formato, lint, tipos y tests). Para formatear: `pnpm format`.
 4. Explica en el PR qué cambia y por qué.
 
 ## Reglas

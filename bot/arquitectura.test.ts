@@ -88,7 +88,9 @@ test("todo system prompt declara que el contenido de terceros es dato", () => {
 
 test("JSON.parse nunca se castea: se valida con zod o queda como unknown", () => {
   for (const ruta of codigo) {
-    for (const linea of leer(ruta).split("\n").filter((l) => l.includes("JSON.parse("))) {
+    for (const linea of leer(ruta)
+      .split("\n")
+      .filter((l) => l.includes("JSON.parse("))) {
       const validada = /\.parse\(JSON\.parse\(/.test(linea) || /:\s*unknown\s*=/.test(linea);
       assert.ok(validada, `${ruta}: ${linea.trim()}`);
     }
@@ -109,12 +111,13 @@ test("cada secreto está en wrangler.jsonc, .dev.vars.example y el README", () =
   assert.deepEqual(readme, requeridos, "los pasos de despliegue del README no coinciden con secrets.required");
 });
 
-// ponytail: compara contra HEAD, así que protege el commit que se está armando; en CI habría que comparar contra la rama base.
-// Un archivo que no existe en HEAD (recién creado o movido) no se compara.
+// En local compara contra HEAD (protege el commit que se está armando); en CI, contra la base del PR o el push
+// (METODOLOGIA_BASE). Un archivo que no existe en la base (recién creado o movido) no se compara.
 test("cambiar un prompt o un umbral obliga a actualizar METODOLOGIA.md", () => {
+  const base = process.env.METODOLOGIA_BASE || "HEAD";
   const enHead = (ruta: string) => {
     try {
-      return execFileSync("git", ["show", `HEAD:${ruta}`], { cwd: raiz, encoding: "utf8", stdio: "pipe" });
+      return execFileSync("git", ["show", `${base}:${ruta}`], { cwd: raiz, encoding: "utf8", stdio: "pipe" });
     } catch {
       return null;
     }
@@ -128,4 +131,59 @@ test("cambiar un prompt o un umbral obliga a actualizar METODOLOGIA.md", () => {
   if (cambiados.length > 0) {
     assert.notEqual(enHead("METODOLOGIA.md"), leer("METODOLOGIA.md"), `${cambiados.join(", ")} cambió la metodología`);
   }
+});
+
+test("todo `pnpm <script>` que citan las guías existe", () => {
+  const guias = ["AGENTS.md", "README.md", "CONTRIBUTING.md", "landing/AGENTS.md"];
+  for (const guia of guias) {
+    const paquete = guia.startsWith("landing/") ? "landing/package.json" : "package.json";
+    const scripts = Object.keys((JSON.parse(leer(paquete)) as { scripts: Record<string, string> }).scripts);
+    // En el README, los comandos del bloque que empieza con `cd landing` son de la landing.
+    const texto = leer(guia);
+    const bloque = guia === "README.md" ? (texto.match(/cd landing[\s\S]*?```/)?.[0] ?? "") : "";
+    const [antes, despues] = [texto.replace(bloque, ""), bloque];
+    const citas = (texto: string) => [...texto.matchAll(/(?:^|`|&& )pnpm (?:run )?([a-z][\w:-]*)/gm)].map((m) => m[1]);
+    const integrados = new Set(["install", "add", "remove", "exec", "dlx", "approve-builds"]);
+    for (const script of citas(antes).filter((s) => !integrados.has(s))) {
+      assert.ok(scripts.includes(script), `${guia} cita \`pnpm ${script}\`, que no está en ${paquete}`);
+    }
+    const landing = Object.keys(
+      (JSON.parse(leer("landing/package.json")) as { scripts: Record<string, string> }).scripts,
+    );
+    for (const script of citas(despues).filter((s) => !integrados.has(s))) {
+      assert.ok(
+        landing.includes(script),
+        `README cita \`pnpm ${script}\` después de \`cd landing\`, que no está en landing/package.json`,
+      );
+    }
+  }
+});
+
+test("las migraciones solo se agregan: una ya commiteada no se edita, y van numeradas sin saltos", () => {
+  const base = process.env.METODOLOGIA_BASE || "HEAD";
+  const migraciones = readdirSync(join(raiz, "migrations")).sort();
+  migraciones.forEach((nombre, i) => {
+    assert.match(
+      nombre,
+      new RegExp(`^${String(i + 1).padStart(4, "0")}_[a-z0-9_]+\\.sql$`),
+      `migración mal numerada: ${nombre}`,
+    );
+    let antes: string | null = null;
+    try {
+      antes = execFileSync("git", ["show", `${base}:migrations/${nombre}`], {
+        cwd: raiz,
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+    } catch {
+      // Nueva en este cambio.
+    }
+    if (antes !== null) {
+      assert.equal(
+        leer(`migrations/${nombre}`),
+        antes,
+        `migrations/${nombre} ya estaba commiteada: crea una migración nueva`,
+      );
+    }
+  });
 });

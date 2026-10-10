@@ -1,0 +1,43 @@
+---
+import Icono from './Icono.astro';
+import { escala } from '../data/sitio';
+---
+
+<!--
+  Un tendedero: el hilo pasa por las primeras cuatro tarjetas y cada una cuelga de su nudo. La última, No verificable,
+  no está atada a nada: el hilo se corta antes y queda deshilachado. El trazo lo dibuja `src/scripts/tendedero.ts`
+  según dónde quedaron las tarjetas; sin JS no hay hilo y las tarjetas se ven igual.
+-->
+<section id="escala" aria-labelledby="titulo-escala" class="px-4 py-24 md:px-12 xl:px-24">
+  <div class="mx-auto max-w-6xl">
+    <div class="max-w-[680px]">
+      <p data-revelar class="text-sm font-semibold tracking-wider text-lino uppercase">Los veredictos</p>
+      <h2 id="titulo-escala" data-titular class="mt-4 text-4xl text-balance lg:text-6xl">Cinco respuestas&nbsp;posibles.</h2>
+    </div>
+    <div data-tendedero class="relative mt-16 lg:mt-20">
+      <svg aria-hidden="true" class="pointer-events-none absolute inset-0 size-full overflow-visible text-lino">
+        <g data-tramos fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></g>
+        <g data-nudos fill="currentColor"></g>
+      </svg>
+      <ol class="relative grid gap-6 pl-8 lg:grid-cols-5 lg:gap-4 lg:pl-0">
+        {
+          escala.map((paso, i) => (
+            <li
+              data-tarjeta
+              data-suelta={i === escala.length - 1 ? '' : undefined}
+              class:list={[
+                'flex origin-top flex-col gap-2 rounded-2xl bg-[#1c1a12] p-5 ring-1 ring-papel/10',
+                // Sin nada que la sostenga, queda caída y un poco torcida.
+                i === escala.length - 1 && 'translate-y-2 rotate-1 lg:translate-y-5 lg:rotate-[2.5deg]',
+              ]}
+            >
+              <Icono nombre={paso.icono} class="size-7 text-lino" />
+              <h3 class="text-xl">{paso.nombre}</h3>
+              <p class="text-base text-papel/80">{paso.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>

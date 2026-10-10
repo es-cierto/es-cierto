@@ -1,0 +1,4 @@
+#!/bin/sh
+# Lo mismo que corre el CI, menos el build de la landing y las migraciones.
+set -e
+pnpm -s check

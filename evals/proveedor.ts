@@ -41,7 +41,9 @@ async function conReintentos<T>(nombre: string, fn: () => Promise<T>): Promise<T
       return await fn();
     } catch (error) {
       if (intento >= 3) {
-        throw new Error(`${nombre}: ${String(error)} ${String((error as Error).cause ?? "")}`);
+        throw new Error(
+          `${nombre}: ${String(error)} ${error instanceof Error && error.cause instanceof Error ? error.cause.message : ""}`,
+        );
       }
       await new Promise((r) => setTimeout(r, 2000 * 2 ** intento));
     }
@@ -56,7 +58,10 @@ const Vars = z.discriminatedUnion("modo", [
     modo: z.literal("conversar"),
     investigacion: z.string().nullable().default(null),
     // El YAML arma el hilo con un ancla (`*hilo-base`) que queda anidada; se aplana.
-    hilo: z.preprocess((v) => (Array.isArray(v) ? v.flat() : v), z.array(z.object({ deBot: z.boolean(), texto: z.string() }))),
+    hilo: z.preprocess(
+      (v) => (Array.isArray(v) ? v.flat() : v),
+      z.array(z.object({ deBot: z.boolean(), texto: z.string() })),
+    ),
   }),
 ]);
 
@@ -75,7 +80,9 @@ export default class ProveedorEsCierto {
       return { output: respuestaPublicable(borrador, vars.investigacion, vars.investigacion ? PAGINA : null) };
     }
 
-    const extraida = await conReintentos("extraer afirmación", () => extraerAfirmacion(ai, vars.publicacion, vars.pregunta));
+    const extraida = await conReintentos("extraer afirmación", () =>
+      extraerAfirmacion(ai, vars.publicacion, vars.pregunta),
+    );
     if (!extraida.verificable) {
       return { output: JSON.stringify({ verificable: false, afirmacion: extraida.afirmacion }) };
     }
@@ -85,6 +92,8 @@ export default class ProveedorEsCierto {
       extraida.afirmacion,
       "",
     );
-    return { output: JSON.stringify({ verificable: true, afirmacion: extraida.afirmacion, ...veredicto, consultas, informe }) };
+    return {
+      output: JSON.stringify({ verificable: true, afirmacion: extraida.afirmacion, ...veredicto, consultas, informe }),
+    };
   }
 }

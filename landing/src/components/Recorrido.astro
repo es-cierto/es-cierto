@@ -1,0 +1,233 @@
+---
+import { Picture } from 'astro:assets';
+import Parada from './Parada.astro';
+import Icono from './Icono.astro';
+import { cuentaBluesky, ejemplo, enlaces, recorrido } from '../data/sitio';
+import inicio from '../assets/recorrido/0-inicio.webp';
+import tirar from '../assets/recorrido/1-tirar.webp';
+import fuentes from '../assets/recorrido/2-fuentes.webp';
+import algoAtado from '../assets/recorrido/3-algo-atado.webp';
+
+// La imagen de cada parada es un cuadro real del video (el primero de su clip; la última, el último del clip C),
+// así el clip entra encima sin que se note el cambio.
+const imagenes = [inicio, tirar, fuentes, algoAtado];
+// Un clip por tramo: el clip k va de la parada k a la k+1.
+const clips = ['A', 'B', 'C'];
+const titulo = 'mt-4 max-w-xl text-5xl text-balance lg:text-7xl';
+const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
+---
+
+<section id="recorrido" data-recorrido aria-label="Cómo funciona, paso a paso" class="relative">
+  <div data-escenario class="sticky top-0 h-lvh overflow-hidden bg-fondo" style="--foco: 50%">
+    <div aria-hidden="true" class="medio absolute inset-0">
+      {
+        imagenes.map((imagen, i) => (
+          <div data-cuadro class="absolute inset-0" style={i === 0 ? undefined : 'opacity: 0'}>
+            <Picture
+              src={imagen}
+              alt=""
+              formats={['avif', 'webp']} fallbackFormat="webp"
+              widths={[828, 1280, 1920]}
+              sizes="(min-aspect-ratio: 16/9) 100vw, (max-aspect-ratio: 3/4) 205vw, 178vh"
+              loading={i === 0 ? 'eager' : 'lazy'}
+              fetchpriority={i === 0 ? 'high' : 'low'}
+              decoding="async"
+              pictureAttributes={{ class: 'block size-full' }}
+              class="size-full object-cover"
+              style="object-position: var(--foco) 50%"
+            />
+          </div>
+        ))
+      }
+      <div class="clips absolute inset-0">
+        {
+          clips.map((clip) => (
+            <video
+              data-clip
+              data-webm={`/video/clip-${clip}-1080.webm`}
+              data-mp4={`/video/clip-${clip}-1080.mp4`}
+              data-movil={`/video/clip-${clip}-720.mp4`}
+              muted
+              playsinline
+              preload="none"
+              disablepictureinpicture
+              disableremoteplayback
+              tabindex="-1"
+              class="clip absolute inset-0 size-full object-cover"
+            />
+          ))
+        }
+      </div>
+    </div>
+
+    <div aria-hidden="true" class="absolute inset-x-0 top-0 h-40 bg-linear-to-b from-fondo/70 to-transparent"></div>
+    <div
+      aria-hidden="true"
+      class="absolute inset-0 bg-linear-to-t from-fondo from-10% via-fondo/50 via-45% to-transparent to-75% lg:bg-linear-to-r lg:from-fondo/90 lg:via-fondo/40 lg:via-35% lg:to-transparent lg:to-65%"
+    >
+    </div>
+
+    <nav aria-label="Paradas del recorrido" class="absolute top-1/2 right-6 hidden -translate-y-1/2 lg:block xl:right-10">
+      <ol class="relative flex flex-col items-end gap-4">
+        <span aria-hidden="true" class="absolute top-3 right-1 bottom-3 w-px translate-x-1/2 bg-papel/20">
+          <span data-riel class="absolute inset-0 origin-top scale-y-0 bg-lino"></span>
+        </span>
+        {
+          recorrido.map((parada, i) => (
+            <li>
+              <a href={`#${parada.id}`} data-ir aria-current={i === 0 ? 'true' : 'false'} class="riel group flex h-6 items-center gap-3">
+                <span class="rotulo rounded-full bg-fondo/60 px-3 py-1 text-sm whitespace-nowrap ring-1 ring-papel/10 backdrop-blur-xl">
+                  {parada.nombre}
+                </span>
+                <span class="punto size-2 rounded-full bg-papel/50" />
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <p data-pista aria-hidden="true" class="absolute right-10 bottom-8 hidden items-center gap-3 text-sm tracking-wider text-papel/80 uppercase lg:flex">
+      Baja para ver cómo funciona
+      <span class="pista relative block h-8 w-px overflow-hidden bg-papel/20"></span>
+    </p>
+    <p class="absolute top-24 right-4 text-[11px] text-papel/50 lg:top-auto lg:right-auto lg:bottom-3 lg:left-12 xl:left-24">Imágenes generadas con IA</p>
+  </div>
+
+  <div class="relative z-10 -mt-[100lvh]">
+    <Parada indice={0} sinPaso>
+      <h1>
+        <span class="block text-sm font-semibold tracking-wider text-lino uppercase">Verificador de datos para redes sociales</span>
+        <span class="mt-4 block max-w-[680px] bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-5xl text-balance text-transparent lg:text-7xl">
+          Te decimos si un dato es&nbsp;cierto.
+        </span>
+      </h1>
+      <p class="mt-4 max-w-md text-xl text-papel/90">Lo mencionas en la publicación y te responde con&nbsp;fuentes.</p>
+      {
+        cuentaBluesky ? (
+          <a href={cuentaBluesky.url} class="boton boton-principal mt-8">Menciona a @{cuentaBluesky.handle}</a>
+        ) : (
+          <p class="mt-8 inline-flex items-center gap-2 rounded-full bg-fondo/60 px-4 py-2 text-sm text-papel ring-1 ring-papel/20 backdrop-blur-md">
+            <span aria-hidden="true" class="size-2 rounded-full bg-lino"></span>
+            Muy pronto, primero en Bluesky
+          </p>
+        )
+      }
+    </Parada>
+
+    <Parada indice={1}>
+      <h2 class={titulo}>Lo&nbsp;mencionas.</h2>
+      <p class={cuerpo}>Respondes a la publicación con la cuenta del&nbsp;bot.</p>
+    </Parada>
+
+    <Parada indice={2}>
+      <h2 class={titulo}>Tira del&nbsp;hilo.</h2>
+      <p class={cuerpo}>Busca el dato en leyes, datos oficiales y&nbsp;estudios.</p>
+    </Parada>
+
+    <Parada indice={3}>
+      <h2 class={titulo}>Te responde con&nbsp;fuentes.</h2>
+      <figure class="mt-6 w-full max-w-sm rounded-2xl bg-fondo/75 p-5 ring-1 ring-papel/15 backdrop-blur-md">
+        <blockquote class="text-base text-papel/80">«{ejemplo.afirmacion}»</blockquote>
+        <figcaption class="mt-4">
+          <p class="sello flex items-center gap-2 text-2xl font-semibold"><Icono nombre={ejemplo.icono} class="size-7 text-lino" /> {ejemplo.veredicto}</p>
+          <p class="mt-1 text-base text-papel/90">{ejemplo.resumen}</p>
+          <p class="mt-3 text-sm text-papel/70">
+            Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
+          </p>
+        </figcaption>
+      </figure>
+    </Parada>
+  </div>
+</section>
+
+<style>
+  /* En pantallas verticales la escena 16:9 llenando toda la altura deja ver apenas un cuarto del cuadro y el celular
+     no se reconoce. La escena ocupa la parte de arriba (se ve dos tercios del ancho) y se funde con el fondo. */
+  @media (max-aspect-ratio: 3/4) {
+    .medio {
+      bottom: auto;
+      height: min(100%, 115vw);
+      mask-image: linear-gradient(to bottom, black 65%, transparent);
+    }
+  }
+
+  .clips {
+    opacity: 0;
+    transition: opacity 1200ms var(--ease-fluido);
+  }
+
+  :global([data-modo='video']) .clips {
+    opacity: 1;
+  }
+
+  /* Solo se ve el clip del tramo actual; el cambio es instantáneo porque comparten cuadro. */
+  .clip {
+    object-position: var(--foco) 50%;
+    visibility: hidden;
+  }
+
+  .clip:global(.visible) {
+    visibility: visible;
+  }
+
+  .rotulo {
+    opacity: 0;
+    transform: translateX(0.5rem);
+    transition:
+      opacity 700ms var(--ease-fluido),
+      transform 700ms var(--ease-fluido);
+  }
+
+  .riel:hover .rotulo,
+  .riel:focus-visible .rotulo,
+  .riel[aria-current='true'] .rotulo {
+    opacity: 1;
+    transform: none;
+  }
+
+  .punto {
+    transition:
+      background-color 700ms var(--ease-fluido),
+      transform 700ms var(--ease-fluido);
+  }
+
+  .riel[aria-current='true'] .punto {
+    background-color: var(--color-lino);
+    transform: scale(1.5);
+  }
+
+  /* El veredicto del ejemplo cae como un timbre cuando la cámara llega a la respuesta. */
+  :global(.js .parada.actual) .sello {
+    animation: sellar 650ms 450ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  }
+
+  @keyframes sellar {
+    from {
+      opacity: 0;
+      transform: scale(1.6) rotate(-6deg);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .pista::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-papel);
+    animation: pista 2400ms var(--ease-fluido) infinite;
+  }
+
+  @keyframes pista {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(100%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pista::after { animation: none; }
+    :global(.js .parada.actual) .sello { animation: none; }
+  }
+</style>

@@ -8,13 +8,17 @@ const FORMULARIO_PRUEBA = `<form method="post" action="/probar"><p><label>Public
 export async function probar(request: Request, env: Env, hilo: string | undefined): Promise<Response> {
   if (request.method === "POST") {
     const datos = await request.formData();
-    const texto = String(datos.get(hilo ? "texto" : "pregunta") ?? "").trim();
+    const campo = (nombre: string) => {
+      const valor = datos.get(nombre);
+      return typeof valor === "string" ? valor : "";
+    };
+    const texto = campo(hilo ? "texto" : "pregunta").trim();
     if (!texto) {
       return new Response("Falta el texto", { status: 400 });
     }
     const id = hilo ?? crypto.randomUUID();
     if (!hilo) {
-      await agregarTurno(env, id, false, String(datos.get("publicacion") ?? ""));
+      await agregarTurno(env, id, false, campo("publicacion"));
     }
     const uri = await agregarTurno(env, id, false, texto);
     await env.CHEQUEO.create({ id: await idDeInstancia(uri), params: { mencion: mencionWeb(uri, texto), red: "web" } });
@@ -27,9 +31,12 @@ export async function probar(request: Request, env: Env, hilo: string | undefine
   if (turnos.length === 0) {
     return new Response("No existe ese hilo", { status: 404 });
   }
-  const pendiente = turnos.at(-1)?.deBot ? null : await env.CHEQUEO.get(await idDeInstancia(`web:${hilo}:${turnos.length - 1}`));
+  const pendiente = turnos.at(-1)?.deBot
+    ? null
+    : await env.CHEQUEO.get(await idDeInstancia(`web:${hilo}:${turnos.length - 1}`));
   const estado = pendiente ? await pendiente.status() : null;
-  const esperando = estado !== null && estado.status !== "errored" && estado.status !== "terminated" && estado.status !== "complete";
+  const esperando =
+    estado !== null && estado.status !== "errored" && estado.status !== "terminated" && estado.status !== "complete";
   return pagina(
     "Probar ¿Es Cierto?",
     `${esperando ? '<meta http-equiv="refresh" content="5">' : ""}<p><a href="/probar">← Nueva prueba</a></p>
