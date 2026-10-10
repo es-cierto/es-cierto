@@ -14,7 +14,7 @@ Mantenedores actuales: [@IsraelHuentecura](https://github.com/IsraelHuentecura) 
 
 Israel Huentecura, Felipe Torres, Renata Martínez y Lorenzo S. fundaron el proyecto y son sus primeros mantenedores. Entran **sin el requisito de tres meses** de contribución, porque al partir no hay a quién aplicárselo; ese requisito rige para todas las personas que lleguen después.
 
-Cada fundador declara en el PR que lo nombra que no milita en un partido, no trabaja para una campaña y no recibe dinero de nadie afectado por una verificación. Ser fundador no da más votos ni derechos que ser mantenedor: solo deja constancia de quién empezó el proyecto.
+Cada fundador declara, **al aprobar el PR que lo nombra**, que no milita en un partido, no trabaja para una campaña y no recibe dinero de nadie afectado por una verificación. La aprobación queda en GitHub con su nombre y la fecha. Ser fundador no da más votos ni derechos que ser mantenedor: solo deja constancia de quién empezó el proyecto.
 
 ## Cómo se decide
 
