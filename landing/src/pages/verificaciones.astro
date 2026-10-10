@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Verificaciones from '../components/Verificaciones.astro';
+---
+
+<Layout
+  titulo="Verificaciones · ¿Es Cierto?"
+  descripcion="Todo lo que ha respondido el bot ¿Es Cierto?, con el veredicto y las fuentes de cada investigación, de la más reciente a la más antigua."
+>
+  <section class="px-4 pt-36 pb-12 md:px-12 xl:px-24">
+    <div class="mx-auto max-w-6xl">
+      <p class="text-sm font-semibold tracking-wider text-lino uppercase">En vivo</p>
+      <h1 class="mt-4 max-w-[780px] text-5xl text-balance lg:text-7xl">Todo lo que ha&nbsp;respondido.</h1>
+      <p class="mt-4 max-w-xl text-xl text-papel/90">
+        Cada respuesta del bot, de la más reciente a la más antigua. Sin filtros: aparecen&nbsp;todas.
+      </p>
+    </div>
+  </section>
+  <Verificaciones limite={12} paginar />
+</Layout>

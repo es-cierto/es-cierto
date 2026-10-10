@@ -1,4 +1,5 @@
 import { idDeInstancia } from "./chequeo.ts";
+import { listarInvestigaciones } from "./paginas/api.ts";
 import { escapar, pagina } from "./paginas/html.ts";
 import { verInvestigacion } from "./paginas/investigacionPublica.ts";
 import { probar } from "./paginas/probar.ts";
@@ -107,6 +108,9 @@ export default {
     const prueba = pathname.match(/^\/probar(?:\/([0-9a-f-]{36}))?$/);
     if (prueba && env.PRUEBA_WEB === "si") {
       return probar(request, env, prueba[1]);
+    }
+    if (pathname === "/api/investigaciones" && request.method === "GET") {
+      return listarInvestigaciones(env, new URL(request.url));
     }
     const investigacion = pathname.match(/^\/a\/([0-9a-f-]{36})$/);
     if (investigacion) {

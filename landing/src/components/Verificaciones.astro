@@ -1,0 +1,88 @@
+---
+import Icono from './Icono.astro';
+import { enlaces, escala } from '../data/sitio';
+
+// Lo que el bot ha respondido, leído en vivo de /api/investigaciones (src/scripts/listado.ts). En el inicio van las
+// últimas 3 con un enlace a /verificaciones; en esa página, de a 12 con "Ver más". Sin filtros: todo, por fecha.
+interface Props {
+  limite: number;
+  paginar?: boolean;
+  /** El inicio muestra un encabezado de sección; la página propia lo trae en su <h1>. */
+  encabezado?: boolean;
+}
+
+const { limite, paginar = false, encabezado = false } = Astro.props;
+---
+
+<section
+  id={encabezado ? 'verificaciones' : undefined}
+  aria-labelledby={encabezado ? 'titulo-verificaciones' : undefined}
+  data-verificaciones
+  data-bot={enlaces.bot}
+  data-limite={limite}
+  data-paginar={paginar ? 'si' : 'no'}
+  class:list={['px-4 md:px-12 xl:px-24', encabezado ? 'py-24' : 'pb-24']}
+>
+  <div class="mx-auto max-w-6xl">
+    {
+      encabezado && (
+        <div class="max-w-[680px]">
+          <p data-revelar class="text-sm font-semibold tracking-wider text-lino uppercase">
+            En vivo
+          </p>
+          <h2 id="titulo-verificaciones" data-titular class="mt-4 text-4xl text-balance lg:text-6xl">
+            Lo último que&nbsp;respondió.
+          </h2>
+          <p data-revelar class="mt-4 max-w-md text-xl text-papel/90">
+            Cada respuesta del bot, con su veredicto y sus&nbsp;fuentes.
+          </p>
+        </div>
+      )
+    }
+
+    <ol data-lista class:list={['grid gap-4 md:grid-cols-2 lg:grid-cols-3', encabezado && 'mt-12']}></ol>
+    <p data-estado aria-live="polite" class="mt-6 text-lg text-papel/80">Cargando las últimas verificaciones…</p>
+    <noscript>
+      <p class="mt-6 text-lg text-papel/80">Activa JavaScript para ver lo que ha respondido el bot.</p>
+    </noscript>
+
+    <div class="mt-10 flex flex-wrap gap-3">
+      {paginar && <button data-mas hidden type="button" class="boton boton-secundario">Ver más</button>}
+      {!paginar && <a href="/verificaciones" class="boton boton-secundario">Ver todas las verificaciones</a>}
+    </div>
+  </div>
+
+  <!-- Una tarjeta. src/scripts/listado.ts la clona y llena cada [data-campo] con textContent. -->
+  <template data-tarjeta>
+    <li class="flex flex-col gap-3 rounded-2xl bg-[#1c1a12] p-5 ring-1 ring-papel/10">
+      <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+        <p class="flex items-center gap-2 text-lg font-semibold text-lino">
+          <span data-campo="icono" class="flex [&_svg]:size-6"></span>
+          <span data-campo="veredicto"></span>
+        </p>
+        <p data-campo="fecha" class="text-sm text-papel/70"></p>
+      </div>
+      <blockquote data-campo="afirmacion" class="text-lg text-papel"></blockquote>
+      <p data-campo="resumen" class="text-base text-papel/80"></p>
+      <div class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 pt-2 text-sm text-papel/70">
+        <span data-campo="fuentes"></span>
+        <span data-campo="corregida" class="rounded-full bg-lino/15 px-2 py-0.5 text-lino">Corregida</span>
+        <a data-campo="enlace" rel="noopener" class="enlace ml-auto text-papel">Ver la investigación</a>
+      </div>
+    </li>
+  </template>
+
+  <!-- Ícono y nombre de cada veredicto, en el mismo orden que la escala. -->
+  {
+    escala.map((v) => (
+      <template data-icono={v.id}>
+        <Icono nombre={v.icono} />
+      </template>
+    ))
+  }
+  <div hidden>{escala.map((v) => <span data-nombre={v.id}>{v.nombre}</span>)}</div>
+</section>
+
+<script>
+  import '../scripts/listado';
+</script>
