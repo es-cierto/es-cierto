@@ -74,7 +74,7 @@ async function perfilBluesky() {
         $type: "app.bsky.actor.profile",
         displayName: bluesky.nombre,
         description: bluesky.biografia,
-        avatar: await subir(bluesky.avatar, "image/png"),
+        avatar: await subir(bluesky.avatar, "image/jpeg"),
         banner: await subir(bluesky.portada, "image/jpeg"),
       },
     }),

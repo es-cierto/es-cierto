@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- El mismo nudo del favicon de la landing, centrado para el recorte circular de las redes (todo cabe en un círculo de radio 32). Sin rojo. -->
-  <rect width="64" height="64" fill="#131209"/>
-  <path d="M6 44 C 20 40, 26 30, 32 30" fill="none" stroke="#d6b27c" stroke-width="4.25" stroke-linecap="round"/>
-  <path d="M32 30 c -6 -8 6 -14 8 -6 c 2 7 -10 8 -8 0 c 1 -4 6 -4 8 -1" fill="none" stroke="#d6b27c" stroke-width="4.25" stroke-linecap="round"/>
-  <path d="M40 24 L 56 20" stroke="#f3eadb" stroke-width="4.25" stroke-linecap="round" opacity=".6"/>
-</svg>
