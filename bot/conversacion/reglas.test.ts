@@ -1,7 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { enlacesDe } from "../shared/enlaces.ts";
-import { investigacionDelHilo, puedeSeguirConversando, respaldarRespuesta } from "./reglas.ts";
+import {
+  ajustarLargo,
+  investigacionDelHilo,
+  LARGO_MAXIMO_RESPUESTA,
+  puedeSeguirConversando,
+  respaldarRespuesta,
+  respuestaPublicable,
+} from "./reglas.ts";
 
 const id = "11111111-2222-3333-4444-555555555555";
 const bot = (texto: string) => ({ deBot: true, texto });
@@ -48,4 +55,26 @@ test("un enlace inventado descarta la respuesta y manda a la investigación", ()
 test("sin investigación, cualquier enlace se descarta", () => {
   const respuesta = respaldarRespuesta("Mira https://algo.cl", null, null);
   assert.equal(enlacesDe(respuesta).length, 0);
+});
+
+test("una respuesta corta no se toca", () => {
+  assert.equal(ajustarLargo("Rige desde el 1 de mayo.", pagina), "Rige desde el 1 de mayo.");
+});
+
+test("una respuesta larga se corta en un fin de oración, sin partir el enlace", () => {
+  const enlace = "https://www.bcn.cl/leychile/21578";
+  const larga = `Rige desde el 1 de mayo de 2025, según la ley (${enlace}). ${"La ley se publicó a fines de junio con efecto retroactivo. ".repeat(6)}`;
+  const respuesta = ajustarLargo(larga, pagina);
+  assert.ok([...respuesta].length <= LARGO_MAXIMO_RESPUESTA);
+  assert.ok(respuesta.includes(enlace));
+  assert.match(respuesta, /[.!?]$/);
+});
+
+test("si ni la primera oración cabe, se manda a la investigación", () => {
+  assert.equal(ajustarLargo("a".repeat(400), pagina), `Los datos y sus fuentes están en la investigación completa: ${pagina}`);
+});
+
+test("lo publicable pasa por los dos filtros", () => {
+  const larga = `Fuente: https://inventado.cl/dato. ${"Texto. ".repeat(60)}`;
+  assert.ok(respuestaPublicable(larga, investigacion, pagina).includes(pagina));
 });

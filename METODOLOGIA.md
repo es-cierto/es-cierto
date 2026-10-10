@@ -20,7 +20,9 @@ Solo **afirmaciones de hecho**: cifras, fechas, citas, eventos, datos comprobabl
 - ☑️ **Mayormente verdadero**: es correcta en lo esencial, con imprecisiones menores.
 - ⚠️ **Engañoso**: contiene datos reales sacados de contexto, desactualizados o presentados para inducir a error.
 - ❌ **Falso**: la evidencia la contradice.
-- ❔ **No verificable**: no hay evidencia suficiente o es contradictoria.
+- ❔ **No verificable**: no hay evidencia suficiente, es contradictoria o el hecho no se puede comprobar con fuentes públicas.
+
+Se juzga lo esencial de la afirmación. Un error en un detalle secundario (una fecha cercana, una cifra redondeada) la deja en *Mayormente verdadero*, no en *Falso*. Y no encontrar evidencia de algo no lo hace falso: *Falso* exige una fuente que lo contradiga.
 
 Cada veredicto incluye una **confianza** (baja, media o alta) según la calidad y concordancia de las fuentes.
 
@@ -40,7 +42,7 @@ Las redes sociales, los blogs anónimos y los sitios sin autoría no se aceptan 
    - si es más antigua, se investiga de nuevo y la investigación nueva enlaza a la anterior.
 3. Se consultan verificaciones profesionales ya publicadas.
 4. Se busca en la web (Tavily) por rondas: el modelo propone hasta 3 búsquedas, revisa lo encontrado y decide si basta o si hacen falta búsquedas distintas. Como máximo 3 rondas; las búsquedas repetidas se descartan.
-5. Con esos resultados, y sin agregar datos de memoria, se escribe un informe de evidencia con la URL de cada dato.
+5. Con esos resultados, y sin agregar datos de memoria, se escribe un informe de evidencia con la URL de cada dato. El informe describe qué confirma y qué contradice la evidencia, pero no da veredicto.
 6. Un segundo paso emite el veredicto usando solo las fuentes del informe. El código descarta toda fuente cuya URL no haya aparecido en los resultados de búsqueda; si no queda ninguna, el veredicto es *No verificable*.
 
 Todos los pasos usan el modelo abierto `gpt-oss-120b` en Cloudflare Workers AI.
@@ -57,6 +59,8 @@ Después de un veredicto se le puede responder al bot en el mismo hilo para preg
 - Solo puede enlazar URLs que estén en la investigación o la página de la investigación. Si la respuesta trae otro enlace, el código la descarta y responde con el enlace a la investigación completa.
 - **El veredicto solo cambia con evidencia.** La insistencia, los insultos o la presión no lo mueven: el bot lo mantiene y explica en qué se basa.
 - Si alguien aporta una fuente sólida que contradice el veredicto, el bot lo reconoce y le pide reportarlo en la página de la investigación para revisarlo.
+- Cada respuesta tiene como máximo dos oraciones y cabe en una publicación (290 caracteres). Si el modelo escribe más, el código la corta en el último fin de oración que cabe, para no publicar enlaces partidos.
+- Si alguien aporta una fuente que contradice el veredicto, el bot no repite ese enlace: lo invita a reportarlo para revisarlo.
 - Responde como máximo 5 veces por hilo, para que nadie lo mantenga discutiendo sin fin.
 
 ## Límites conocidos

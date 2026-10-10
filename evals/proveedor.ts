@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { conversar } from "../bot/conversacion/prompt.ts";
-import { respaldarRespuesta } from "../bot/conversacion/reglas.ts";
+import { respuestaPublicable } from "../bot/conversacion/reglas.ts";
 import type { Turno } from "../bot/shared/hilo.ts";
 import { investigarAfirmacion } from "../bot/verificacion/investigacion.ts";
 import { extraerAfirmacion } from "../bot/verificacion/prompts.ts";
@@ -34,6 +34,20 @@ function requerida(nombre: string): string {
   return valor;
 }
 
+// Como CON_REINTENTOS del Workflow: hasta 3 reintentos con espera creciente, para que un corte de red no bote el escenario.
+async function conReintentos<T>(nombre: string, fn: () => Promise<T>): Promise<T> {
+  for (let intento = 0; ; intento++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (intento >= 3) {
+        throw new Error(`${nombre}: ${String(error)} ${String((error as Error).cause ?? "")}`);
+      }
+      await new Promise((r) => setTimeout(r, 2000 * 2 ** intento));
+    }
+  }
+}
+
 const PAGINA = "https://escierto.org/a/00000000-0000-0000-0000-000000000000";
 
 const Vars = z.discriminatedUnion("modo", [
@@ -57,20 +71,20 @@ export default class ProveedorEsCierto {
 
     if (vars.modo === "conversar") {
       const hilo: Turno[] = vars.hilo.map((t) => ({ ...t, texto: t.texto.replace("{{pagina}}", PAGINA) }));
-      const borrador = await conversar(ai, hilo, vars.investigacion);
-      return { output: respaldarRespuesta(borrador, vars.investigacion, vars.investigacion ? PAGINA : null) };
+      const borrador = await conReintentos("conversar", () => conversar(ai, hilo, vars.investigacion));
+      return { output: respuestaPublicable(borrador, vars.investigacion, vars.investigacion ? PAGINA : null) };
     }
 
-    const extraida = await extraerAfirmacion(ai, vars.publicacion, vars.pregunta);
+    const extraida = await conReintentos("extraer afirmación", () => extraerAfirmacion(ai, vars.publicacion, vars.pregunta));
     if (!extraida.verificable) {
       return { output: JSON.stringify({ verificable: false, afirmacion: extraida.afirmacion }) };
     }
-    const { informe, veredicto } = await investigarAfirmacion(
-      (_nombre, fn) => fn(),
+    const { informe, veredicto, consultas } = await investigarAfirmacion(
+      conReintentos,
       { ai, tavilyApiKey: requerida("TAVILY_API_KEY") },
       extraida.afirmacion,
       "",
     );
-    return { output: JSON.stringify({ verificable: true, afirmacion: extraida.afirmacion, ...veredicto, informe }) };
+    return { output: JSON.stringify({ verificable: true, afirmacion: extraida.afirmacion, ...veredicto, consultas, informe }) };
   }
 }

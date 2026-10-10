@@ -18,12 +18,39 @@ export function investigacionDelHilo(hilo: Turno[]): string | null {
   return null;
 }
 
-export function respaldarRespuesta(texto: string, investigacion: string | null, pagina: string | null): string {
-  const permitidos = new Set([...enlacesDe(investigacion ?? ""), ...(pagina ? [pagina] : [])]);
-  if (enlacesDe(texto).every((url) => permitidos.has(url))) {
-    return texto;
-  }
-  return pagina
+const respuestaDeRespaldo = (pagina: string | null) =>
+  pagina
     ? `Los datos y sus fuentes están en la investigación completa: ${pagina}`
     : "No tengo una investigación sobre eso. Etiquétame en la publicación con el dato y lo investigo.";
+
+export function respaldarRespuesta(texto: string, investigacion: string | null, pagina: string | null): string {
+  const permitidos = new Set([...enlacesDe(investigacion ?? ""), ...(pagina ? [pagina] : [])]);
+  return enlacesDe(texto).every((url) => permitidos.has(url)) ? texto : respuestaDeRespaldo(pagina);
+}
+
+// Bluesky permite 300 grafemas por post; se deja margen.
+export const LARGO_MAXIMO_RESPUESTA = 290;
+
+const grafemas = (texto: string) => [...new Intl.Segmenter("es", { granularity: "grapheme" }).segment(texto)].length;
+
+// El modelo no respeta siempre el largo que pide el prompt. Se corta en el último fin de oración que cabe,
+// para no publicar un enlace partido; si ni la primera oración cabe, se manda a la investigación.
+export function ajustarLargo(texto: string, pagina: string | null): string {
+  if (grafemas(texto) <= LARGO_MAXIMO_RESPUESTA) {
+    return texto;
+  }
+  let recortado = "";
+  for (const oracion of texto.split(/(?<=[.!?])\s+/)) {
+    const siguiente = recortado ? `${recortado} ${oracion}` : oracion;
+    if (grafemas(siguiente) > LARGO_MAXIMO_RESPUESTA) {
+      break;
+    }
+    recortado = siguiente;
+  }
+  return recortado || respuestaDeRespaldo(pagina);
+}
+
+// Lo que se publica en el hilo: solo enlaces investigados y dentro del largo de un post.
+export function respuestaPublicable(borrador: string, investigacion: string | null, pagina: string | null): string {
+  return ajustarLargo(respaldarRespuesta(borrador, investigacion, pagina), pagina);
 }

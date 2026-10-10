@@ -60,9 +60,10 @@ export async function investigar(
 - Usa SOLO la información de los resultados. No agregues datos de memoria.
 - Prioriza fuentes primarias (datos oficiales, documentos, estudios) y verificadores profesionales (firmantes de la IFCN). Desconfía de redes sociales, blogs anónimos y sitios sin autoría.
 - Cada dato del informe lleva la URL de donde sale, tal como aparece en los resultados.
-- Si la evidencia es insuficiente o contradictoria, dilo: "no verificable" es una conclusión válida y preferible a adivinar.
+- Si la evidencia es insuficiente o contradictoria, dilo: "no verificable" es una conclusión válida y preferible a adivinar. Que no aparezca evidencia de algo no prueba que sea falso.
 - Juzga la afirmación, nunca a las personas ni a los partidos.
 - Distingue entre falso, sacado de contexto y desactualizado.
+- No emitas veredicto ni conclusión de verdadero o falso: describe qué parte de la afirmación confirma la evidencia, qué parte contradice y qué no se pudo comprobar. El veredicto lo decide el editor.
 ${REGLA_DATO}`,
     usuario: [
       `<afirmacion>${afirmacion}</afirmacion>`,
@@ -80,7 +81,15 @@ export async function redactarVeredicto(ai: Ai, afirmacion: string, informe: str
   const crudo = await completar(ai, {
     esfuerzo: "medium",
     json: Veredicto,
-    system: `Eres el editor de ¿Es Cierto?. A partir del informe de evidencia, emite el veredicto sobre la afirmación. Usa solo fuentes que aparecen en el informe, con su URL exacta. Si el informe no tiene fuentes que respalden una conclusión, el veredicto es "no_verificable". ${REGLA_DATO}`,
+    system: `Eres el editor de ¿Es Cierto?. A partir del informe de evidencia, emite el veredicto sobre la afirmación. Usa solo fuentes que aparecen en el informe, con su URL exacta.
+Escala (juzga lo esencial de la afirmación, no cada detalle):
+- verdadero: la evidencia confirma la afirmación.
+- mayormente_verdadero: lo esencial es correcto, pero tiene imprecisiones menores (una fecha cercana, una cifra redondeada, un detalle secundario).
+- enganoso: los datos son reales pero están sacados de contexto, desactualizados o presentados para inducir a error.
+- falso: la evidencia contradice lo esencial de la afirmación.
+- no_verificable: no hay evidencia suficiente, es contradictoria o el hecho no es comprobable con fuentes públicas (por ejemplo, algo privado).
+No encontrar evidencia de algo NO lo hace falso: "falso" exige una fuente que lo contradiga. Si el informe no tiene fuentes que respalden una conclusión, el veredicto es "no_verificable".
+${REGLA_DATO}`,
     usuario: `<afirmacion>${afirmacion}</afirmacion>\n\n<informe>${informe}</informe>`,
   });
   return Veredicto.parse(JSON.parse(crudo));

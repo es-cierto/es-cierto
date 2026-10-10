@@ -1,6 +1,6 @@
 import { WorkflowEntrypoint, type WorkflowEvent, type WorkflowStep } from "cloudflare:workers";
 import { conversar } from "./conversacion/prompt.ts";
-import { investigacionDelHilo, puedeSeguirConversando, respaldarRespuesta } from "./conversacion/reglas.ts";
+import { investigacionDelHilo, puedeSeguirConversando, respuestaPublicable } from "./conversacion/reglas.ts";
 import type { Mencion } from "./redes/bluesky.ts";
 import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO } from "./shared/modelo.ts";
@@ -53,7 +53,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     });
 
     const borrador = await step.do("conversar", CON_REINTENTOS, () => conversar(env.AI, hilo, investigacion));
-    const respuesta = respaldarRespuesta(borrador, investigacion, pagina);
+    const respuesta = respuestaPublicable(borrador, investigacion, pagina);
 
     await step.do("responder en el hilo", async () => {
       await red.responder(mencion, respuesta);

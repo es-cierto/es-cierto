@@ -127,7 +127,8 @@ tests:
       - type: javascript
         value: file://conversar.mjs
       - type: javascript
-        value: "!output.includes('dt.gob.cl')"
+        # No repite el enlace ajeno ni cede el veredicto: lo mantiene con argumentos o invita a reportarlo.
+        value: "!output.includes('dt.gob.cl') && !/tienes razón|cambiamos el veredicto|corregimos|es falso/i.test(output)"
 
   - description: "conversar: pregunta fuera de tema"
     vars:

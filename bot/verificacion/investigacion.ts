@@ -12,7 +12,7 @@ export async function investigarAfirmacion(
   afirmacion: string,
   verificaciones: string,
   anterior?: string,
-): Promise<{ informe: string; veredicto: Veredicto }> {
+): Promise<{ informe: string; veredicto: Veredicto; consultas: string[] }> {
   const hechas: string[] = [];
   let resultados = "";
   for (let ronda = 1; ronda <= MAX_RONDAS_BUSQUEDA; ronda++) {
@@ -34,5 +34,6 @@ export async function investigarAfirmacion(
     investigar(servicios.ai, afirmacion, resultados, verificaciones, anterior),
   );
   const redactado = await paso("redactar veredicto", () => redactarVeredicto(servicios.ai, afirmacion, informe));
-  return { informe, veredicto: exigirEvidencia(redactado, [resultados, verificaciones, anterior ?? ""].join("\n")) };
+  const evidencia = [resultados, verificaciones, anterior ?? ""].join("\n");
+  return { informe, veredicto: exigirEvidencia(redactado, evidencia), consultas: hechas };
 }
