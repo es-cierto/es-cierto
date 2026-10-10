@@ -24,7 +24,10 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 - `src/components/Parada.astro`: una parada; su texto aparece cuando la cámara está quieta en ella.
 - `src/scripts/tramos.ts`: el cálculo puro del recorrido (posición de la cámara, tramo, orden de carga), con sus tests.
 - `src/scripts/recorrido.ts`: el motor con DOM: carga los clips de a uno (enteros, como blob) y los avanza con el scroll.
-- `src/scripts/movimiento.ts`: Lenis, entradas al hacer scroll, el lema palabra por palabra.
+- `src/scripts/movimiento.ts`: Lenis, entradas al hacer scroll, titulares con SplitText (cada línea sube tras su máscara) y el lema palabra por palabra, con el hilo que se corta al final.
+- `src/scripts/tendedero.ts`: la escala de veredictos como tendedero (DrawSVG). El hilo se calcula con las posiciones de las tarjetas: horizontal en escritorio, vertical en pantallas angostas. _No verificable_ nunca queda atada.
+
+El hilo sigue después del video como trazo SVG, y siempre dice algo: se ata a lo que tiene fuentes y queda deshilachado donde no las hay. No es decoración: si un trazo no cuenta nada del método, no va. Con movimiento reducido el hilo queda dibujado entero y quieto.
 
 ## El recorrido
 

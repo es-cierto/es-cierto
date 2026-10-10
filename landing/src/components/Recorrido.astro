@@ -130,7 +130,7 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
       <figure class="mt-6 w-full max-w-sm rounded-2xl bg-fondo/75 p-5 ring-1 ring-papel/15 backdrop-blur-md">
         <blockquote class="text-base text-papel/80">«{ejemplo.afirmacion}»</blockquote>
         <figcaption class="mt-4">
-          <p class="flex items-center gap-2 text-2xl font-semibold"><Icono nombre={ejemplo.icono} class="size-7 text-lino" /> {ejemplo.veredicto}</p>
+          <p class="sello flex items-center gap-2 text-2xl font-semibold"><Icono nombre={ejemplo.icono} class="size-7 text-lino" /> {ejemplo.veredicto}</p>
           <p class="mt-1 text-base text-papel/90">{ejemplo.resumen}</p>
           <p class="mt-3 text-sm text-papel/70">
             Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
@@ -197,6 +197,22 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
     transform: scale(1.5);
   }
 
+  /* El veredicto del ejemplo cae como un timbre cuando la cámara llega a la respuesta. */
+  :global(.js .parada.actual) .sello {
+    animation: sellar 650ms 450ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  }
+
+  @keyframes sellar {
+    from {
+      opacity: 0;
+      transform: scale(1.6) rotate(-6deg);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .pista::after {
     content: '';
     position: absolute;
@@ -212,5 +228,6 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
 
   @media (prefers-reduced-motion: reduce) {
     .pista::after { animation: none; }
+    :global(.js .parada.actual) .sello { animation: none; }
   }
 </style>

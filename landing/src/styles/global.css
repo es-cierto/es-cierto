@@ -125,6 +125,12 @@
     filter: none;
   }
 
+  /* Máscara de SplitText: sin este aire, el overflow corta los descendentes (g, p, y). */
+  .linea-mask {
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .js [data-revelar] {
       opacity: 1;
