@@ -22,7 +22,7 @@ export const seo = {
 // El recorrido del hilo. Cada parada es una imagen quieta; entre una y otra, un clip que el scroll avanza.
 // `foco` es la posición horizontal (%) del recorte en pantallas verticales: el hilo tiene que quedar a la vista.
 export const recorrido = [
-  { id: 'inicio', nombre: 'La publicación', foco: 35 },
+  { id: 'inicio', nombre: 'La publicación', foco: 5 },
   { id: 'mencion', nombre: 'La mención', foco: 45 },
   { id: 'busqueda', nombre: 'La búsqueda', foco: 40 },
   { id: 'respuesta', nombre: 'La respuesta', foco: 62 },
