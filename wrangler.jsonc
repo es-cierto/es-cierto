@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "escierto",
+  // La cuenta de Cloudflare del proyecto (escierto.dev@gmail.com), no una personal. Fijarla evita desplegar en otra.
+  "account_id": "a59ff336f9e5b7f9bd3182963ba65269",
   "main": "bot/index.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
@@ -13,7 +15,7 @@
     // PENDIENTE: escierto.bsky.social es la cuenta de otra persona (creada en 2024, miles de publicaciones).
     // Hay que crear la cuenta propia del bot y poner aquí su handle antes de desplegar.
     "BSKY_HANDLE": "escierto.bsky.social",
-    "PUBLIC_URL": "https://escierto.org",
+    "PUBLIC_URL": "https://escierto.cierto.workers.dev",
     "REPO_URL": "https://github.com/es-cierto/es-cierto",
     // "si" activa /probar, un chat de prueba sin Bluesky. Solo en .dev.vars.
     "PRUEBA_WEB": "no",
@@ -23,7 +25,7 @@
   },
 
   "d1_databases": [
-    { "binding": "DB", "database_name": "escierto", "database_id": "REEMPLAZAR_CON_wrangler_d1_create" },
+    { "binding": "DB", "database_name": "escierto", "database_id": "a1d4a971-1667-4be0-b913-fa0d07139951" },
   ],
   "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones", "remote": true }],
   "ai": { "binding": "AI", "remote": true },

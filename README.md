@@ -18,7 +18,7 @@ El monto es correcto, pero rige desde el 1 de mayo de 2025, no desde julio.
 
 Cada investigación queda publicada con su informe y sus fuentes. Si alguien vuelve a preguntar lo mismo, se reutiliza la investigación reciente o se complementa con evidencia nueva si ya es antigua.
 
-> **Estado:** el bot todavía no está desplegado. Falta crear su cuenta propia en Bluesky (`escierto.bsky.social` es de otra persona) y elegir un dominio propio (`escierto.org`, que figura en la configuración, no es nuestro). Ver [Pendientes](#pendientes).
+> **Estado:** el bot todavía no está desplegado. Falta crear su cuenta propia en Bluesky (`escierto.bsky.social` es de otra persona). Mientras no haya dominio propio, el bot vive en `https://escierto.cierto.workers.dev`. Ver [Pendientes](#pendientes).
 
 ## Cómo funciona
 
@@ -122,7 +122,7 @@ Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sit
 ## Pendientes
 
 - **Cuenta del bot en Bluesky.** `escierto.bsky.social` es de otra persona (creada en 2024, miles de publicaciones). Hay que crear la propia y ponerla en `BSKY_HANDLE` (`wrangler.jsonc`) y en `cuentaBluesky` (`landing/src/data/sitio.ts`).
-- **Dominio propio.** `escierto.dev`, `escierto.org` y `escierto.cl` estaban libres el 10 de octubre de 2026. Al comprar uno, va en `PUBLIC_URL` del bot y en `site` de la landing.
+- **Dominio propio.** `escierto.dev`, `escierto.org` y `escierto.cl` estaban libres el 10 de octubre de 2026. Al comprar uno, va en `PUBLIC_URL` del bot (hoy `escierto.cierto.workers.dev`) y en `site` de la landing.
 - **Financiamiento.** Se publicará quién financia el proyecto y con qué condiciones.
 - **Registro de cuentas que publican falsedades.** Subproducto de las verificaciones, no el foco del bot: anota quién publicó cada afirmación verificada. Aplica a cualquier cuenta (personas, medios, figuras públicas o bots), con la misma regla. Diseño en revisión; no forma parte del bot todavía.
 

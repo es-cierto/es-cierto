@@ -110,7 +110,7 @@ Si el reporte no se confirma, se responde en el issue explicando por qué, con l
 
 ## Organización y contacto
 
-¿Es Cierto? es un proyecto de código abierto, **todavía sin una organización legalmente constituida**. Lo mantienen las personas con permiso de escritura en [github.com/es-cierto](https://github.com/es-cierto), que responden por las correcciones y por los cambios a esta metodología. Cuando exista una organización, aquí se publicarán su forma legal, quiénes la dirigen y sus biografías profesionales.
+¿Es Cierto? es un proyecto de código abierto, **todavía sin una organización legalmente constituida**. Lo mantienen las personas con permiso de escritura en [github.com/es-cierto](https://github.com/es-cierto), que responden por las correcciones y por los cambios a esta metodología. Cuando exista una organización, aquí se publicarán su forma legal, quiénes la dirigen y sus biografías profesionales. La infraestructura (el bot, la página y sus datos) está en una cuenta de Cloudflare del proyecto, no en la cuenta personal de nadie.
 
 - **Reportes, preguntas y propuestas:** [issues en GitHub](https://github.com/es-cierto/es-cierto/issues).
 - **Vulnerabilidades:** en privado, según [SECURITY.md](SECURITY.md).
