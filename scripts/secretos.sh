@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
-# Sube los secretos del bot desde un archivo .env a la cuenta de Cloudflare del proyecto (la fija `account_id` en
-# wrangler.jsonc). Solo toma las claves de `secrets.required`; el resto del archivo se ignora.
+# Sube los secretos del bot desde .dev.vars (el mismo archivo que usa `pnpm dev`) a la cuenta de Cloudflare del
+# proyecto (la fija `account_id` en wrangler.jsonc). Solo toma las claves de `secrets.required`; el resto se ignora.
 #
-# Uso:  ./scripts/secretos.sh            # lee .env
-#       ./scripts/secretos.sh otro.env
+# Uso:  ./scripts/secretos.sh               # lee .dev.vars
+#       ./scripts/secretos.sh otro-archivo
 #
-# Si falta CORRECCIONES_TOKEN, genera uno al azar y lo agrega al archivo, para que quede guardado.
+# CORRECCIONES_TOKEN tiene que ser de 64 caracteres hexadecimales (openssl rand -hex 32). Si falta o es otro (por
+# ejemplo uno de prueba), se genera uno al azar y se guarda en el archivo: a producción nunca sube un token débil.
 # Si GOOGLE_FACTCHECK_KEY está vacía, sube "ninguna" (el bot se salta esa búsqueda).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-archivo="${1:-.env}"
+archivo="${1:-.dev.vars}"
 [[ -f "$archivo" ]] || { echo "No existe $archivo"; exit 1; }
 git check-ignore -q "$archivo" || { echo "$archivo no está en .gitignore: no subo secretos desde un archivo que se podría commitear."; exit 1; }
 
-if ! grep -qE '^CORRECCIONES_TOKEN=.+' "$archivo"; then
-  printf '\nCORRECCIONES_TOKEN=%s\n' "$(openssl rand -hex 32)" >>"$archivo"
-  echo "Generé CORRECCIONES_TOKEN y lo agregué a $archivo."
+if ! grep -qE '^CORRECCIONES_TOKEN=[0-9a-f]{64}$' "$archivo"; then
+  token=$(openssl rand -hex 32)
+  if grep -qE '^CORRECCIONES_TOKEN=' "$archivo"; then
+    sed -i '' -E "s/^CORRECCIONES_TOKEN=.*/CORRECCIONES_TOKEN=$token/" "$archivo"
+  else
+    printf '\nCORRECCIONES_TOKEN=%s\n' "$token" >>"$archivo"
+  fi
+  unset token
+  echo "Generé un CORRECCIONES_TOKEN nuevo y lo guardé en $archivo."
 fi
 
 # Arma un JSON temporal (solo legible por ti) con las claves requeridas y lo borra al terminar.
@@ -42,9 +49,9 @@ for (const nombre of requeridos) {
   else if (nombre === "GOOGLE_FACTCHECK_KEY") secretos[nombre] = "ninguna";
   else faltan.push(nombre);
 }
+// Lo que falta no se sube (se puede completar después); el bot no se despliega hasta tener todos.
 if (faltan.length) {
-  console.error(`Faltan en ${archivo}: ${faltan.join(", ")}. Agrégalos (NOMBRE=valor) y vuelve a correr.`);
-  process.exit(1);
+  console.error(`⚠ Faltan en ${archivo} y no se suben: ${faltan.join(", ")}. Agrégalos (NOMBRE=valor) y vuelve a correr.`);
 }
 fs.writeFileSync(salida, JSON.stringify(secretos));
 console.log(`Subo: ${Object.keys(secretos).join(", ")}`);
