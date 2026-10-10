@@ -5,8 +5,8 @@ import { pasos } from '../data/sitio';
 <section id="como-funciona" aria-labelledby="titulo-pasos" class="px-4 py-24 md:px-12 xl:px-24">
   <div class="mx-auto max-w-6xl">
     <div data-revelar class="max-w-[680px]">
-      <p class="text-xs font-semibold tracking-widest text-lino uppercase">Cómo funciona</p>
-      <h2 id="titulo-pasos" class="mt-4 text-4xl lg:text-5xl">Tres pasos, en el mismo hilo donde viste el dato.</h2>
+      <p class="text-sm font-semibold tracking-wider text-lino uppercase">En resumen</p>
+      <h2 id="titulo-pasos" class="mt-4 text-4xl text-balance lg:text-5xl">Tres pasos, sin salir de&nbsp;Bluesky.</h2>
     </div>
     <ol class="mt-12 grid gap-8 md:grid-cols-3">
       {
@@ -14,7 +14,7 @@ import { pasos } from '../data/sitio';
           <li data-revelar style={`transition-delay: ${i * 100}ms`} class="flex flex-col gap-3">
             <span class="text-4xl font-semibold text-lino tabular-nums">{i + 1}</span>
             <h3 class="text-xl">{paso.titulo}</h3>
-            <p class="text-base text-papel/70">{paso.texto}</p>
+            <p class="text-lg text-papel/80">{paso.texto}</p>
           </li>
         ))
       }

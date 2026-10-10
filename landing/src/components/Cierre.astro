@@ -8,17 +8,18 @@ import { cuentaBluesky, enlaces } from '../data/sitio';
     {
       cuentaBluesky ? (
         <>
-          <p class="mt-4 text-lg text-papel/80">Responde a la publicación y etiqueta a @{cuentaBluesky.handle}. Tiramos del hilo por ti.</p>
-          <a href={cuentaBluesky.url} class="boton boton-principal mt-8">Etiqueta a @{cuentaBluesky.handle}</a>
+          <p class="mt-4 text-lg text-papel/80">Responde a la publicación y menciona a @{cuentaBluesky.handle}. El bot busca de dónde sale el dato y te responde ahí mismo.</p>
+          <a href={cuentaBluesky.url} class="boton boton-principal mt-8">Menciona a @{cuentaBluesky.handle}</a>
         </>
       ) : (
         <>
-          <p class="mt-4 text-lg text-papel/80">
-            El bot está en preparación. Mientras tanto, puedes revisar cómo trabaja y seguir el proyecto, que es abierto.
+          <p class="mt-4 text-lg text-papel/85">
+            El bot todavía no está activo. Mientras tanto, puedes leer cómo verifica cada dato y seguir el proyecto, que es
+            abierto.
           </p>
           <div class="mt-8 flex flex-wrap justify-center gap-3">
-            <a href={enlaces.repo} class="boton boton-principal">Seguir el proyecto</a>
-            <a href={enlaces.metodologia} class="boton boton-secundario">Leer la metodología</a>
+            <a href={enlaces.metodologia} class="boton boton-principal">Leer cómo verifica</a>
+            <a href={enlaces.repo} class="boton boton-secundario">Seguir el proyecto en GitHub</a>
           </div>
         </>
       )

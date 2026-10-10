@@ -12,6 +12,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 - **El texto vive en el HTML.** El video es fondo (`aria-hidden`); sin JS, sin video o con movimiento reducido la página se entiende entera.
 - **Movimiento reducido y ahorro de datos:** no se descarga ningún video; quedan las imágenes de cada parada.
 - **Las imágenes y el video se declaran como generados con IA**, en el recorrido y en el pie.
+- **Redacción clara.** Primero lo literal y después la metáfora del hilo, que aparece una sola vez como imagen (la búsqueda). Una palabra para cada cosa: *mencionar* (no etiquetar), *publicación* (no post), *el bot*, *fuentes*, *veredicto* o *respuesta*. Nada de jerga: si aparece una sigla (IFCN), se explica. Texto de lectura en 18 px, etiquetas en 14 px como mínimo.
 - **Peso:** cada clip pesa menos de 4 MB en cada variante y cada imagen de parada menos de 300 KB.
 
 ## Archivos

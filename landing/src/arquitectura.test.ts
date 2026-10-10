@@ -82,3 +82,22 @@ test('cada imagen de parada pesa menos de 300 KB', () => {
 test('con movimiento reducido o ahorro de datos no se descarga ningún video', () => {
   assert.match(leer('src/scripts/recorrido.ts'), /if \(!clips\.length \|\| reducir \|\| conexion\?\.saveData\) return;/);
 });
+
+test('una palabra para cada cosa: mencionar (no etiquetar) y publicación (no post)', () => {
+  for (const ruta of fuentes) {
+    const texto = leer(ruta).replace(/class="[^"]*"/g, '').replace(/\/\/.*$/gm, '');
+    for (const prohibida of [/\betiquet(a|á|ar|as|o|alo|arlo)\b/i, /\bposts?\b/i]) {
+      assert.ok(!prohibida.test(texto), `${ruta} usa ${prohibida}`);
+    }
+  }
+});
+
+test('el texto de lectura no baja de 18 px ni las etiquetas de 14 px', () => {
+  for (const ruta of fuentes.filter((r) => r.endsWith('.astro'))) {
+    const texto = leer(ruta);
+    for (const [, clases] of texto.matchAll(/<p class="([^"]*)"/g)) {
+      const esNota = /text-\[11px\]|text-papel\/50/.test(clases);
+      assert.ok(esNota || !/\btext-xs\b/.test(clases), `${ruta}: párrafo con text-xs (${clases})`);
+    }
+  }
+});

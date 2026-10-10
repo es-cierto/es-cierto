@@ -13,7 +13,7 @@ ${pasos.map((p, i) => `${i + 1}. ${p.titulo}: ${p.texto}`).join('\n')}
 
 ## Veredictos
 
-${escala.map((e) => `- ${e.nombre}: ${e.hilo}`).join('\n')}
+${escala.map((e) => `- ${e.nombre}: ${e.texto}`).join('\n')}
 
 ## Preguntas frecuentes
 

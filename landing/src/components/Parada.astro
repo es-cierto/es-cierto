@@ -9,15 +9,14 @@ interface Props {
 
 const { indice } = Astro.props;
 const parada = recorrido[indice];
-const dos = (n: number) => String(n).padStart(2, '0');
 ---
 
 <article id={parada.id} data-parada data-foco={parada.foco} class="parada pointer-events-none flex min-h-[190svh] flex-col justify-end">
   <div class="cuerpo pointer-events-auto sticky bottom-0 flex w-full max-w-2xl xl:max-w-4xl flex-col items-start px-4 pt-32 pb-12 md:px-12 lg:pb-16 xl:px-24">
-    <p class="flex items-center gap-2 text-xs tracking-widest text-papel/60 uppercase">
-      <span class="tabular-nums">{dos(indice + 1)} / {dos(recorrido.length)}</span>
+    <p class="flex items-center gap-2 text-sm tracking-wider text-papel/75 uppercase">
+      <span class="tabular-nums">Paso {indice + 1} de {recorrido.length}</span>
       <span aria-hidden="true" class="size-1 rounded-full bg-lino"></span>
-      <span>{parada.etiqueta}</span>
+      <span>{parada.nombre}</span>
     </p>
     <slot />
   </div>

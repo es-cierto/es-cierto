@@ -13,11 +13,11 @@ import algoAtado from '../assets/recorrido/3-algo-atado.webp';
 const imagenes = [inicio, tirar, fuentes, algoAtado];
 // Un clip por tramo: el clip k va de la parada k a la k+1.
 const clips = ['A', 'B', 'C'];
-const titulo = 'mt-4 max-w-xl text-4xl lg:text-5xl xl:text-6xl';
-const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
+const titulo = 'mt-4 max-w-xl text-4xl text-balance lg:text-5xl';
+const cuerpo = 'mt-4 max-w-md text-lg text-papel/90';
 ---
 
-<section id="recorrido" data-recorrido aria-label="Cómo trabaja: tirar del hilo" class="relative">
+<section id="recorrido" data-recorrido aria-label="Cómo funciona, paso a paso" class="relative">
   <div data-escenario class="sticky top-0 h-lvh overflow-hidden bg-fondo" style="--foco: 50%">
     <div aria-hidden="true" class="absolute inset-0">
       {
@@ -76,8 +76,8 @@ const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
           recorrido.map((parada, i) => (
             <li>
               <a href={`#${parada.id}`} data-ir aria-current={i === 0 ? 'true' : 'false'} class="riel group flex h-6 items-center gap-3">
-                <span class="etiqueta rounded-full bg-fondo/60 px-3 py-1 text-xs whitespace-nowrap ring-1 ring-papel/10 backdrop-blur-xl">
-                  {parada.etiqueta}
+                <span class="rotulo rounded-full bg-fondo/60 px-3 py-1 text-sm whitespace-nowrap ring-1 ring-papel/10 backdrop-blur-xl">
+                  {parada.nombre}
                 </span>
                 <span class="punto size-2 rounded-full bg-papel/50" />
               </a>
@@ -87,8 +87,8 @@ const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
       </ol>
     </nav>
 
-    <p data-pista aria-hidden="true" class="absolute right-10 bottom-8 hidden items-center gap-3 text-xs tracking-widest text-papel/70 uppercase lg:flex">
-      Baja para tirar del hilo
+    <p data-pista aria-hidden="true" class="absolute right-10 bottom-8 hidden items-center gap-3 text-sm tracking-wider text-papel/80 uppercase lg:flex">
+      Baja para ver cómo funciona
       <span class="pista relative block h-8 w-px overflow-hidden bg-papel/20"></span>
     </p>
     <p class="absolute top-24 right-4 text-[11px] text-papel/50 lg:top-auto lg:right-auto lg:bottom-3 lg:left-12 xl:left-24">Imágenes generadas con IA</p>
@@ -97,51 +97,52 @@ const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
   <div class="relative z-10 -mt-[100lvh]">
     <Parada indice={0}>
       <h1 class="mt-4">
-        <span class="block text-xs font-semibold tracking-widest text-lino uppercase">¿Es Cierto? · Verificador de datos abierto</span>
-        <span class="mt-4 block max-w-[680px] text-balance bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-4xl text-transparent lg:text-6xl">
-          Toda afirmación<br /> cuelga de un&nbsp;hilo.
+        <span class="block text-sm font-semibold tracking-wider text-lino uppercase">Verificador de datos para Bluesky</span>
+        <span class="mt-4 block max-w-[680px] bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-4xl text-balance text-transparent lg:text-6xl">
+          Te decimos si un dato es cierto, con las&nbsp;fuentes.
         </span>
       </h1>
       <p class={cuerpo}>
-        Lo etiquetas en una publicación, tira del hilo hasta encontrar de dónde sale el dato y te responde con la
-        evidencia. O te dice que no la hay.
+        Mencionas al bot en la publicación de Bluesky donde viste el dato. Busca de dónde sale y te responde ahí mismo:
+        con las fuentes que lo confirman o lo desmienten, o avisándote que no encontró ninguna.
       </p>
       {
         cuentaBluesky ? (
-          <a href={cuentaBluesky.url} class="boton boton-principal mt-6">Etiqueta a @{cuentaBluesky.handle}</a>
+          <a href={cuentaBluesky.url} class="boton boton-principal mt-6">Menciona a @{cuentaBluesky.handle}</a>
         ) : (
-          <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-fondo/50 px-3 py-1 text-xs text-papel/80 ring-1 ring-papel/20 backdrop-blur-md">
-            <span aria-hidden="true" class="size-1.5 rounded-full bg-lino"></span>
-            El bot está en preparación: todavía no responde en Bluesky.
+          <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-fondo/60 px-4 py-2 text-sm text-papel ring-1 ring-papel/20 backdrop-blur-md">
+            <span aria-hidden="true" class="size-2 rounded-full bg-lino"></span>
+            El bot todavía no está activo. Muy pronto en Bluesky.
           </p>
         )
       }
     </Parada>
 
     <Parada indice={1}>
-      <h2 class={titulo}>Etiquetas al bot. Él tira del hilo.</h2>
+      <h2 class={titulo}>Mencionas al bot donde viste el&nbsp;dato.</h2>
       <p class={cuerpo}>
-        Primero separa el dato de la opinión: las opiniones no se verifican. Después sigue el hilo entre todo lo que se
-        comparte, sin importar cuántas veces se repita.
+        Respondes a la publicación y escribes la cuenta del bot. Él separa el dato que se puede comprobar de las
+        opiniones, que no se verifican.
       </p>
     </Parada>
 
     <Parada indice={2}>
-      <h2 class={titulo}>Lo sigue hasta las fuentes.</h2>
+      <h2 class={titulo}>Tira del hilo hasta encontrar de dónde sale el&nbsp;dato.</h2>
       <p class={cuerpo}>
-        Busca en la web por rondas: leyes, datos oficiales, estudios y verificadores profesionales. Si con una vuelta no
-        alcanza, da otra. Solo cuenta lo que de verdad encontró.
+        Revisa leyes, datos oficiales, estudios y verificaciones profesionales. Si con la primera búsqueda no basta,
+        vuelve a buscar. Solo usa las fuentes que de verdad encontró.
       </p>
     </Parada>
 
     <Parada indice={3}>
-      <h2 class={titulo}>A veces hay algo atado al otro extremo.</h2>
-      <figure class="mt-6 w-full max-w-md rounded-2xl bg-fondo/60 p-5 ring-1 ring-papel/15 backdrop-blur-md">
-        <figcaption class="text-xs tracking-widest text-papel/60 uppercase">Ejemplo de respuesta</figcaption>
-        <blockquote class="mt-3 text-sm text-papel/80">«{ejemplo.afirmacion}»</blockquote>
+      <h2 class={titulo}>Si encuentra fuentes, te dice qué tan cierto&nbsp;es.</h2>
+      <figure class="mt-6 w-full max-w-md rounded-2xl bg-fondo/70 p-5 ring-1 ring-papel/15 backdrop-blur-md">
+        <figcaption class="text-sm font-semibold tracking-wider text-papel/70 uppercase">Así se ve una respuesta</figcaption>
+        <p class="mt-3 text-sm text-papel/70">Afirmación revisada</p>
+        <blockquote class="mt-1 text-base text-papel">«{ejemplo.afirmacion}»</blockquote>
         <p class="mt-4 flex items-center gap-2 text-xl font-semibold"><Icono nombre={ejemplo.icono} class="size-6 text-lino" /> {ejemplo.veredicto}</p>
-        <p class="mt-2 text-sm text-papel/80">{ejemplo.resumen}</p>
-        <p class="mt-4 text-xs text-papel/60">
+        <p class="mt-2 text-base text-papel/90">{ejemplo.resumen}</p>
+        <p class="mt-4 text-sm text-papel/70">
           Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
         </p>
       </figure>
@@ -169,7 +170,7 @@ const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
     visibility: visible;
   }
 
-  .etiqueta {
+  .rotulo {
     opacity: 0;
     transform: translateX(0.5rem);
     transition:
@@ -177,9 +178,9 @@ const cuerpo = 'mt-4 max-w-md text-base text-papel/80 lg:text-lg';
       transform 700ms var(--ease-fluido);
   }
 
-  .riel:hover .etiqueta,
-  .riel:focus-visible .etiqueta,
-  .riel[aria-current='true'] .etiqueta {
+  .riel:hover .rotulo,
+  .riel:focus-visible .rotulo,
+  .riel[aria-current='true'] .rotulo {
     opacity: 1;
     transform: none;
   }

@@ -2,7 +2,7 @@
 import { cuentaBluesky, enlaces } from '../data/sitio';
 
 const navegacion = [
-  { href: '#recorrido', texto: 'Cómo trabaja' },
+  { href: '#recorrido', texto: 'Cómo funciona' },
   { href: '#escala', texto: 'Veredictos' },
   { href: '#preguntas', texto: 'Preguntas' },
 ];
@@ -26,9 +26,9 @@ const navegacion = [
     </nav>
     {
       cuentaBluesky ? (
-        <a href={cuentaBluesky.url} class="boton boton-principal min-h-9 px-4 text-sm">Etiquétalo</a>
+        <a href={cuentaBluesky.url} class="boton boton-principal min-h-9 px-4 text-sm">Mencionar al bot</a>
       ) : (
-        <a href={enlaces.repo} class="boton boton-principal min-h-9 px-4 text-sm">Ver el código</a>
+        <a href={enlaces.metodologia} class="boton boton-principal min-h-9 px-4 text-sm">Cómo verifica</a>
       )
     }
   </div>
