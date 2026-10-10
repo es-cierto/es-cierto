@@ -55,7 +55,7 @@ El esquema de D1 vive en `migrations/`, con las migraciones de wrangler (`pnpm d
 
 ## Secretos y configuración
 
-`wrangler.jsonc` es la fuente de verdad. Todo se despliega en la **cuenta de Cloudflare del proyecto**, fijada con `account_id` en los dos `wrangler.jsonc`; nunca en una cuenta personal. `PUBLIC_URL` es `https://escierto.cierto.workers.dev` hasta que haya dominio propio (`escierto.org` no está registrado por el proyecto). `BSKY_HANDLE` sigue **pendiente y no es nuestro** (`escierto.bsky.social` es de otra persona): nunca se enlaza ni se publica como propio; cuando exista la cuenta real, se cambia aquí y en `landing/src/data/sitio.ts`. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
+`wrangler.jsonc` es la fuente de verdad. Todo se despliega en la **cuenta de Cloudflare del proyecto**, fijada con `account_id` en los dos `wrangler.jsonc`; nunca en una cuenta personal. `PUBLIC_URL` es `https://escierto.cierto.workers.dev` hasta que haya dominio propio (`escierto.org` no está registrado por el proyecto). `BSKY_HANDLE` sigue **pendiente y no es nuestro** (`escierto.bsky.social` es de otra persona): nunca se enlaza ni se publica como propio; cuando exista la cuenta real, se cambia aquí y en `landing/src/data/sitio.ts`. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. `scripts/secretos.sh` sube todos los de `secrets.required` a la cuenta del proyecto, pidiendo cada valor oculto. Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
 
 ## Verificar
 
