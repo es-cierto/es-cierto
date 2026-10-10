@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Turno } from "../shared/hilo.ts";
 
 const XRPC = "https://bsky.social/xrpc";
 const LARGO_MAXIMO = 300;
@@ -48,7 +49,7 @@ const RespuestaPosts = z.object({
 async function xrpc(
   metodo: string,
   init: { sesion?: Sesion; query?: Record<string, string | string[]>; body?: unknown },
-) {
+): Promise<unknown> {
   const url = new URL(`${XRPC}/${metodo}`);
   for (const [clave, valores] of Object.entries(init.query ?? {})) {
     for (const valor of [valores].flat()) {
@@ -71,7 +72,8 @@ async function xrpc(
     throw new Error(`bluesky ${metodo} ${respuesta.status}: ${await respuesta.text()}`);
   }
   const texto = await respuesta.text();
-  return texto ? JSON.parse(texto) : {};
+  const datos: unknown = texto ? JSON.parse(texto) : {};
+  return datos;
 }
 
 export async function sesionBluesky(env: Env): Promise<Sesion> {
@@ -133,11 +135,6 @@ const NodoHilo = z.object({
   post: z.object({ author: z.object({ did: z.string() }), record: z.object({ text: z.string().default("") }) }),
   parent: z.unknown().optional(),
 });
-
-export interface Turno {
-  deBot: boolean;
-  texto: string;
-}
 
 // ponytail: solo la cadena de padres (hasta 20); las ramas laterales del hilo no son parte de la conversación.
 export async function leerHilo(sesion: Sesion, uri: string): Promise<Turno[]> {
