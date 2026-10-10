@@ -1,67 +1,56 @@
 #!/usr/bin/env bash
-# Sube los secretos del bot a la cuenta de Cloudflare del proyecto (la fija `account_id` en wrangler.jsonc).
-# Los nombres salen de `secrets.required` de wrangler.jsonc, así que este script no se desactualiza.
-# Cada valor se escribe oculto y va directo a Cloudflare: no queda en el historial ni en ningún archivo.
+# Sube los secretos del bot desde un archivo .env a la cuenta de Cloudflare del proyecto (la fija `account_id` en
+# wrangler.jsonc). Solo toma las claves de `secrets.required`; el resto del archivo se ignora.
 #
-# Uso, en una terminal propia (no con `!` de Claude Code, que no deja escribir oculto):
-#   ./scripts/secretos.sh            # todos
-#   ./scripts/secretos.sh TAVILY_API_KEY   # solo algunos
+# Uso:  ./scripts/secretos.sh            # lee .env
+#       ./scripts/secretos.sh otro.env
+#
+# Si falta CORRECCIONES_TOKEN, genera uno al azar y lo agrega al archivo, para que quede guardado.
+# Si GOOGLE_FACTCHECK_KEY está vacía, sube "ninguna" (el bot se salta esa búsqueda).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-# Un token de otra cuenta en el entorno (por ejemplo el de un trabajo) le gana al login de wrangler.
-wrangler() { env -u CLOUDFLARE_API_TOKEN npx --yes wrangler "$@"; }
+archivo="${1:-.env}"
+[[ -f "$archivo" ]] || { echo "No existe $archivo"; exit 1; }
+git check-ignore -q "$archivo" || { echo "$archivo no está en .gitignore: no subo secretos desde un archivo que se podría commitear."; exit 1; }
 
-echo "Cuenta de Cloudflare con la que vas a subir los secretos:"
-wrangler whoami 2>/dev/null | grep -E "associated with the email|│ .* │ [0-9a-f]{32} │" || true
-read -rp "¿Es la cuenta del proyecto? [s/N] " ok
-[[ "$ok" =~ ^[sS]$ ]] || { echo "Inicia sesión con la cuenta del proyecto: env -u CLOUDFLARE_API_TOKEN npx wrangler login"; exit 1; }
-
-if [[ $# -gt 0 ]]; then
-  nombres=("$@")
-else
-  read -ra nombres <<<"$(node -e '
-    const t = require("fs").readFileSync("wrangler.jsonc", "utf8");
-    console.log((t.match(/"required":\s*\[([^\]]*)\]/)?.[1] ?? "").match(/\w+/g).join(" "));
-  ')"
+if ! grep -qE '^CORRECCIONES_TOKEN=.+' "$archivo"; then
+  printf '\nCORRECCIONES_TOKEN=%s\n' "$(openssl rand -hex 32)" >>"$archivo"
+  echo "Generé CORRECCIONES_TOKEN y lo agregué a $archivo."
 fi
 
-ayuda() {
-  case "$1" in
-    BSKY_APP_PASSWORD) echo "Contraseña de aplicación de la cuenta del bot en Bluesky (Ajustes → Privacidad y seguridad → Contraseñas de aplicación). Nunca la principal." ;;
-    TAVILY_API_KEY) echo "Clave de Tavily (tavily.com → API Keys). Usa una nueva, no una que se haya compartido." ;;
-    GOOGLE_FACTCHECK_KEY) echo "Clave de Google Fact Check Tools. Opcional: si no tienes, deja vacío y el bot se salta ese paso." ;;
-    *) echo "" ;;
-  esac
+# Arma un JSON temporal (solo legible por ti) con las claves requeridas y lo borra al terminar.
+temporal=$(mktemp)
+chmod 600 "$temporal"
+trap 'rm -f "$temporal"' EXIT
+
+node - "$archivo" "$temporal" <<'NODE'
+const fs = require("fs");
+const [archivo, salida] = process.argv.slice(2);
+const wrangler = fs.readFileSync("wrangler.jsonc", "utf8");
+const requeridos = (wrangler.match(/"required":\s*\[([^\]]*)\]/)?.[1] ?? "").match(/\w+/g) ?? [];
+const valores = {};
+for (const linea of fs.readFileSync(archivo, "utf8").split("\n")) {
+  const m = linea.match(/^\s*(?:export\s+)?(\w+)\s*=\s*(.*)\s*$/);
+  if (m) valores[m[1]] = m[2].replace(/^(['"])(.*)\1$/, "$2");
 }
+const secretos = {};
+const faltan = [];
+for (const nombre of requeridos) {
+  const valor = valores[nombre] ?? "";
+  if (valor) secretos[nombre] = valor;
+  else if (nombre === "GOOGLE_FACTCHECK_KEY") secretos[nombre] = "ninguna";
+  else faltan.push(nombre);
+}
+if (faltan.length) {
+  console.error(`Faltan en ${archivo}: ${faltan.join(", ")}. Agrégalos (NOMBRE=valor) y vuelve a correr.`);
+  process.exit(1);
+}
+fs.writeFileSync(salida, JSON.stringify(secretos));
+console.log(`Subo: ${Object.keys(secretos).join(", ")}`);
+NODE
 
-for nombre in "${nombres[@]}"; do
-  echo
-  echo "── $nombre"
-  if [[ "$nombre" == "CORRECCIONES_TOKEN" ]]; then
-    valor=$(openssl rand -hex 32)
-    printf %s "$valor" | pbcopy
-    echo "Generé un token al azar y lo copié a tu portapapeles."
-    echo "Guárdalo AHORA en tu gestor de contraseñas: sirve para POST /correcciones y Cloudflare no lo vuelve a mostrar."
-    read -rp "Enter cuando lo hayas guardado… " _
-  else
-    texto=$(ayuda "$nombre")
-    [[ -n "$texto" ]] && echo "$texto"
-    read -rsp "Valor (no se ve mientras escribes): " valor
-    echo
-    if [[ -z "$valor" ]]; then
-      if [[ "$nombre" == "GOOGLE_FACTCHECK_KEY" ]]; then
-        valor="ninguna" # bot/verificacion/verificacionesPublicadas.ts lo entiende como "sin clave"
-      else
-        echo "Vacío: me salto $nombre. Vuelve a correr ./scripts/secretos.sh $nombre cuando lo tengas."
-        continue
-      fi
-    fi
-  fi
-  printf %s "$valor" | wrangler secret put "$nombre"
-  unset valor
-done
-
+# Un token de otra cuenta en el entorno (por ejemplo el de un trabajo) le gana al login de wrangler.
+env -u CLOUDFLARE_API_TOKEN npx --yes wrangler secret bulk "$temporal"
 echo
-echo "Secretos en el Worker (solo los nombres):"
-wrangler secret list
+env -u CLOUDFLARE_API_TOKEN npx --yes wrangler secret list
