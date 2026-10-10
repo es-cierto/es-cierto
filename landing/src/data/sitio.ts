@@ -16,7 +16,7 @@ export const cuentaBluesky: { handle: string; url: string } | null = null;
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
   descripcion:
-    'Bot de Bluesky que verifica datos. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.',
+    'Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Parte en Bluesky. Abierto y no partidista.',
 };
 
 // El recorrido del hilo. Cada parada es una imagen quieta; entre una y otra, un clip que el scroll avanza.
@@ -73,6 +73,10 @@ export const preguntas = [
   {
     pregunta: '¿Qué verifica?',
     respuesta: 'Datos que se pueden comprobar: cifras, fechas, citas y hechos. No opiniones ni chistes.',
+  },
+  {
+    pregunta: '¿En qué redes funciona?',
+    respuesta: 'Parte en Bluesky. La idea es sumar otras redes sociales y cualquier página web.',
   },
   { pregunta: '¿Es neutral?', respuesta: 'Revisa lo que se dice, nunca quién lo dice. La misma regla para todos.' },
   {

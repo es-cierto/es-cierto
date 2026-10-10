@@ -1,6 +1,8 @@
 # ¿Es Cierto?
 
-Bot de Bluesky que verifica datos. Lo mencionas en una publicación, busca de dónde sale el dato y te responde ahí mismo con un veredicto y sus fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.
+Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde ahí mismo con un veredicto y sus fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.
+
+Parte en Bluesky, que tiene una API abierta y gratuita. La idea es sumar otras redes sociales y cualquier página web: cada red es un módulo en `bot/redes/`.
 
 **Página:** https://es.cierto.workers.dev
 
