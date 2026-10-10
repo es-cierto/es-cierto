@@ -9,9 +9,12 @@ export const enlaces = {
   issues: 'https://github.com/es-cierto/es-cierto/issues/new',
 };
 
-// PENDIENTE: la cuenta del bot en Bluesky. `escierto.bsky.social` es de otra persona (creada en 2024, miles de
-// publicaciones), así que no se enlaza. Mientras sea null, la página dice que el bot todavía no está activo.
-export const cuentaBluesky: { handle: string; url: string } | null = null;
+// La cuenta del bot en Bluesky. Ojo: `escierto.bsky.social`, sin guion, es de otra persona y no se enlaza.
+// Con null, la página dice que el bot todavía no está activo.
+export const cuentaBluesky: { handle: string; url: string } | null = {
+  handle: 'es-cierto.bsky.social',
+  url: 'https://bsky.app/profile/es-cierto.bsky.social',
+};
 
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
