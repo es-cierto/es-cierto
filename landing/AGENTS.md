@@ -8,7 +8,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 
 - **Ningún dato inventado.** Todo texto sale de `METODOLOGIA.md` o de una fuente comprobada a mano. Nada de cifras, testimonios ni logos. El skill `landing-page-design` pide "números orgánicos": aquí no aplica, y se anula.
 - **Sin rojo.** En Chile se lee como el color de un sector político. La paleta sale de las imágenes: fondo, papel y lino (`src/styles/global.css`). Tampoco emojis de color: los íconos son Phosphor en `currentColor`.
-- **La cuenta del bot no se inventa.** `escierto.bsky.social` es de otra persona. Mientras `cuentaBluesky` sea `null`, la página dice "Muy pronto, primero en Bluesky" y no enlaza ninguna cuenta.
+- **La cuenta del bot no se inventa.** Es `es-cierto.bsky.social` (`cuentaBluesky`). `escierto.bsky.social`, sin guion, es de otra persona y nunca se enlaza. Si `cuentaBluesky` vuelve a `null`, la página dice "Muy pronto, primero en Bluesky" y no enlaza ninguna cuenta.
 - **Para redes sociales y la web, no solo Bluesky.** Bluesky se nombra como la primera red donde funciona, nunca como la única ("para Bluesky", "bot de Bluesky").
 - **El texto vive en el HTML.** El video es fondo (`aria-hidden`); sin JS, sin video o con movimiento reducido la página se entiende entera.
 - **Movimiento reducido y ahorro de datos:** no se descarga ningún video; quedan las imágenes de cada parada.

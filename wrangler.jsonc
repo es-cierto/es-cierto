@@ -10,11 +10,14 @@
 
   // Bluesky no tiene webhooks: se revisan las menciones cada minuto.
   "triggers": { "crons": ["* * * * *"] },
+  // La URL pública del bot (escierto.cierto.workers.dev) queda activa; las URLs de vista previa por versión, no:
+  // dejarían en línea versiones viejas del bot.
+  "workers_dev": true,
+  "preview_urls": false,
 
   "vars": {
-    // PENDIENTE: escierto.bsky.social es la cuenta de otra persona (creada en 2024, miles de publicaciones).
-    // Hay que crear la cuenta propia del bot y poner aquí su handle antes de desplegar.
-    "BSKY_HANDLE": "escierto.bsky.social",
+    // La cuenta del bot (creada con escierto.dev@gmail.com). Ojo: escierto.bsky.social, sin guion, es de otra persona.
+    "BSKY_HANDLE": "es-cierto.bsky.social",
     "PUBLIC_URL": "https://escierto.cierto.workers.dev",
     "REPO_URL": "https://github.com/es-cierto/es-cierto",
     // "si" activa /probar, un chat de prueba sin Bluesky. Solo en .dev.vars.
