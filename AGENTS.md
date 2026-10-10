@@ -53,6 +53,10 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 
 El esquema de D1 vive en `migrations/`, con las migraciones de wrangler (`pnpm db:migrar`), sin ORM. Una migración commiteada no se edita: un cambio de esquema es un archivo nuevo con el número siguiente (`0002_algo.sql`).
 
+## Colaboración
+
+`main` está protegida: se entra por PR, con el CI (`verificar`) en verde y una aprobación. Lo que define la metodología, dónde corre el bot o cómo se presenta en público necesita además la revisión del equipo `mantenedores`, según `.github/CODEOWNERS`; el test de arquitectura exige que todo archivo con prompts o umbrales esté ahí. Cómo contribuir, para personas: `CONTRIBUTING.md`.
+
 ## Secretos y configuración
 
 `wrangler.jsonc` es la fuente de verdad. Todo se despliega en la **cuenta de Cloudflare del proyecto**, fijada con `account_id` en los dos `wrangler.jsonc`; nunca en una cuenta personal. `PUBLIC_URL` es `https://escierto.cierto.workers.dev` hasta que haya dominio propio (`escierto.org` no está registrado por el proyecto). La cuenta del bot es `es-cierto.bsky.social` (`BSKY_HANDLE`). `escierto.bsky.social`, sin guion, es de otra persona: nunca se enlaza ni se publica como propia. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. `scripts/secretos.sh` sube a la cuenta del proyecto los de `secrets.required`, tomando los valores de `.dev.vars` (que nunca se commitea). Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.

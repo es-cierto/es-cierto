@@ -1,0 +1,32 @@
+name: Veredicto equivocado
+description: El bot dio un veredicto que la evidencia no sostiene.
+title: "Corrección: "
+labels: ["corrección"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por revisar. Una persona que mantiene el proyecto contrasta el reporte con las fuentes; si se confirma, se publica una corrección y el bot avisa en cada hilo donde respondió ([cómo se corrige](https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md#correcciones)).
+        Una opinión distinta no es un error si las fuentes sostienen el veredicto.
+  - type: input
+    id: investigacion
+    attributes:
+      label: Enlace a la investigación
+      description: La página que enlaza el bot en su respuesta (termina en /a/…).
+      placeholder: https://escierto.cierto.workers.dev/a/…
+    validations:
+      required: true
+  - type: textarea
+    id: que
+    attributes:
+      label: Qué está mal
+      description: El veredicto, un dato, una fecha o una fuente que no dice lo que el resumen afirma.
+    validations:
+      required: true
+  - type: textarea
+    id: fuente
+    attributes:
+      label: Fuente que lo muestra
+      description: Enlace a la fuente, de preferencia primaria (datos oficiales, leyes, estudios).
+    validations:
+      required: true

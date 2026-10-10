@@ -129,7 +129,7 @@ Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sit
 
 ## Contribuir
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md). Las vulnerabilidades se reportan en privado: [SECURITY.md](SECURITY.md).
+Lee [CONTRIBUTING.md](CONTRIBUTING.md) y el [código de conducta](CODE_OF_CONDUCT.md). Para empezar, busca issues con la etiqueta `good first issue`. Las vulnerabilidades se reportan en privado: [SECURITY.md](SECURITY.md).
 
 ## Licencia
 
