@@ -158,3 +158,32 @@ test("todo `pnpm <script>` que citan las guías existe", () => {
     }
   }
 });
+
+test("las migraciones solo se agregan: una ya commiteada no se edita, y van numeradas sin saltos", () => {
+  const base = process.env.METODOLOGIA_BASE || "HEAD";
+  const migraciones = readdirSync(join(raiz, "migrations")).sort();
+  migraciones.forEach((nombre, i) => {
+    assert.match(
+      nombre,
+      new RegExp(`^${String(i + 1).padStart(4, "0")}_[a-z0-9_]+\\.sql$`),
+      `migración mal numerada: ${nombre}`,
+    );
+    let antes: string | null = null;
+    try {
+      antes = execFileSync("git", ["show", `${base}:migrations/${nombre}`], {
+        cwd: raiz,
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+    } catch {
+      // Nueva en este cambio.
+    }
+    if (antes !== null) {
+      assert.equal(
+        leer(`migrations/${nombre}`),
+        antes,
+        `migrations/${nombre} ya estaba commiteada: crea una migración nueva`,
+      );
+    }
+  });
+});

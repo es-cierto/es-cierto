@@ -57,7 +57,7 @@ cp .dev.vars.example .dev.vars        # completa las claves
 pnpm types
 npx wrangler login                    # Workers AI y Vectorize corren remotos aun en local
 npx wrangler vectorize create escierto-afirmaciones --dimensions 1024 --metric cosine   # una vez
-npx wrangler d1 execute escierto --local --file schema.sql
+pnpm db:migrar -- --local
 pnpm dev                              # http://localhost:8787
 curl "http://localhost:8787/__scheduled"   # simula el cron
 # o, sin Bluesky: PRUEBA_WEB=si en .dev.vars y abre http://localhost:8787/probar
@@ -90,7 +90,7 @@ Después de desplegar, espera unos 30 segundos antes de probar: el HTML nuevo pu
 npx wrangler d1 create escierto                  # copia el database_id a wrangler.jsonc
 npx wrangler vectorize create escierto-afirmaciones --dimensions 1024 --metric cosine
 npx wrangler vectorize create-metadata-index escierto-afirmaciones --property-name creado_en --type number
-pnpm db:init -- --remote
+pnpm db:migrar -- --remote
 npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavily.com
 npx wrangler secret put BSKY_APP_PASSWORD
 npx wrangler secret put GOOGLE_FACTCHECK_KEY

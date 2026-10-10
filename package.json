@@ -9,14 +9,14 @@
     "types": "wrangler types --strict-vars=false",
     "typecheck": "tsc --noEmit",
     "test": "node --test 'bot/**/*.test.ts'",
-    "db:init": "wrangler d1 execute escierto --file schema.sql",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
     "eval:ver": "promptfoo view",
     "prepare": "git config core.hooksPath .githooks || true",
     "lint": "oxlint --type-aware",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test"
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "db:migrar": "wrangler d1 migrations apply escierto"
   },
   "dependencies": {
     "zod": "^4.6.5"

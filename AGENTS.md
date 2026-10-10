@@ -19,7 +19,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque los tests pasen.
 
 - `bot/verificacion/`: de una publicación a un veredicto con evidencia.
 - `bot/conversacion/`: responder en el hilo después de un veredicto.
-- `bot/redes/`: las redes sociales donde vive el bot (leer, responder).
+- `bot/redes/`: las redes sociales donde vive el bot (leer, responder). El bot es para redes sociales y la web, no para una sola red: Bluesky es la primera, y una red nueva es un archivo aquí.
 - `bot/paginas/`: las páginas públicas (HTML).
 - `bot/shared/`: lo que usan varios dominios (el modelo, el hilo, los enlaces). No depende de ningún dominio.
 
@@ -28,7 +28,7 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 - `bot/index.ts`: punto de entrada (cron y rutas). Solo encola trabajo y entrega páginas.
 - `bot/chequeo.ts`: el Workflow. Una mención inicia una verificación y una respuesta al bot inicia un turno de conversación (rama `conversar`). Para seguir cualquiera de las dos de punta a punta, empieza aquí.
 
-Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `schema.sql` (D1), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
+Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `migrations/` (el esquema de D1, con las migraciones de wrangler), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
 
 Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`: `verificacion`, `conversacion` y `redes` solo dependen de `shared`. Un dominio nuevo llega con su `AGENTS.md` y su línea en `FRONTERAS`.
 
@@ -45,6 +45,10 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 - **Sin SDK de Bluesky:** son cuatro endpoints XRPC con `fetch` y zod.
 - **Un solo Worker para el bot.** Separarlo solo si una parte necesita otro ritmo de despliegue o de escala. La landing (`landing/`) es la excepción por ese motivo: es estática, cambia por diseño y no por metodología, y se publica aunque el bot no esté desplegado. Es un Worker de solo assets (`es`, publicado en `es.cierto.workers.dev`), sin código.
 - **Modelo:** `gpt-oss-120b` en Workers AI para todo, por presupuesto: entra en el plan gratis (10.000 neuronas al día, unas 8–10 investigaciones). La búsqueda es Tavily (1.000 gratis al mes). Se descartaron DeepSeek por censura documentada en temas sensibles para China, que choca con la neutralidad, y Claude por costo. Cambiar de modelo es una decisión de producto; antes hay que medir la calidad con `pnpm eval`.
+
+## Base de datos
+
+El esquema de D1 vive en `migrations/`, con las migraciones de wrangler (`pnpm db:migrar`), sin ORM. Una migración commiteada no se edita: un cambio de esquema es un archivo nuevo con el número siguiente (`0002_algo.sql`).
 
 ## Secretos y configuración
 
