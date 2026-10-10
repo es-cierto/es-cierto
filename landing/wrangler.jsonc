@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "escierto",
+  "name": "es",
   "compatibility_date": "2026-10-01",
   // Web estática: Workers sirve el build de Astro sin código de Worker, igual que la landing de midudev.
   "assets": {

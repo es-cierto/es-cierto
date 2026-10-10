@@ -43,7 +43,7 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 
 - **Sin framework de agentes** (ni Flue, ni Agents SDK, ni planner/executor). El flujo es fijo y lo fija el Workflow. Investigar es un bucle con tope y cada ronda es su propio `step.do`. Para conversar, la memoria es el hilo de la red, que se relee en cada turno; el bot no guarda estado de conversación. Un framework se justifica solo si aparece estado que el hilo no puede llevar (chat web propio, memoria del usuario entre hilos).
 - **Sin SDK de Bluesky:** son cuatro endpoints XRPC con `fetch` y zod.
-- **Un solo Worker para el bot.** Separarlo solo si una parte necesita otro ritmo de despliegue o de escala. La landing (`landing/`) es la excepción por ese motivo: es estática, cambia por diseño y no por metodología, y se publica aunque el bot no esté desplegado. Es un Worker de solo assets (`escierto`), sin código.
+- **Un solo Worker para el bot.** Separarlo solo si una parte necesita otro ritmo de despliegue o de escala. La landing (`landing/`) es la excepción por ese motivo: es estática, cambia por diseño y no por metodología, y se publica aunque el bot no esté desplegado. Es un Worker de solo assets (`es`, publicado en `es.cierto.workers.dev`), sin código.
 - **Modelo:** `gpt-oss-120b` en Workers AI para todo, por presupuesto: entra en el plan gratis (10.000 neuronas al día, unas 8–10 investigaciones). La búsqueda es Tavily (1.000 gratis al mes). Se descartaron DeepSeek por censura documentada en temas sensibles para China, que choca con la neutralidad, y Claude por costo. Cambiar de modelo es una decisión de producto; antes hay que medir la calidad con `pnpm eval`.
 
 ## Secretos y configuración
