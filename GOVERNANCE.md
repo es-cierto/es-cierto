@@ -8,11 +8,11 @@ Cómo se toman las decisiones en ¿Es Cierto? y quién las toma. Un verificador 
 - **Colaboradores** (equipo `colaboradores` en GitHub). Pueden crear ramas en el repo y aprobar PR del día a día. Se suma a quien contribuye con regularidad, por invitación de una persona que mantiene el proyecto.
 - **Mantenedores** (equipo `mantenedores`). Revisan lo que define la metodología, dónde corre el bot y cómo se presenta en público (`.github/CODEOWNERS`), publican correcciones, despliegan y responden por el proyecto.
 
-Mantenedores actuales: [@IsraelHuentecura](https://github.com/IsraelHuentecura) y [@fforres](https://github.com/fforres) (Felipe Torres).
+Mantenedores actuales: [@IsraelHuentecura](https://github.com/IsraelHuentecura) (Israel Huentecura), [@fforres](https://github.com/fforres) (Felipe Torres), [@Rena006](https://github.com/Rena006) (Renata Martínez) y [@lore-is-already-taken](https://github.com/lore-is-already-taken) (Lorenzo S.).
 
 ### Fundadores
 
-Israel Huentecura y Felipe Torres fundaron el proyecto y son sus primeros mantenedores. Entran **sin el requisito de tres meses** de contribución, porque al partir no hay a quién aplicárselo; ese requisito rige para todas las personas que lleguen después.
+Israel Huentecura, Felipe Torres, Renata Martínez y Lorenzo S. fundaron el proyecto y son sus primeros mantenedores. Entran **sin el requisito de tres meses** de contribución, porque al partir no hay a quién aplicárselo; ese requisito rige para todas las personas que lleguen después.
 
 Cada fundador declara en el PR que lo nombra que no milita en un partido, no trabaja para una campaña y no recibe dinero de nadie afectado por una verificación. Ser fundador no da más votos ni derechos que ser mantenedor: solo deja constancia de quién empezó el proyecto.
 
