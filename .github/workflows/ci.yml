@@ -29,26 +29,13 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
-          cache-dependency-path: |
-            pnpm-lock.yaml
-            landing/pnpm-lock.yaml
 
+      # Un solo lockfile para todo el workspace (bot y landing).
       - run: pnpm install --frozen-lockfile
-      - run: pnpm install --frozen-lockfile
-        working-directory: landing
       - run: pnpm types
       - run: pnpm --dir landing exec astro sync
 
-      - run: pnpm format:check
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test
+      - run: pnpm check
       - run: pnpm db:migrar -- --local
       - run: npx wrangler deploy --dry-run --outdir /tmp/escierto-dist
-
-      - run: pnpm typecheck
-        working-directory: landing
-      - run: pnpm test
-        working-directory: landing
-      - run: pnpm build
-        working-directory: landing
+      - run: pnpm --filter escierto-landing build

@@ -29,6 +29,8 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 - `bot/chequeo.ts`: el Workflow. Una mención inicia una verificación y una respuesta al bot inicia un turno de conversación (rama `conversar`). Para seguir cualquiera de las dos de punta a punta, empieza aquí.
 - `bot/correccion.ts`: el Workflow de correcciones. Una persona que mantiene el proyecto publica la corrección (`POST /correcciones`, con token) y el bot avisa en cada hilo donde había dado el veredicto anterior.
 
+Es un monorepo con un workspace de pnpm: el bot vive en la raíz y `landing/` es un paquete del workspace. Hay un solo lockfile y una sola instalación, y `pnpm check` revisa los dos. Las reglas de instalación (plazo de 24 horas para versiones nuevas, qué paquetes pueden correr scripts) están en `pnpm-workspace.yaml`.
+
 Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `migrations/` (el esquema de D1, con las migraciones de wrangler), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
 
 Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`: `verificacion`, `conversacion` y `redes` solo dependen de `shared`. Un dominio nuevo llega con su `AGENTS.md` y su línea en `FRONTERAS`.
@@ -80,7 +82,9 @@ Los tests usan el runner nativo de Node (`node --test`), con imports `.ts` expl�
 - El valor esperado es un literal o un ejemplo resuelto a mano, nunca recalculado como lo calcula el código.
 - Se prueban funciones puras con datos reales del dominio (una publicación, una URL de verdad); lo que toca la red se deja fuera del test, no se mockea.
 - Un test que solo comprueba que algo "existe" no prueba nada: cada test afirma un valor.
-- Una regla nueva del repo se prueba haciéndola fallar una vez (mutación) antes de darla por buena. Los evals usan promptfoo: el proveedor (`evals/proveedor.ts`) corre el mismo código de `bot/`, y un escenario nuevo va en `evals/promptfooconfig.yaml`.
+- Una regla nueva del repo se prueba haciéndola fallar una vez (mutación) antes de darla por buena.
+
+Los evals usan promptfoo: el proveedor (`evals/proveedor.ts`) corre el mismo código de `bot/`, y un escenario nuevo va en `evals/promptfooconfig.yaml`.
 
 ## Idioma
 

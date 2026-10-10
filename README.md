@@ -39,11 +39,14 @@ La metodología completa, con la escala de veredictos y los límites conocidos, 
 
 ## Estructura del repo
 
-| Carpeta    | Qué es                                                                                                               |
-| ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| `bot/`     | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`. |
-| `landing/` | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll.                        |
-| `evals/`   | Escenarios de calidad del modelo con promptfoo.                                                                      |
+| Carpeta       | Qué es                                                                                                               |
+| ------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `bot/`        | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`. |
+| `landing/`    | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll.                        |
+| `evals/`      | Escenarios de calidad del modelo con promptfoo.                                                                      |
+| `migrations/` | El esquema de D1, con las migraciones de wrangler.                                                                   |
+
+Es un monorepo: un solo `pnpm install` en la raíz instala el bot y la landing (workspace de pnpm, un solo lockfile), y `pnpm check` revisa los dos.
 
 Cada carpeta tiene su `AGENTS.md` con sus reglas. El repo sigue [context architecture](https://context-architecture.dev/): cada regla que el repo afirma sobre sí mismo está atada a un test que falla si deja de cumplirse.
 
@@ -75,11 +78,10 @@ pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily
 `landing/` se publica en **https://es.cierto.workers.dev** (Worker `es` en el subdominio `cierto` de workers.dev). Al hacer scroll, un video sigue un hilo de lino desde una publicación hasta su fuente. Las imágenes y los clips se generaron con IA (Higgsfield, GPT Image y MiniMax H3); los prompts, las técnicas y los antipatrones están en [landing/PROMPTS.md](landing/PROMPTS.md).
 
 ```bash
-cd landing
-pnpm install
+cd landing     # la instalación de la raíz ya incluye la landing (workspace de pnpm)
 pnpm typecheck # tipos (astro sync + tsc)
 pnpm test      # cálculo del recorrido y reglas de la página
-pnpm deploy    # astro build + wrangler deploy
+pnpm run deploy    # astro build + wrangler deploy
 ```
 
 Después de desplegar, espera unos 30 segundos antes de probar: el HTML nuevo puede llegar a Cloudflare antes que sus estilos.
@@ -95,7 +97,7 @@ npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavi
 npx wrangler secret put BSKY_APP_PASSWORD
 npx wrangler secret put GOOGLE_FACTCHECK_KEY
 npx wrangler secret put CORRECCIONES_TOKEN     # para publicar correcciones (POST /correcciones); genera uno largo y aleatorio
-pnpm deploy
+pnpm run deploy
 ```
 
 ## Publicar una corrección

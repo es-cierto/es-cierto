@@ -43,7 +43,7 @@ El hilo sigue después del video como trazo SVG, y siempre dice algo: se ata a l
 pnpm typecheck # tipos (astro sync + tsc)
 pnpm test      # cálculo del recorrido y arquitectura
 pnpm build
-pnpm deploy    # build + wrangler deploy
+pnpm run deploy    # build + wrangler deploy
 ```
 
 Después de desplegar, esperar unos 30 segundos antes de probar el sitio publicado: el HTML nuevo puede llegar al borde de Cloudflare antes que su CSS y dar un 404 transitorio.

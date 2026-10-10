@@ -1,0 +1,18 @@
+# Un solo repo, una sola instalación y un solo lockfile: el bot vive en la raíz y la landing es un paquete del workspace.
+packages:
+  - landing
+
+# No instalar versiones publicadas hace menos de 24 horas: la mayoría de los paquetes comprometidos se detectan antes.
+minimumReleaseAge: 1440
+# Excepciones al plazo de 24 horas. La lista solo se achica: cada entrada dice por qué y cuándo se borra.
+minimumReleaseAgeExclude:
+  # promptfoo (solo evals, nunca entra al bundle) pide la versión del SDK de AWS publicada el 9-oct-2026 17:55.
+  # Borrar después del 11-oct-2026.
+  - "@aws-sdk/*"
+
+# Solo estos paquetes pueden correr scripts al instalarse (binarios de esbuild, workerd y sharp). Uno nuevo se agrega
+# a mano, sabiendo por qué.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - workerd

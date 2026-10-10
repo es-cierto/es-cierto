@@ -15,17 +15,17 @@
     "lint": "oxlint --type-aware",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm --filter escierto-landing typecheck && pnpm --filter escierto-landing test",
     "db:migrar": "wrangler d1 migrations apply escierto"
   },
   "dependencies": {
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@types/node": "^26.6.5",
+    "@types/node": "^26.6.0",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
-    "oxlint-tsgolint": "^7.0.2004",
+    "oxlint-tsgolint": "7.0.2003",
     "promptfoo": "^0.124.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.149.0"
