@@ -27,6 +27,7 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 
 - `bot/index.ts`: punto de entrada (cron y rutas). Solo encola trabajo y entrega páginas.
 - `bot/chequeo.ts`: el Workflow. Una mención inicia una verificación y una respuesta al bot inicia un turno de conversación (rama `conversar`). Para seguir cualquiera de las dos de punta a punta, empieza aquí.
+- `bot/correccion.ts`: el Workflow de correcciones. Una persona que mantiene el proyecto publica la corrección (`POST /correcciones`, con token) y el bot avisa en cada hilo donde había dado el veredicto anterior.
 
 Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `migrations/` (el esquema de D1, con las migraciones de wrangler), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
 

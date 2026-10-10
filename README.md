@@ -94,8 +94,28 @@ pnpm db:migrar -- --remote
 npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavily.com
 npx wrangler secret put BSKY_APP_PASSWORD
 npx wrangler secret put GOOGLE_FACTCHECK_KEY
+npx wrangler secret put CORRECCIONES_TOKEN     # para publicar correcciones (POST /correcciones); genera uno largo y aleatorio
 pnpm deploy
 ```
+
+## Publicar una corrección
+
+Cuando un reporte se confirma (ver [Correcciones](METODOLOGIA.md#correcciones)), quien mantiene el proyecto publica la versión corregida. El bot la guarda, marca la anterior como corregida y avisa en cada hilo donde había respondido:
+
+```bash
+curl -X POST "$PUBLIC_URL/correcciones" \
+  -H "authorization: Bearer $CORRECCIONES_TOKEN" \
+  -d '{
+    "investigacionId": "<id de la investigación equivocada>",
+    "veredicto": "mayormente_verdadero",
+    "confianza": "media",
+    "resumen": "El monto es correcto, pero rige desde mayo.",
+    "fuentes": [{ "titulo": "Ministerio del Trabajo", "url": "https://www.mintrab.gob.cl/..." }],
+    "nota": "Qué cambió y por qué, en una o dos oraciones."
+  }'
+```
+
+Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sitios distintos, igual que en una investigación. Cada investigación se corrige una sola vez: para volver a corregir, se corrige la versión nueva.
 
 ## Pendientes
 

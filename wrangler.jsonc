@@ -19,7 +19,7 @@
     "PRUEBA_WEB": "no",
   },
   "secrets": {
-    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY"],
+    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY", "CORRECCIONES_TOKEN"],
   },
 
   "d1_databases": [
@@ -27,5 +27,8 @@
   ],
   "vectorize": [{ "binding": "VECTORIZE", "index_name": "escierto-afirmaciones", "remote": true }],
   "ai": { "binding": "AI", "remote": true },
-  "workflows": [{ "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" }],
+  "workflows": [
+    { "name": "chequeo", "binding": "CHEQUEO", "class_name": "Chequeo" },
+    { "name": "correccion", "binding": "CORRECCION", "class_name": "Correccion" },
+  ],
 }

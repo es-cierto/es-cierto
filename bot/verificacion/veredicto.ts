@@ -15,3 +15,11 @@ export const ETIQUETAS: Record<Veredicto["veredicto"], string> = {
   falso: "❌ Falso",
   no_verificable: "❔ No verificable",
 };
+
+// Lo que manda quien mantiene el proyecto para corregir una investigación (POST /correcciones). La nota explica qué
+// cambió y por qué; va en la página y en la respuesta del hilo.
+export const PedidoCorreccion = Veredicto.extend({
+  investigacionId: z.uuid(),
+  nota: z.string().trim().min(10).max(200),
+});
+export type PedidoCorreccion = z.infer<typeof PedidoCorreccion>;

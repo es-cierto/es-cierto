@@ -31,9 +31,7 @@ const datos = {
     },
     {
       '@type': 'FAQPage',
-      mainEntity: preguntas
-        .filter((p) => !p.pendiente)
-        .map((p) => ({ '@type': 'Question', name: p.pregunta, acceptedAnswer: { '@type': 'Answer', text: p.respuesta } })),
+      mainEntity: preguntas.map((p) => ({ '@type': 'Question', name: p.pregunta, acceptedAnswer: { '@type': 'Answer', text: p.respuesta } })),
     },
   ],
 };

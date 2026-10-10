@@ -93,11 +93,16 @@ export const preguntas = [
   },
   {
     pregunta: '¿Cómo reporto un error?',
-    respuesta: 'Desde la página de cada investigación o en GitHub. Las correcciones quedan publicadas.',
+    respuesta: 'Desde la página de cada investigación o en GitHub. La corrección se publica y el bot avisa en el hilo.',
+  },
+  {
+    pregunta: '¿Sigue algún estándar?',
+    respuesta:
+      'Los cinco principios de la red internacional de verificadores (IFCN). Aún no es signatario: eso exige una organización constituida.',
   },
   {
     pregunta: '¿Quién lo financia?',
-    respuesta: 'Todavía no está definido. Se publicará con sus condiciones.',
-    pendiente: true,
+    respuesta:
+      'Hoy nadie: funciona en planes gratuitos. Si llega dinero, se publica quién aporta y con qué condiciones.',
   },
 ];
