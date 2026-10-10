@@ -1,0 +1,39 @@
+name: DCO
+
+# Developer Certificate of Origin (https://developercertificate.org): cada commit de un PR lleva
+# "Signed-off-by" con el mismo correo de quien lo escribió. Así cada aporte certifica que se puede publicar bajo la
+# licencia del proyecto (AGPL-3.0). Los hooks del repo lo agregan solos; ver CONTRIBUTING.md.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dco:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Cada commit está firmado
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          faltan=0
+          for c in $(git rev-list --no-merges "$BASE..$HEAD"); do
+            correo=$(git log -1 --format=%ae "$c")
+            # Los bots (Dependabot, Actions) no firman: no son personas que puedan certificar.
+            case "$correo" in *"[bot]@users.noreply.github.com") continue ;; esac
+            # Se compara como texto (-F): un correo con "+" o "." no es una expresión regular.
+            if ! git log -1 --format=%B "$c" | grep -i '^Signed-off-by:' | grep -qF "<$correo>"; then
+              echo "::error::$(git log -1 --format='%h %s' "$c") no tiene 'Signed-off-by: … <$correo>'"
+              faltan=1
+            fi
+          done
+          if [ "$faltan" = 1 ]; then
+            echo "Para firmar los commits de esta rama: git rebase --signoff $BASE && git push --force-with-lease"
+            exit 1
+          fi

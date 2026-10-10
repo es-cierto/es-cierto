@@ -1,0 +1,6 @@
+#!/bin/sh
+# DCO: firma cada commit ("Signed-off-by") con el nombre y correo de git, para no tener que acordarse del -s.
+# No firma dos veces ni toca los mensajes de merge o squash.
+case "$2" in merge|squash) exit 0 ;; esac
+firma="Signed-off-by: $(git config user.name) <$(git config user.email)>"
+grep -qsF "$firma" "$1" || git interpret-trailers --in-place --if-exists doNothing --trailer "$firma" "$1"

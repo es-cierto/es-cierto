@@ -44,6 +44,12 @@ Si tocas la landing, revisa cómo se ve en escritorio y en celular antes de pedi
 - Claves, tokens o `.dev.vars` en el repo. Si se filtra una por error, avisa: hay que revocarla, no basta con borrar el commit.
 - Datos inventados en la página o en los ejemplos.
 
+## Firma de los commits (DCO)
+
+Cada commit lleva al final una línea `Signed-off-by: Tu Nombre <tu@correo>`. Con ella certificas el [Developer Certificate of Origin](https://developercertificate.org): que escribiste ese cambio o tienes derecho a aportarlo, y que se puede publicar bajo la licencia del proyecto (AGPL-3.0). Lo usan proyectos como el kernel de Linux y GitLab.
+
+No tienes que hacer nada: el hook `.githooks/prepare-commit-msg` (se activa con `pnpm install`) la agrega sola, con el nombre y correo de tu `git config`. El correo tiene que ser el mismo con que firmas el commit. Si trabajas desde un fork sin los hooks, usa `git commit -s`. El check `DCO` del PR avisa si falta en algún commit y dice cómo arreglarlo.
+
 ## Despliegue
 
 El bot y la página corren en la cuenta de Cloudflare del proyecto. Por ahora despliegan solo las personas que mantienen el proyecto, después de mergear. Nadie necesita acceso a Cloudflare ni a la cuenta de Bluesky para contribuir.
@@ -51,4 +57,5 @@ El bot y la página corren en la cuenta de Cloudflare del proyecto. Por ahora de
 ## Conducta y seguridad
 
 - Sigue el [código de conducta](CODE_OF_CONDUCT.md).
+- Cómo se toman las decisiones, quién mantiene el proyecto y cómo se llega a mantenedor: [GOVERNANCE.md](GOVERNANCE.md).
 - Las vulnerabilidades se reportan en privado: [SECURITY.md](SECURITY.md).
