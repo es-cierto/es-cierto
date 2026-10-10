@@ -59,7 +59,7 @@ export const pasos = [
   },
 ];
 
-export const lema = ['El volumen no cambia el veredicto.', 'La evidencia, sí.'];
+export const lema = ['El volumen no cambia el\u00a0veredicto.', 'La evidencia, sí.'];
 
 export const preguntas = [
   {
