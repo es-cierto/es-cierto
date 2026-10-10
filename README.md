@@ -93,7 +93,7 @@ npx wrangler d1 create escierto                  # copia el database_id a wrangl
 npx wrangler vectorize create escierto-afirmaciones --dimensions 1024 --metric cosine
 npx wrangler vectorize create-metadata-index escierto-afirmaciones --property-name creado_en --type number
 pnpm db:migrar -- --remote
-./scripts/secretos.sh                      # pide cada secreto oculto y lo sube; o uno por uno:
+./scripts/secretos.sh                      # sube los secretos desde tu .env local; o uno por uno:
 npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavily.com
 npx wrangler secret put BSKY_APP_PASSWORD
 npx wrangler secret put GOOGLE_FACTCHECK_KEY
