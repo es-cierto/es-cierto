@@ -1,6 +1,6 @@
 # Landing — guía para agentes
 
-La página pública de ¿Es Cierto? (Astro estático en un Worker de Cloudflare propio). El concepto es **tirar del hilo**: el scroll avanza un video que sigue un hilo de lino crudo desde una publicación hasta su fuente. Las reglas del repo (`../AGENTS.md`) aplican aquí también.
+La página pública de ¿Es Cierto?: Astro estático en un Worker de solo assets (`es`), publicado en **https://es.cierto.workers.dev** (subdominio `cierto` de workers.dev). El concepto es **tirar del hilo**: el scroll avanza un video que sigue un hilo de lino crudo desde una publicación hasta su fuente. Las reglas del repo (`../AGENTS.md`) aplican aquí también.
 
 ## Invariantes
 
@@ -8,11 +8,12 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 
 - **Ningún dato inventado.** Todo texto sale de `METODOLOGIA.md` o de una fuente comprobada a mano. Nada de cifras, testimonios ni logos. El skill `landing-page-design` pide "números orgánicos": aquí no aplica, y se anula.
 - **Sin rojo.** En Chile se lee como el color de un sector político. La paleta sale de las imágenes: fondo, papel y lino (`src/styles/global.css`). Tampoco emojis de color: los íconos son Phosphor en `currentColor`.
-- **La cuenta del bot no se inventa.** `escierto.bsky.social` es de otra persona. Mientras `cuentaBluesky` sea `null`, la página dice que el bot está en preparación.
+- **La cuenta del bot no se inventa.** `escierto.bsky.social` es de otra persona. Mientras `cuentaBluesky` sea `null`, la página dice "Muy pronto en Bluesky" y no enlaza ninguna cuenta.
 - **El texto vive en el HTML.** El video es fondo (`aria-hidden`); sin JS, sin video o con movimiento reducido la página se entiende entera.
 - **Movimiento reducido y ahorro de datos:** no se descarga ningún video; quedan las imágenes de cada parada.
 - **Las imágenes y el video se declaran como generados con IA**, en el recorrido y en el pie.
-- **Redacción clara.** Primero lo literal y después la metáfora del hilo, que aparece una sola vez como imagen (la búsqueda). Una palabra para cada cosa: *mencionar* (no etiquetar), *publicación* (no post), *el bot*, *fuentes*, *veredicto* o *respuesta*. Nada de jerga: si aparece una sigla (IFCN), se explica. Texto de lectura en 18 px, etiquetas en 14 px como mínimo.
+- **Pocas palabras.** Quien llega lee en diagonal: cada pantalla es un titular de pocas palabras y, como mucho, una línea de apoyo (unas 12 palabras). Si una sección repite lo que ya contó el recorrido, se saca.
+- **Redacción clara.** Primero lo literal y después la metáfora del hilo, que aparece una sola vez como imagen ("Tira del hilo", la búsqueda). Una palabra para cada cosa: *mencionar* (no etiquetar), *publicación* (no post), *el bot*, *fuentes*, *veredicto* o *respuesta*. Nada de jerga: si aparece una sigla (IFCN), se explica. Titulares de las pantallas en `text-5xl`/`lg:text-7xl`; texto de apoyo en 20 px; nada bajo 14 px salvo la nota de IA.
 - **Peso:** cada clip pesa menos de 4 MB en cada variante y cada imagen de parada menos de 300 KB.
 
 ## Archivos
@@ -38,6 +39,8 @@ pnpm test      # cálculo del recorrido y arquitectura
 pnpm build
 pnpm deploy    # build + wrangler deploy
 ```
+
+Después de desplegar, esperar unos 30 segundos antes de probar el sitio publicado: el HTML nuevo puede llegar al borde de Cloudflare antes que su CSS y dar un 404 transitorio.
 
 Para probar el scroll de verdad (escritorio, celular, movimiento reducido), usar un navegador headless con perfil propio, nunca el Chrome de la persona.
 

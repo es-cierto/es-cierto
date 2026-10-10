@@ -2,9 +2,9 @@
 import { enlaces } from '../data/sitio';
 
 const puntos = [
-  { titulo: 'Todo es público', texto: 'El código, las instrucciones que sigue el bot y cada investigación se pueden revisar.' },
-  { titulo: 'Solo fuentes que existen', texto: 'Si una fuente no apareció en la búsqueda, el bot no puede usarla. Sin fuentes, no hay veredicto.' },
-  { titulo: 'Puede equivocarse', texto: 'La investigación la hace una inteligencia artificial. Por eso siempre muestra sus fuentes y los errores se corrigen a la vista.' },
+  { titulo: 'Código público', texto: 'Cualquiera puede revisar cómo decide.' },
+  { titulo: 'Solo fuentes reales', texto: 'Si no la encontró, no la usa.' },
+  { titulo: 'Puede equivocarse', texto: 'Y corrige sus errores a la vista.' },
 ];
 ---
 
@@ -12,14 +12,14 @@ const puntos = [
   <div class="mx-auto max-w-6xl">
     <div data-revelar class="max-w-[680px]">
       <p class="text-sm font-semibold tracking-wider text-lino uppercase">Transparencia</p>
-      <h2 id="titulo-transparencia" class="mt-4 text-4xl text-balance lg:text-5xl">Puedes revisar cómo llega a cada&nbsp;respuesta.</h2>
+      <h2 id="titulo-transparencia" class="mt-4 text-4xl text-balance lg:text-6xl">Abierto y&nbsp;revisable.</h2>
     </div>
     <ul class="mt-12 grid gap-4 md:grid-cols-3">
       {
         puntos.map((punto, i) => (
           <li data-revelar style={`transition-delay: ${i * 100}ms`} class="rounded-2xl bg-papel/[0.04] p-6 ring-1 ring-papel/10">
-            <h3 class="text-lg">{punto.titulo}</h3>
-            <p class="mt-2 text-base text-papel/80">{punto.texto}</p>
+            <h3 class="text-xl">{punto.titulo}</h3>
+            <p class="mt-2 text-lg text-papel/80">{punto.texto}</p>
           </li>
         ))
       }

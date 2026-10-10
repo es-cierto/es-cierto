@@ -13,8 +13,8 @@ import algoAtado from '../assets/recorrido/3-algo-atado.webp';
 const imagenes = [inicio, tirar, fuentes, algoAtado];
 // Un clip por tramo: el clip k va de la parada k a la k+1.
 const clips = ['A', 'B', 'C'];
-const titulo = 'mt-4 max-w-xl text-4xl text-balance lg:text-5xl';
-const cuerpo = 'mt-4 max-w-md text-lg text-papel/90';
+const titulo = 'mt-4 max-w-xl text-5xl text-balance lg:text-7xl';
+const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
 ---
 
 <section id="recorrido" data-recorrido aria-label="Cómo funciona, paso a paso" class="relative">
@@ -95,56 +95,47 @@ const cuerpo = 'mt-4 max-w-md text-lg text-papel/90';
   </div>
 
   <div class="relative z-10 -mt-[100lvh]">
-    <Parada indice={0}>
-      <h1 class="mt-4">
+    <Parada indice={0} sinPaso>
+      <h1>
         <span class="block text-sm font-semibold tracking-wider text-lino uppercase">Verificador de datos para Bluesky</span>
-        <span class="mt-4 block max-w-[680px] bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-4xl text-balance text-transparent lg:text-6xl">
-          Te decimos si un dato es cierto, con las&nbsp;fuentes.
+        <span class="mt-4 block max-w-[680px] bg-linear-to-r from-white to-[#9b9b9b] bg-clip-text pb-2 text-5xl text-balance text-transparent lg:text-7xl">
+          Te decimos si un dato es&nbsp;cierto.
         </span>
       </h1>
-      <p class={cuerpo}>
-        Mencionas al bot en la publicación de Bluesky donde viste el dato. Busca de dónde sale y te responde ahí mismo:
-        con las fuentes que lo confirman o lo desmienten, o avisándote que no encontró ninguna.
-      </p>
+      <p class="mt-4 max-w-md text-xl text-papel/90">Lo mencionas en la publicación y te responde con&nbsp;fuentes.</p>
       {
         cuentaBluesky ? (
-          <a href={cuentaBluesky.url} class="boton boton-principal mt-6">Menciona a @{cuentaBluesky.handle}</a>
+          <a href={cuentaBluesky.url} class="boton boton-principal mt-8">Menciona a @{cuentaBluesky.handle}</a>
         ) : (
-          <p class="mt-6 inline-flex items-center gap-2 rounded-full bg-fondo/60 px-4 py-2 text-sm text-papel ring-1 ring-papel/20 backdrop-blur-md">
+          <p class="mt-8 inline-flex items-center gap-2 rounded-full bg-fondo/60 px-4 py-2 text-sm text-papel ring-1 ring-papel/20 backdrop-blur-md">
             <span aria-hidden="true" class="size-2 rounded-full bg-lino"></span>
-            El bot todavía no está activo. Muy pronto en Bluesky.
+            Muy pronto en Bluesky
           </p>
         )
       }
     </Parada>
 
     <Parada indice={1}>
-      <h2 class={titulo}>Mencionas al bot donde viste el&nbsp;dato.</h2>
-      <p class={cuerpo}>
-        Respondes a la publicación y escribes la cuenta del bot. Él separa el dato que se puede comprobar de las
-        opiniones, que no se verifican.
-      </p>
+      <h2 class={titulo}>Lo&nbsp;mencionas.</h2>
+      <p class={cuerpo}>Respondes a la publicación con la cuenta del&nbsp;bot.</p>
     </Parada>
 
     <Parada indice={2}>
-      <h2 class={titulo}>Tira del hilo hasta encontrar de dónde sale el&nbsp;dato.</h2>
-      <p class={cuerpo}>
-        Revisa leyes, datos oficiales, estudios y verificaciones profesionales. Si con la primera búsqueda no basta,
-        vuelve a buscar. Solo usa las fuentes que de verdad encontró.
-      </p>
+      <h2 class={titulo}>Tira del&nbsp;hilo.</h2>
+      <p class={cuerpo}>Busca el dato en leyes, datos oficiales y&nbsp;estudios.</p>
     </Parada>
 
     <Parada indice={3}>
-      <h2 class={titulo}>Si encuentra fuentes, te dice qué tan cierto&nbsp;es.</h2>
-      <figure class="mt-6 w-full max-w-md rounded-2xl bg-fondo/70 p-5 ring-1 ring-papel/15 backdrop-blur-md">
-        <figcaption class="text-sm font-semibold tracking-wider text-papel/70 uppercase">Así se ve una respuesta</figcaption>
-        <p class="mt-3 text-sm text-papel/70">Afirmación revisada</p>
-        <blockquote class="mt-1 text-base text-papel">«{ejemplo.afirmacion}»</blockquote>
-        <p class="mt-4 flex items-center gap-2 text-xl font-semibold"><Icono nombre={ejemplo.icono} class="size-6 text-lino" /> {ejemplo.veredicto}</p>
-        <p class="mt-2 text-base text-papel/90">{ejemplo.resumen}</p>
-        <p class="mt-4 text-sm text-papel/70">
-          Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
-        </p>
+      <h2 class={titulo}>Te responde con&nbsp;fuentes.</h2>
+      <figure class="mt-6 w-full max-w-sm rounded-2xl bg-fondo/75 p-5 ring-1 ring-papel/15 backdrop-blur-md">
+        <blockquote class="text-base text-papel/80">«{ejemplo.afirmacion}»</blockquote>
+        <figcaption class="mt-4">
+          <p class="flex items-center gap-2 text-2xl font-semibold"><Icono nombre={ejemplo.icono} class="size-7 text-lino" /> {ejemplo.veredicto}</p>
+          <p class="mt-1 text-base text-papel/90">{ejemplo.resumen}</p>
+          <p class="mt-3 text-sm text-papel/70">
+            Fuente: <a class="enlace" href={ejemplo.fuente.url} rel="noopener">{ejemplo.fuente.titulo}</a>
+          </p>
+        </figcaption>
       </figure>
     </Parada>
   </div>

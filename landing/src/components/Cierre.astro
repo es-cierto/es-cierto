@@ -4,7 +4,7 @@ import { cuentaBluesky, enlaces } from '../data/sitio';
 
 <section aria-labelledby="titulo-cierre" class="px-4 py-32 md:px-12 xl:px-24">
   <div data-revelar class="mx-auto flex max-w-[680px] flex-col items-center text-center">
-    <h2 id="titulo-cierre" class="text-4xl lg:text-6xl">¿Viste un dato dudoso?</h2>
+    <h2 id="titulo-cierre" class="text-5xl text-balance lg:text-7xl">¿Viste un dato dudoso?</h2>
     {
       cuentaBluesky ? (
         <>
@@ -13,13 +13,10 @@ import { cuentaBluesky, enlaces } from '../data/sitio';
         </>
       ) : (
         <>
-          <p class="mt-4 text-lg text-papel/85">
-            El bot todavía no está activo. Mientras tanto, puedes leer cómo verifica cada dato y seguir el proyecto, que es
-            abierto.
-          </p>
+          <p class="mt-4 text-xl text-papel/85">Muy pronto podrás mencionar al bot en&nbsp;Bluesky.</p>
           <div class="mt-8 flex flex-wrap justify-center gap-3">
             <a href={enlaces.metodologia} class="boton boton-principal">Leer cómo verifica</a>
-            <a href={enlaces.repo} class="boton boton-secundario">Seguir el proyecto en GitHub</a>
+            <a href={enlaces.repo} class="boton boton-secundario">Seguir en GitHub</a>
           </div>
         </>
       )

@@ -28,7 +28,7 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 - `bot/index.ts`: punto de entrada (cron y rutas). Solo encola trabajo y entrega páginas.
 - `bot/chequeo.ts`: el Workflow. Una mención inicia una verificación y una respuesta al bot inicia un turno de conversación (rama `conversar`). Para seguir cualquiera de las dos de punta a punta, empieza aquí.
 
-Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `schema.sql` (D1), `wrangler.jsonc` (configuración) y `landing/` (la página pública, con su propio `AGENTS.md`).
+Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `schema.sql` (D1), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
 
 Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`: `verificacion`, `conversacion` y `redes` solo dependen de `shared`. Un dominio nuevo llega con su `AGENTS.md` y su línea en `FRONTERAS`.
 
@@ -48,7 +48,7 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 
 ## Secretos y configuración
 
-`wrangler.jsonc` es la fuente de verdad. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
+`wrangler.jsonc` es la fuente de verdad. Dos valores de identidad están **pendientes y no son nuestros**: `BSKY_HANDLE` (`escierto.bsky.social` es de otra persona) y `PUBLIC_URL` (`escierto.org` no está registrado por el proyecto). Nunca se enlaza ni se publica uno de ellos como propio; cuando existan la cuenta y el dominio reales, se cambian aquí y en `landing/src/data/sitio.ts`. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
 
 ## Verificar
 

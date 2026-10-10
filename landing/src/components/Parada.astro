@@ -5,19 +5,25 @@ import { recorrido } from '../data/sitio';
 // quieta en esta parada y se va cuando empieza el tramo hacia la siguiente.
 interface Props {
   indice: number;
+  /** La portada no lleva "Paso 1 de 4": su titular se presenta solo. */
+  sinPaso?: boolean;
 }
 
-const { indice } = Astro.props;
+const { indice, sinPaso = false } = Astro.props;
 const parada = recorrido[indice];
 ---
 
 <article id={parada.id} data-parada data-foco={parada.foco} class="parada pointer-events-none flex min-h-[190svh] flex-col justify-end">
   <div class="cuerpo pointer-events-auto sticky bottom-0 flex w-full max-w-2xl xl:max-w-4xl flex-col items-start px-4 pt-32 pb-12 md:px-12 lg:pb-16 xl:px-24">
-    <p class="flex items-center gap-2 text-sm tracking-wider text-papel/75 uppercase">
-      <span class="tabular-nums">Paso {indice + 1} de {recorrido.length}</span>
-      <span aria-hidden="true" class="size-1 rounded-full bg-lino"></span>
-      <span>{parada.nombre}</span>
-    </p>
+    {
+      !sinPaso && (
+        <p class="flex items-center gap-2 text-sm tracking-wider text-papel/75 uppercase">
+          <span class="tabular-nums">Paso {indice} de {recorrido.length - 1}</span>
+          <span aria-hidden="true" class="size-1 rounded-full bg-lino" />
+          <span>{parada.nombre}</span>
+        </p>
+      )
+    }
     <slot />
   </div>
 </article>

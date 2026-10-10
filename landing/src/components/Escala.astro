@@ -7,18 +7,14 @@ import { escala } from '../data/sitio';
   <div class="mx-auto max-w-6xl">
     <div data-revelar class="max-w-[680px]">
       <p class="text-sm font-semibold tracking-wider text-lino uppercase">Los veredictos</p>
-      <h2 id="titulo-escala" class="mt-4 text-4xl text-balance lg:text-5xl">Cinco respuestas&nbsp;posibles.</h2>
-      <p class="mt-4 text-lg text-papel/85">
-        Se evalúa lo principal de la afirmación: un error en un detalle menor no la vuelve falsa. Cada respuesta indica
-        además qué tan seguro está el bot (confianza baja, media o alta), según la calidad de las fuentes.
-      </p>
+      <h2 id="titulo-escala" class="mt-4 text-4xl text-balance lg:text-6xl">Cinco respuestas&nbsp;posibles.</h2>
     </div>
     <ol class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
       {
         escala.map((paso, i) => (
-          <li data-revelar style={`transition-delay: ${i * 80}ms`} class="flex flex-col gap-3 rounded-2xl bg-papel/[0.04] p-5 ring-1 ring-papel/10">
+          <li data-revelar style={`transition-delay: ${i * 80}ms`} class="flex flex-col gap-2 rounded-2xl bg-papel/[0.04] p-5 ring-1 ring-papel/10">
             <Icono nombre={paso.icono} class="size-7 text-lino" />
-            <h3 class="text-lg">{paso.nombre}</h3>
+            <h3 class="text-xl">{paso.nombre}</h3>
             <p class="text-base text-papel/80">{paso.texto}</p>
           </li>
         ))
