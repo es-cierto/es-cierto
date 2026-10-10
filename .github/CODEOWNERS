@@ -1,0 +1,14 @@
+# Lo que cambia cómo verifica el bot, dónde corre o cómo se presenta en público necesita la revisión de
+# quienes mantienen el proyecto. El resto lo puede aprobar cualquier persona con permiso de escritura.
+METODOLOGIA.md                      @es-cierto/mantenedores
+bot/verificacion/prompts.ts         @es-cierto/mantenedores
+bot/verificacion/reglas.ts          @es-cierto/mantenedores
+bot/conversacion/prompt.ts          @es-cierto/mantenedores
+bot/conversacion/reglas.ts          @es-cierto/mantenedores
+bot/shared/modelo.ts                @es-cierto/mantenedores
+wrangler.jsonc                      @es-cierto/mantenedores
+landing/wrangler.jsonc              @es-cierto/mantenedores
+migrations/                         @es-cierto/mantenedores
+perfiles/                           @es-cierto/mantenedores
+pnpm-workspace.yaml                 @es-cierto/mantenedores
+.github/                            @es-cierto/mantenedores

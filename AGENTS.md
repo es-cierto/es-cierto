@@ -31,7 +31,7 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 
 Es un monorepo con un workspace de pnpm: el bot vive en la raíz y `landing/` es un paquete del workspace. Hay un solo lockfile y una sola instalación, y `pnpm check` revisa los dos. Las reglas de instalación (plazo de 24 horas para versiones nuevas, qué paquetes pueden correr scripts) están en `pnpm-workspace.yaml`.
 
-Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `migrations/` (el esquema de D1, con las migraciones de wrangler), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`).
+Fuera de `bot/`: `evals/` (calidad del modelo con promptfoo), `migrations/` (el esquema de D1, con las migraciones de wrangler), `wrangler.jsonc` (configuración) y `landing/` (la página pública, publicada en https://es.cierto.workers.dev, con su propio `AGENTS.md`) y `perfiles/` (los perfiles del bot en Bluesky y de la organización en GitHub, con su `AGENTS.md`).
 
 Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`: `verificacion`, `conversacion` y `redes` solo dependen de `shared`. Un dominio nuevo llega con su `AGENTS.md` y su línea en `FRONTERAS`.
 
@@ -52,6 +52,10 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 ## Base de datos
 
 El esquema de D1 vive en `migrations/`, con las migraciones de wrangler (`pnpm db:migrar`), sin ORM. Una migración commiteada no se edita: un cambio de esquema es un archivo nuevo con el número siguiente (`0002_algo.sql`).
+
+## Colaboración
+
+`main` está protegida: se entra por PR, con el CI (`verificar`) en verde y una aprobación. Lo que define la metodología, dónde corre el bot o cómo se presenta en público necesita además la revisión del equipo `mantenedores`, según `.github/CODEOWNERS`; el test de arquitectura exige que todo archivo con prompts o umbrales esté ahí. Cómo contribuir, para personas: `CONTRIBUTING.md`.
 
 ## Secretos y configuración
 
@@ -75,7 +79,7 @@ Cada afirmación de los `AGENTS.md` está atada a algo que falla si deja de ser 
 
 Una afirmación nueva llega con su mecanismo. Para que un test pase, se arregla el código, no se debilita el test.
 
-Sin mecanismo todavía (se revisan a mano): la durabilidad del Workflow y el escape de las páginas públicas.
+Sin mecanismo todavía (se revisan a mano): la durabilidad del Workflow, el escape de las páginas públicas y las reglas de `GOVERNANCE.md` que GitHub no puede exigir por carpeta (7 días de discusión y dos aprobaciones para la metodología). El DCO sí tiene mecanismo: el check `DCO` de cada PR.
 
 Los tests usan el runner nativo de Node (`node --test`), con imports `.ts` explícitos. No agregues un framework de tests. Cómo se escribe un test:
 

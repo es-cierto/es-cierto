@@ -187,3 +187,20 @@ test("las migraciones solo se agregan: una ya commiteada no se edita, y van nume
     }
   });
 });
+
+test("CODEOWNERS solo nombra rutas que existen y cubre lo que define la metodología", () => {
+  const reglas = leer(".github/CODEOWNERS")
+    .split("\n")
+    .filter((l) => l.trim() && !l.startsWith("#"))
+    .map((l) => l.trim().split(/\s+/));
+  for (const [ruta, ...duenos] of reglas) {
+    assert.ok(existsSync(join(raiz, ruta)), `CODEOWNERS nombra ${ruta}, que no existe`);
+    assert.ok(duenos.length > 0, `${ruta} no tiene dueño en CODEOWNERS`);
+  }
+  const cubiertas = new Set(reglas.map(([ruta]) => ruta));
+  // Los prompts y los umbrales son metodología (ver "cambiar un prompt o un umbral obliga a actualizar METODOLOGIA.md").
+  const metodologia = codigo.filter((ruta) => /system: `|^export const [A-Z_]+ = /m.test(leer(ruta)));
+  for (const ruta of ["METODOLOGIA.md", ...metodologia]) {
+    assert.ok(cubiertas.has(ruta), `${ruta} define metodología y no tiene dueño en CODEOWNERS`);
+  }
+});

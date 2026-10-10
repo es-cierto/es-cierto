@@ -39,12 +39,13 @@ La metodología completa, con la escala de veredictos y los límites conocidos, 
 
 ## Estructura del repo
 
-| Carpeta       | Qué es                                                                                                               |
-| ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `bot/`        | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`. |
-| `landing/`    | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll.                        |
-| `evals/`      | Escenarios de calidad del modelo con promptfoo.                                                                      |
-| `migrations/` | El esquema de D1, con las migraciones de wrangler.                                                                   |
+| Carpeta       | Qué es                                                                                                                |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `bot/`        | El bot (un Worker), con una carpeta por dominio: `verificacion/`, `conversacion/`, `redes/`, `paginas/` y `shared/`.  |
+| `landing/`    | La página pública: Astro estático en su propio Worker, con un video controlado por el scroll.                         |
+| `evals/`      | Escenarios de calidad del modelo con promptfoo.                                                                       |
+| `migrations/` | El esquema de D1, con las migraciones de wrangler.                                                                    |
+| `perfiles/`   | Los perfiles del bot en Bluesky y de la organización en GitHub: textos, avatar y portada. `pnpm perfiles` los aplica. |
 
 Es un monorepo: un solo `pnpm install` en la raíz instala el bot y la landing (workspace de pnpm, un solo lockfile), y `pnpm check` revisa los dos.
 
@@ -128,7 +129,7 @@ Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sit
 
 ## Contribuir
 
-Lee [CONTRIBUTING.md](CONTRIBUTING.md). Las vulnerabilidades se reportan en privado: [SECURITY.md](SECURITY.md).
+Lee [CONTRIBUTING.md](CONTRIBUTING.md), el [código de conducta](CODE_OF_CONDUCT.md) y la [gobernanza](GOVERNANCE.md). Para empezar, busca issues con la etiqueta `good first issue`. Las vulnerabilidades se reportan en privado: [SECURITY.md](SECURITY.md).
 
 ## Licencia
 

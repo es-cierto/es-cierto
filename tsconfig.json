@@ -11,5 +11,5 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   },
-  "include": ["bot", "evals", "worker-configuration.d.ts"]
+  "include": ["bot", "evals", "perfiles", "scripts", "worker-configuration.d.ts"]
 }
