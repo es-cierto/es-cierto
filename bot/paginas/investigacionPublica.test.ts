@@ -67,3 +67,31 @@ test("la versión nueva muestra la nota escapada y enlaza a la anterior", () => 
   assert.ok(correccion.includes("La fecha era &#60;mayo&#62;, no julio."));
   assert.match(correccion, /href="\/a\/0b8c2f9e-3c1a-4c55-9d3e-2f6a1b7c8d90"/);
 });
+
+test("al compartir, la tarjeta lleva el veredicto, la afirmación, el resumen y la imagen de su veredicto", async () => {
+  const { metaParaCompartir } = await import("./html.ts");
+  const meta = metaParaCompartir({
+    titulo: "Engañoso: «El sueldo mínimo subió a $529.000 en julio de 2025.»",
+    descripcion: "El monto es correcto, pero rige desde mayo.",
+    url: "https://escierto.cierto.workers.dev/a/a3cddb6c-755e-43d2-8550-90fd4fd9d4fc",
+    imagen: "https://es.cierto.workers.dev/og/enganoso.png",
+  });
+  assert.match(meta, /<meta property="og:image" content="https:\/\/es\.cierto\.workers\.dev\/og\/enganoso\.png">/);
+  assert.match(meta, /<meta name="twitter:card" content="summary_large_image">/);
+  assert.match(
+    meta,
+    /<meta property="og:title" content="Engañoso: «El sueldo mínimo subió a \$529\.000 en julio de 2025\.»">/,
+  );
+});
+
+test("una afirmación con comillas no puede romper las etiquetas de la tarjeta", async () => {
+  const { metaParaCompartir } = await import("./html.ts");
+  const meta = metaParaCompartir({
+    titulo: 'x"><script>alert(1)</script>',
+    descripcion: "y",
+    url: "https://x.cl/a/1",
+    imagen: "https://x.cl/og/falso.png",
+  });
+  assert.doesNotMatch(meta, /<script>/);
+  assert.match(meta, /content="x&#34;&#62;&#60;script&#62;/);
+});

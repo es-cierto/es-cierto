@@ -26,6 +26,7 @@ Las páginas públicas. Puede leer de `verificacion/` y `redes/`, pero no tiene 
 - **Correcciones:** la versión corregida avisa arriba de todo y enlaza a la nueva; la nueva explica qué cambió y enlaza a la anterior (`avisosDeCorreccion`).
 - **API de investigaciones:** cuenta las fuentes (el detalle está en la página de cada investigación). `?limite=` va de 1 a 50 (12 por defecto) y `?antes=` pide la página siguiente; lo inválido se ignora. Se pide una fila de más para saber si hay otra página. Son datos públicos de solo lectura: CORS abierto y caché de 60 segundos.
 - **El chat de prueba** se recarga cada 5 segundos en vez de usar streaming: es solo para probar en local.
+- **Al compartir** una investigación, la tarjeta (`metaParaCompartir`: Open Graph y Twitter) lleva de título el veredicto y la afirmación, de descripción el resumen, y la imagen de su veredicto, que genera la landing (`/og/<veredicto>.png`).
 - **La tipografía** se carga desde la landing (`/fuentes/manrope.woff2`, con CORS abierto en `landing/public/_headers`): el bot no tiene archivos estáticos propios.
 - **Los títulos del informe** bajan dos niveles (un `##` del modelo se dibuja como `h4`), porque la página ya tiene su `h1` y sus `h2`. Las tablas se desplazan de lado en pantallas angostas.
 - **El modelo escribe espacios angostos** (U+202F) en fechas y cifras; se muestran como espacios comunes, igual que en la landing.

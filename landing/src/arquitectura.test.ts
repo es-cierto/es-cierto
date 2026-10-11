@@ -162,3 +162,16 @@ test('sin comentarios HTML ni CSS: lo que explica algo va en AGENTS.md', () => {
     if (ruta.endsWith('.css')) assert.doesNotMatch(texto, /\/\*/, `${ruta} tiene un comentario CSS`);
   }
 });
+
+test('hay una imagen para compartir por cada veredicto que puede dar el bot', async () => {
+  const { escala } = await import('./data/sitio.ts');
+  const delBot = leer('../bot/verificacion/veredicto.ts').match(/veredicto: z\.enum\(\[([^\]]+)\]\)/)?.[1] ?? '';
+  const veredictosDelBot = [...delBot.matchAll(/"(\w+)"/g)].map((m) => m[1]).sort();
+  assert.ok(veredictosDelBot.length > 0, 'no encontré la escala del bot');
+  assert.deepEqual(
+    escala.map((v) => v.id).sort(),
+    veredictosDelBot,
+    'la escala de la landing no coincide con la del bot',
+  );
+  assert.ok(existsSync(join(raiz, 'src/pages/og/[veredicto].png.ts')), 'falta la página que genera las imágenes');
+});

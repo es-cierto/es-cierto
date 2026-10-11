@@ -104,6 +104,15 @@ ${fila.anterior_id && !fila.nota_correccion ? `<p class="seccion">Esta investiga
 <p>Investigación automática con inteligencia artificial (${escapar(fila.modelo)}). Puede equivocarse: por eso muestra todas sus fuentes y el informe completo. <a href="${escapar(env.REPO_URL)}/blob/main/METODOLOGIA.md">Cómo verifica</a>.</p>
 <div class="acciones"><a class="boton principal" href="${escapar(reportar)}">Reportar un error</a><a class="boton secundario" href="${escapar(env.LANDING_URL)}">Qué es ¿Es Cierto?</a></div>
 </footer>`,
-    { descripcion: `${nombre}. ${fila.resumen}`, canonica: url },
+    {
+      descripcion: `${nombre}. ${fila.resumen}`,
+      canonica: url,
+      compartir: {
+        titulo: `${nombre}: «${fila.afirmacion}»`,
+        descripcion: fila.resumen,
+        url,
+        imagen: `${env.LANDING_URL}/og/${fila.veredicto}.png`,
+      },
+    },
   );
 }
