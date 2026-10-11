@@ -19,6 +19,9 @@ svg{width:1em;height:1em;flex:none}
 .cabecera{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.5rem .5rem .5rem 1.1rem;border-radius:999px;background:color-mix(in oklab,var(--fondo) 70%,transparent);box-shadow:inset 0 0 0 1px var(--borde);margin-bottom:3.5rem}
 .cabecera a{text-decoration:none;font-size:.9rem}
 .marca{font-weight:600}
+.navegacion{display:flex;align-items:center;gap:1.25rem}
+.contexto{margin:-1.5rem 0 3rem;padding:1rem 1.15rem;border-radius:1rem;background:var(--tarjeta);box-shadow:inset 0 0 0 1px var(--borde);font-size:1rem;color:var(--suave)}
+.contexto a{color:var(--papel)}
 .boton{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.55rem 1.1rem;font-weight:600;font-size:1rem;text-decoration:none;transition:background-color .5s,color .5s}
 .principal{background:var(--lino);color:var(--fondo)}
 .principal:hover{background:var(--papel)}

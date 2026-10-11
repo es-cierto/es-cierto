@@ -79,7 +79,8 @@ export async function verInvestigacion(env: Env, id: string): Promise<Response> 
   return pagina(
     `${nombre}: ${fila.afirmacion} · ¿Es Cierto?`,
     `<script type="application/ld+json">${claimReview(fila, url, nombre)}</script>
-<header class="cabecera"><a class="marca" href="${escapar(env.LANDING_URL)}">¿Es Cierto?</a><a class="boton secundario" href="${escapar(env.LANDING_URL)}/verificaciones">Más verificaciones</a></header>
+<header class="cabecera"><a class="marca" href="${escapar(env.LANDING_URL)}" aria-label="¿Es Cierto?, ir al inicio">¿Es Cierto?</a><nav class="navegacion" aria-label="Principal"><a class="oculto-movil" href="${escapar(env.LANDING_URL)}/#recorrido">Cómo funciona</a><a class="boton secundario" href="${escapar(env.LANDING_URL)}/verificaciones">Verificaciones</a></nav></header>
+<p class="contexto">Esto lo investigó <a href="${escapar(env.LANDING_URL)}">¿Es Cierto?</a>, un bot que verifica datos de redes sociales: alguien lo mencionó en una publicación y buscó de dónde sale el dato. <a href="${escapar(env.LANDING_URL)}/#recorrido">Cómo funciona</a>.</p>
 ${corregida}
 <main>
 <p class="antetitulo">Investigación · ${escapar(FECHA.format(fila.creado_en))}</p>

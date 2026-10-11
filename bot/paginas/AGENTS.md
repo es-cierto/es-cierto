@@ -29,4 +29,4 @@ Las páginas públicas. Puede leer de `verificacion/` y `redes/`, pero no tiene 
 - **La tipografía** se carga desde la landing (`/fuentes/manrope.woff2`, con CORS abierto en `landing/public/_headers`): el bot no tiene archivos estáticos propios.
 - **Los títulos del informe** bajan dos niveles (un `##` del modelo se dibuja como `h4`), porque la página ya tiene su `h1` y sus `h2`. Las tablas se desplazan de lado en pantallas angostas.
 - **El modelo escribe espacios angostos** (U+202F) en fechas y cifras; se muestran como espacios comunes, igual que en la landing.
-- **La raíz del bot** (`/`) redirige a la landing (`LANDING_URL`): la presentación del proyecto vive ahí.
+- **La raíz del bot** (`/`) redirige a la landing (`LANDING_URL`): la presentación del proyecto vive ahí. Quien llega a una investigación desde un enlace en una red no sabe qué es ¿Es Cierto?: por eso la página abre con una línea de contexto que lleva a la landing, y la cabecera enlaza a «Cómo funciona» y a las verificaciones.
