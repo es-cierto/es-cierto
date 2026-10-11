@@ -3,7 +3,7 @@ import { conversar } from "./conversacion/prompt.ts";
 import { investigacionDelHilo, puedeSeguirConversando, respuestaPublicable } from "./conversacion/reglas.ts";
 import type { Mencion } from "./redes/bluesky.ts";
 import { red, type NombreRed, type Red } from "./redes/red.ts";
-import { MODELO } from "./shared/modelo.ts";
+import { MODELO, pasarela } from "./shared/modelo.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
 import { extraerAfirmacion } from "./verificacion/prompts.ts";
 import { decidir } from "./verificacion/reglas.ts";
@@ -131,7 +131,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     }
 
     const vector = await paso("embedding", async () => {
-      const resultado = await env.AI.run("@cf/baai/bge-m3", { text: [extraida.afirmacion] });
+      const resultado = await env.AI.run("@cf/baai/bge-m3", { text: [extraida.afirmacion] }, pasarela);
       if (!("data" in resultado) || !resultado.data?.[0]) {
         throw new Error("bge-m3 no devolvió embedding");
       }
