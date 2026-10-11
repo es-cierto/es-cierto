@@ -20,7 +20,6 @@ const CON_REINTENTOS = {
   timeout: "15 minutes",
 } as const;
 
-// El id de la instancia se deriva de la URI: así la misma mención nunca se responde dos veces.
 export async function idDeInstancia(uri: string): Promise<string> {
   const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(uri));
   return [...new Uint8Array(hash)]
@@ -124,7 +123,6 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
         verificacionesPublicadas(env.GOOGLE_FACTCHECK_KEY, extraida.afirmacion),
       );
 
-      // ponytail: cast porque step.do exige tipos serializables y Paso es genérico; todo lo que devuelve investigarAfirmacion lo es.
       const paso = ((nombre: string, fn: () => Promise<string>) =>
         step.do(nombre, CON_REINTENTOS, fn)) as unknown as Paso;
       const { informe, veredicto } = await investigarAfirmacion(

@@ -38,7 +38,7 @@ test('quieta en una parada no hay clip; en un tramo, el clip y su avance', () =>
 
 test('se carga primero el clip del tramo actual y después el más cercano', () => {
   assert.deepEqual(ordenDeCarga([0, 1, 2], 0), [0, 1, 2]);
-  // En 1,2 el clip 0 queda a 0,2 hacia atrás y el 2 a 0,8 hacia adelante: va antes el 0.
+
   assert.deepEqual(ordenDeCarga([0, 1, 2], 1.2), [1, 0, 2]);
 });
 

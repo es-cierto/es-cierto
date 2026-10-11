@@ -1,7 +1,3 @@
-// Aplica los perfiles de perfiles/datos.ts: la cuenta del bot en Bluesky y la organización y el repo en GitHub.
-// Uso: node scripts/perfiles.ts            (los dos)
-//      node scripts/perfiles.ts bluesky    (solo uno)
-// Bluesky usa BSKY_APP_PASSWORD de .dev.vars; GitHub usa la sesión de `gh` (hace falta ser admin de la organización).
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { z } from "zod";
@@ -54,7 +50,6 @@ async function perfilBluesky() {
       }),
     ).blob;
 
-  // Se parte del perfil actual para no borrar lo que no maneja este script (por ejemplo, una publicación fijada).
   const actual = await xrpc(
     `com.atproto.repo.getRecord?repo=${sesion.did}&collection=app.bsky.actor.profile&rkey=self`,
     { token: sesion.accessJwt },
@@ -114,7 +109,7 @@ function perfilGithub() {
     ...github.repo.temas.flatMap((t) => ["-f", `names[]=${t}`]),
   );
   console.log(`GitHub: organización ${github.organizacion} y repo ${github.repo.nombre} actualizados.`);
-  // La API de GitHub no permite cambiar el avatar de una organización.
+
   console.log(
     `  El avatar se sube a mano: github.com/organizations/${github.organizacion}/settings/profile → perfiles/avatar.png`,
   );

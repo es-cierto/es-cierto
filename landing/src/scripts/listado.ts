@@ -1,5 +1,3 @@
-// Dibuja lo que el bot ha respondido en cada [data-verificaciones]. Las tarjetas se clonan de un <template> y el texto
-// se asigna con textContent: las afirmaciones vienen de redes sociales y nunca se interpretan como HTML.
 import {
   Respuesta,
   cuantasFuentes,

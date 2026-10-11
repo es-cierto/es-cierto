@@ -1,10 +1,6 @@
 import { z } from "zod";
 import { Veredicto } from "../verificacion/veredicto.ts";
 
-// GET /api/investigaciones: lo que el bot ha respondido, para que la landing lo muestre. Son solo las investigaciones
-// (afirmación, veredicto, fuentes): nunca quién preguntó ni desde qué cuenta. Sin filtros por tema ni por sector:
-// todo, en orden cronológico, para que nadie pueda elegir qué veredictos mostrar.
-
 const LIMITE_POR_DEFECTO = 12;
 const LIMITE_MAXIMO = 50;
 
@@ -31,7 +27,6 @@ export const ItemPublico = z.object({
 });
 export type ItemPublico = z.infer<typeof ItemPublico>;
 
-/** Una fila de D1 → lo que se publica. Las fuentes se cuentan; el detalle está en la página de la investigación. */
 export function itemPublico(fila: unknown): ItemPublico {
   const f = Fila.parse(fila);
   return {
@@ -46,7 +41,6 @@ export function itemPublico(fila: unknown): ItemPublico {
   };
 }
 
-/** `?limite=` (1 a 50) y `?antes=` (marca de tiempo en ms, para pedir la página siguiente). Lo inválido se ignora. */
 export function parametros(url: URL): { limite: number; antes: number } {
   const limite = Number(url.searchParams.get("limite"));
   const antes = Number(url.searchParams.get("antes"));
@@ -64,13 +58,12 @@ export async function listarInvestigaciones(env: Env, url: URL): Promise<Respons
     .bind(antes, limite + 1)
     .all();
   const items = results.slice(0, limite).map(itemPublico);
-  // Si vino una fila de más, hay otra página: se pide con ?antes=<creadoEn del último>.
+
   const siguiente = results.length > limite ? items.at(-1)?.creadoEn : undefined;
   return Response.json(
     { items, siguiente: siguiente ?? null },
     {
       headers: {
-        // Datos públicos y de solo lectura: cualquier página puede leerlos.
         "access-control-allow-origin": "*",
         "cache-control": "public, max-age=60",
       },

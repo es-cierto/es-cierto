@@ -1,4 +1,3 @@
-// Revisa la salida de "verificar". config.veredictos: los aceptables; config.noVerificable: también vale que no haya hecho.
 export default function (output, context) {
   const { veredictos = [], noVerificable = false } = context.config ?? {};
   const r = JSON.parse(output);

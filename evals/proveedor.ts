@@ -5,9 +5,6 @@ import type { Turno } from "../bot/shared/hilo.ts";
 import { investigarAfirmacion } from "../bot/verificacion/investigacion.ts";
 import { extraerAfirmacion } from "../bot/verificacion/prompts.ts";
 
-// Proveedor de promptfoo: corre el mismo código del Workflow, con Workers AI por REST en vez del binding.
-// Necesita CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN (permiso Workers AI) y TAVILY_API_KEY.
-
 const RespuestaCloudflare = z.object({ success: z.boolean(), result: z.unknown(), errors: z.array(z.unknown()) });
 
 function workersAi(cuenta: string, token: string): Ai {
@@ -34,7 +31,6 @@ function requerida(nombre: string): string {
   return valor;
 }
 
-// Como CON_REINTENTOS del Workflow: hasta 3 reintentos con espera creciente, para que un corte de red no bote el escenario.
 async function conReintentos<T>(nombre: string, fn: () => Promise<T>): Promise<T> {
   for (let intento = 0; ; intento++) {
     try {
@@ -57,7 +53,7 @@ const Vars = z.discriminatedUnion("modo", [
   z.object({
     modo: z.literal("conversar"),
     investigacion: z.string().nullable().default(null),
-    // El YAML arma el hilo con un ancla (`*hilo-base`) que queda anidada; se aplana.
+
     hilo: z.preprocess(
       (v) => (Array.isArray(v) ? v.flat() : v),
       z.array(z.object({ deBot: z.boolean(), texto: z.string() })),

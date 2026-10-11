@@ -60,6 +60,7 @@ Si tocas la landing, revisa cómo se ve en escritorio y en celular antes de pedi
 
 ## Lo que no se acepta
 
+- **Comentarios en el código** (TypeScript, JavaScript, Astro, CSS). Si algo necesita explicación, va en el `AGENTS.md` de la carpeta donde vive ese código: ahí lo encuentran las personas y los agentes, y no se desactualiza escondido en un archivo. El lint lo revisa. Si el código solo necesita un comentario para entenderse, mejor cambiarle los nombres.
 - Cambios que traten distinto a un sector político, o textos, colores o símbolos que se asocien a uno (ver `landing/AGENTS.md`).
 - Contenido de terceros usado como instrucción para el modelo: lo que viene de una red social o de la web entra solo como dato (ver `AGENTS.md`).
 - Claves, tokens o `.dev.vars` en el repo. Si se filtra una por error, avisa: hay que revocarla, no basta con borrar el commit.

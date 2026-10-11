@@ -1,18 +1,10 @@
-// Todo el texto y los datos de la landing. Sale de METODOLOGIA.md: nada de cifras, testimonios ni logos inventados.
-//
-// Reglas de redacción (ver AGENTS.md): primero lo literal y después la metáfora del hilo; una palabra para cada cosa
-// (siempre "mencionar", "publicación", "el bot", "fuentes"); nada en clave ni en jerga técnica.
-
 export const enlaces = {
-  // El Worker del bot: sirve la página de cada investigación y /api/investigaciones, que lista lo que ha respondido.
   bot: 'https://escierto.cierto.workers.dev',
   repo: 'https://github.com/es-cierto/es-cierto',
   metodologia: 'https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md',
   issues: 'https://github.com/es-cierto/es-cierto/issues/new',
 };
 
-// La cuenta del bot en Bluesky. Ojo: `escierto.bsky.social`, sin guion, es de otra persona y no se enlaza.
-// Con null, la página dice que el bot todavía no está activo.
 export const cuentaBluesky: { handle: string; url: string } | null = {
   handle: 'es-cierto.bsky.social',
   url: 'https://bsky.app/profile/es-cierto.bsky.social',
@@ -24,8 +16,6 @@ export const seo = {
     'Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Parte en Bluesky. Abierto y no partidista.',
 };
 
-// El recorrido del hilo. Cada parada es una imagen quieta; entre una y otra, un clip que el scroll avanza.
-// `foco` es la posición horizontal (%) del recorte en pantallas verticales: el hilo tiene que quedar a la vista.
 export const recorrido = [
   { id: 'inicio', nombre: 'La publicación', foco: 5 },
   { id: 'mencion', nombre: 'La mención', foco: 45 },
@@ -33,8 +23,6 @@ export const recorrido = [
   { id: 'respuesta', nombre: 'La respuesta', foco: 62 },
 ] as const;
 
-// Ejemplo de respuesta. La fuente se comprobó a mano: la página del Ministerio del Trabajo dice que el ingreso mínimo
-// sube a $529.000 "a partir del 1 de mayo de 2025".
 export const ejemplo = {
   afirmacion: 'El sueldo mínimo subió a $529.000 en julio de 2025.',
   veredicto: 'Mayormente verdadero',
@@ -46,7 +34,6 @@ export const ejemplo = {
   },
 };
 
-// La escala de METODOLOGIA.md, en palabras simples. `id` es el valor que usa el bot (bot/verificacion/veredicto.ts).
 export const escala = [
   { id: 'verdadero', icono: 'check-circle', nombre: 'Verdadero', texto: 'Las fuentes lo confirman.' },
   {

@@ -15,7 +15,6 @@ export interface FilaInvestigacion {
   creado_en: number;
 }
 
-// Escala numérica para ClaimReview (1 = falso, 4 = verdadero). "No verificable" no tiene número: solo su nombre.
 const PUNTAJE: Partial<Record<Veredicto["veredicto"], number>> = {
   falso: 1,
   enganoso: 2,
@@ -23,7 +22,6 @@ const PUNTAJE: Partial<Record<Veredicto["veredicto"], number>> = {
   verdadero: 4,
 };
 
-// Marcado ClaimReview (schema.org) para Google Fact Check Explorer: uno por página y con lo mismo que se ve en ella.
 export function claimReview(fila: FilaInvestigacion, url: string, nombre: string): string {
   const puntaje = PUNTAJE[fila.veredicto];
   const datos = {
@@ -39,11 +37,10 @@ export function claimReview(fila: FilaInvestigacion, url: string, nombre: string
       ...(puntaje ? { ratingValue: puntaje, bestRating: 4, worstRating: 1 } : {}),
     },
   };
-  // Dentro de <script>, un "</script>" en la afirmación cerraría la etiqueta: se escapa el "<".
+
   return JSON.stringify(datos).replaceAll("<", "\\u003c");
 }
 
-// La versión corregida avisa arriba de todo y enlaza a la nueva; la nueva explica qué cambió.
 export function avisosDeCorreccion(fila: FilaInvestigacion): { corregida: string; correccion: string } {
   return {
     corregida: fila.corregida_por
@@ -62,7 +59,7 @@ export async function verInvestigacion(env: Env, id: string): Promise<Response> 
   }
   const fuentes = Veredicto.shape.fuentes.parse(JSON.parse(fila.fuentes));
   const enlacesSeguros = fuentes.filter((f) => /^https?:\/\//.test(f.url));
-  const nombre = ETIQUETAS[fila.veredicto].replace(/^\S+\s/, ""); // sin el emoji
+  const nombre = ETIQUETAS[fila.veredicto].replace(/^\S+\s/, "");
   const { corregida, correccion } = avisosDeCorreccion(fila);
   return pagina(
     `${ETIQUETAS[fila.veredicto]}: ${fila.afirmacion}`,

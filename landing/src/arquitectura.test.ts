@@ -1,4 +1,3 @@
-// Las invariantes de landing/AGENTS.md que se pueden comprobar leyendo el repo.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
@@ -148,5 +147,18 @@ test('ningún script inserta HTML: lo que viene del bot se asigna como texto', (
       /\.(innerHTML|outerHTML)\s*=|insertAdjacentHTML|document\.write/,
       `${ruta} inserta HTML`,
     );
+  }
+});
+
+test('sin comentarios HTML ni CSS: lo que explica algo va en AGENTS.md', () => {
+  for (const ruta of fuentes) {
+    const texto = leer(ruta);
+    if (ruta.endsWith('.astro')) {
+      assert.doesNotMatch(texto, /<!--/, `${ruta} tiene un comentario HTML`);
+      for (const [, estilo] of texto.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) {
+        assert.doesNotMatch(estilo, /\/\*/, `${ruta} tiene un comentario en su <style>`);
+      }
+    }
+    if (ruta.endsWith('.css')) assert.doesNotMatch(texto, /\/\*/, `${ruta} tiene un comentario CSS`);
   }
 });

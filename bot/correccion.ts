@@ -5,11 +5,6 @@ import { red } from "./redes/red.ts";
 import { textoDeCorreccion } from "./verificacion/reglas.ts";
 import { type PedidoCorreccion, Veredicto } from "./verificacion/veredicto.ts";
 
-// Principio 5 de la IFCN: la corrección llega a quien vio el error. Se publica una investigación nueva que reemplaza a
-// la anterior y el bot responde en cada hilo donde había dado el veredicto equivocado. Cada respuesta es su propio
-// step.do: si el Workflow se reintenta, un hilo ya avisado no recibe el aviso dos veces.
-
-// Lo que se guardó de cada mención al encolarla (index.ts), para poder volver a su hilo.
 export const DatosMencion = z.object({ mencion: Mencion, red: z.enum(["bluesky", "web"]) });
 
 const CON_REINTENTOS = {
@@ -32,12 +27,11 @@ export class Correccion extends WorkflowEntrypoint<Env, PedidoCorreccion> {
       return z.object({ veredicto: Veredicto.shape.veredicto, corregida_por: z.string().nullable() }).parse(fila);
     });
     if (anterior.corregida_por) {
-      return; // ya tiene una corrección; la siguiente se hace sobre la versión nueva
+      return;
     }
 
     const nuevaId = await step.do("nuevo id", async () => crypto.randomUUID());
     await step.do("guardar corrección", async () => {
-      // Las dos escrituras van juntas: nunca queda una corrección sin enlazar ni una investigación marcada sin reemplazo.
       await env.DB.batch([
         env.DB.prepare(
           `INSERT INTO investigaciones (id, afirmacion, veredicto, confianza, resumen, fuentes, informe, modelo, anterior_id, nota_correccion, creado_en)

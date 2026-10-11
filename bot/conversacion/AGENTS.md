@@ -13,3 +13,12 @@ Responder en el hilo después de un veredicto: dudas, fuentes, discusión. Solo 
 
 - `prompt.ts`: el prompt para conversar. Cambiarlo es cambio de metodología.
 - `reglas.ts`: reglas puras de la conversación, con su test al lado.
+
+## Por qué está así
+
+- **Largo:** Bluesky permite 300 grafemas por post; `LARGO_MAXIMO_RESPUESTA` (290) deja margen. El modelo no siempre respeta el largo que pide el prompt, así que `ajustarLargo` corta en el último fin de oración que cabe, para no publicar un enlace partido; si ni la primera oración cabe, la respuesta manda a la investigación.
+- **Lo que se publica** en el hilo tiene solo enlaces que están en la investigación y cabe en un post (`respuestaPublicable`).
+
+## Límites y umbrales a calibrar
+
+- El tope de 5 respuestas por hilo es fijo, contra discusiones infinitas que gastan el modelo. Si hay que ajustarlo seguido, se mueve a `vars` de `wrangler.jsonc`.

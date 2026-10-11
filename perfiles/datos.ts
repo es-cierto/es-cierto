@@ -1,7 +1,3 @@
-// Los perfiles públicos del proyecto: la cuenta del bot en Bluesky y la organización de GitHub.
-// `scripts/perfiles.ts` los aplica; `perfiles.test.ts` revisa los límites de cada red y las reglas de redacción.
-// Un cambio aquí se aplica corriendo ese script: el perfil publicado nunca se edita a mano.
-
 export const PAGINA = "https://es.cierto.workers.dev";
 
 export const bluesky = {

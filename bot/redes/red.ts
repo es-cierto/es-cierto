@@ -3,7 +3,6 @@ import * as bluesky from "./bluesky.ts";
 import type { Mencion } from "./bluesky.ts";
 import * as web from "./web.ts";
 
-// Lo que el Workflow necesita de una red social. Una red nueva es un archivo hermano y un caso más aquí.
 export type NombreRed = "bluesky" | "web";
 
 export interface Red {

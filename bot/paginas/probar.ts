@@ -4,7 +4,6 @@ import { conEnlaces, escapar, pagina } from "./html.ts";
 
 const FORMULARIO_PRUEBA = `<form method="post" action="/probar"><p><label>Publicación a verificar<br><textarea name="publicacion" rows="4" cols="60" required></textarea></label></p><p><label>Tu pregunta<br><input name="pregunta" size="60" value="¿es cierto?" required></label></p><button>Verificar</button></form>`;
 
-// ponytail: chat de prueba sin Bluesky; se recarga cada 5 s en vez de streaming.
 export async function probar(request: Request, env: Env, hilo: string | undefined): Promise<Response> {
   if (request.method === "POST") {
     const datos = await request.formData();

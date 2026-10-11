@@ -1,9 +1,6 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ordenDeCarga, paradaActual, posicion, tramo } from './tramos';
 
-// El recorrido del hilo: el scroll avanza los clips entre parada y parada. Debajo de los clips están las imágenes de
-// cada parada (cuadros reales del video), que se ven mientras un clip no ha cargado y siempre con movimiento reducido o
-// ahorro de datos.
 export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
   const escenario = seccion.querySelector<HTMLElement>('[data-escenario]');
   if (!escenario) return;
@@ -30,7 +27,6 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
     enlaces.forEach((a, i) => a.setAttribute('aria-current', String(i === indice)));
   };
 
-  // El clip se muestra recién cuando llegó al cuadro pedido; si no, siguen las imágenes.
   const sincronizar = () => {
     const clip = clips[activo];
     if (!clip || !listo[activo]) {
@@ -56,14 +52,12 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
     );
     marcarParada(paradaActual(w));
 
-    // Foco del recorte en pantallas verticales, interpolado entre paradas.
     const i = Math.min(Math.floor(w), ultima);
     const f = focos[i] + (focos[Math.min(i + 1, ultima)] - focos[i]) * (w - i);
     escenario.style.setProperty('--foco', `${f}%`);
     if (riel) riel.style.transform = `scaleY(${w / ultima})`;
     if (pista) pista.style.opacity = String(Math.max(0, 1 - w * 4));
 
-    // Imágenes: la de la parada de origen entera; la de destino aparece a medida que avanza el tramo.
     cuadros.forEach((cuadro, k) => {
       const opacidad = k === i ? 1 : k === i + 1 ? w - i : 0;
       cuadro.style.opacity = String(opacidad);
@@ -101,7 +95,7 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
     const clip = clips[i];
     const url = fuente(clip);
     clip.preload = 'auto';
-    // Cada clip se baja entero para que avanzar con el scroll no dependa de la red.
+
     try {
       const respuesta = await fetch(url);
       if (!respuesta.ok) throw new Error(String(respuesta.status));
@@ -114,7 +108,6 @@ export function iniciarRecorrido(seccion: HTMLElement, reducir: boolean) {
       clip.addEventListener('error', () => resolver(false), { once: true });
     });
     if (cargado) {
-      // iOS no pinta los cuadros buscados hasta que el video se reprodujo una vez.
       await clip.play().catch(() => {});
       clip.pause();
       listo[i] = true;
