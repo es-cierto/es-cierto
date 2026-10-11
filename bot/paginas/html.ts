@@ -65,15 +65,45 @@ svg{width:1em;height:1em;flex:none}
 @media (max-width:40rem){body{font-size:1.0625rem}.cabecera{margin-bottom:2.5rem}.oculto-movil{display:none}}
 `;
 
+export interface Compartir {
+  titulo: string;
+  descripcion: string;
+  url: string;
+  imagen: string;
+}
+
 interface Opciones {
   descripcion?: string;
   canonica?: string;
+  compartir?: Compartir;
+}
+
+export function metaParaCompartir(c: Compartir): string {
+  const og = (propiedad: string, valor: string) => `<meta property="${propiedad}" content="${escapar(valor)}">`;
+  const tw = (nombre: string, valor: string) => `<meta name="${nombre}" content="${escapar(valor)}">`;
+  return [
+    og("og:type", "article"),
+    og("og:site_name", "¿Es Cierto?"),
+    og("og:locale", "es_CL"),
+    og("og:title", c.titulo),
+    og("og:description", c.descripcion),
+    og("og:url", c.url),
+    og("og:image", c.imagen),
+    og("og:image:width", "1200"),
+    og("og:image:height", "630"),
+    og("og:image:alt", c.titulo),
+    tw("twitter:card", "summary_large_image"),
+    tw("twitter:title", c.titulo),
+    tw("twitter:description", c.descripcion),
+    tw("twitter:image", c.imagen),
+  ].join("");
 }
 
 export function pagina(titulo: string, cuerpo: string, opciones: Opciones = {}): Response {
   const meta = [
     opciones.descripcion && `<meta name="description" content="${escapar(opciones.descripcion)}">`,
     opciones.canonica && `<link rel="canonical" href="${escapar(opciones.canonica)}">`,
+    opciones.compartir && metaParaCompartir(opciones.compartir),
   ]
     .filter(Boolean)
     .join("");
