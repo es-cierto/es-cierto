@@ -84,7 +84,12 @@ echo
 echo "Listo. El chat de prueba queda en http://localhost:8787/probar"
 if interactivo; then
   read -rp "¿Arranco pnpm dev ahora? [S/n] " arrancar
-  [[ "$arrancar" =~ ^[nN]$ ]] || exec pnpm dev
+  # "n", "no", "No"…: cualquier respuesta que empiece con n es no. Enter o cualquier otra cosa, sí.
+  if [[ "$arrancar" =~ ^[[:space:]]*[nN] ]]; then
+    echo "Cuando quieras:  pnpm dev"
+  else
+    exec pnpm dev
+  fi
 else
   echo "Corre  pnpm dev  para arrancarlo."
 fi
