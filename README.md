@@ -80,16 +80,14 @@ Después de desplegar, espera unos 30 segundos antes de probar: el HTML nuevo pu
 
 ## Desplegar
 
-Al mergear a `main`, cuando el CI termina en verde, `.github/workflows/desplegar.yml` aplica las migraciones y despliega el bot y la página en la cuenta de Cloudflare del proyecto. Usa el entorno `produccion` de GitHub, con el secreto `CLOUDFLARE_API_TOKEN` y la variable `CLOUDFLARE_ACCOUNT_ID`.
+Al mergear a `main`, cuando el CI termina en verde, `.github/workflows/desplegar.yml` despliega en la cuenta de Cloudflare del proyecto **solo lo que el merge cambió** (`scripts/que-desplegar.ts`): el bot con sus migraciones, la página, los dos o nada. Un merge de solo documentación o tests no despliega; `METODOLOGIA.md` sí cuenta como parte de la página, porque `llms-full.txt` la incluye. Usa el entorno `produccion` de GitHub, con el secreto `CLOUDFLARE_API_TOKEN` y la variable `CLOUDFLARE_ACCOUNT_ID`.
 
-Los secretos del bot viven en Cloudflare y se suben una vez, desde `.dev.vars`, con `./scripts/secretos.sh` (solo mantenedores):
+Los secretos del bot viven en Cloudflare, cifrados, y nunca en el repo. Se suben desde `.dev.vars` con `./scripts/secretos.sh`, que apunta siempre a la cuenta del proyecto (solo mantenedores, con acceso a ella). Son:
 
-```bash
-npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavily.com
-npx wrangler secret put BSKY_APP_PASSWORD
-npx wrangler secret put GOOGLE_FACTCHECK_KEY
-npx wrangler secret put CORRECCIONES_TOKEN     # para publicar correcciones (POST /correcciones)
-```
+- `TAVILY_API_KEY`: la búsqueda web (plan gratis en tavily.com).
+- `BSKY_APP_PASSWORD`: la contraseña de aplicación de la cuenta del bot en Bluesky.
+- `GOOGLE_FACTCHECK_KEY`: verificaciones profesionales ya publicadas (opcional: con «ninguna», se salta).
+- `CORRECCIONES_TOKEN`: para publicar correcciones (`POST /correcciones`).
 
 Para desplegar a mano (solo mantenedores, con acceso a la cuenta del proyecto): `CLOUDFLARE_ACCOUNT_ID=<cuenta del proyecto> ./scripts/desplegar.sh todo`. Sin esa cuenta, el script se niega.
 

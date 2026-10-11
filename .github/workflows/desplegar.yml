@@ -1,7 +1,8 @@
 name: Desplegar
 
-# Al mergear a main, cuando el CI termina en verde: migraciones de D1, el bot y la landing, en la cuenta de Cloudflare
-# del proyecto. Nadie más necesita acceso a Cloudflare: basta con mergear.
+# Al mergear a main, cuando el CI termina en verde, despliega en la cuenta de Cloudflare del proyecto solo lo que el
+# merge cambió (scripts/que-desplegar.ts): el bot con sus migraciones, la landing, los dos o nada. Un merge de solo
+# documentación o tests no despliega. Nadie más necesita acceso a Cloudflare: basta con mergear.
 on:
   workflow_run:
     workflows: [CI]
@@ -40,8 +41,9 @@ jobs:
       - uses: actions/checkout@v6
         if: steps.listo.outputs.si == 'si'
         with:
-          # Lo que pasó el CI, no lo último de main.
+          # Lo que pasó el CI, no lo último de main. Con el commit anterior, para saber qué cambió.
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 2
       - uses: pnpm/action-setup@v6
         if: steps.listo.outputs.si == 'si'
       - uses: actions/setup-node@v6
@@ -49,7 +51,20 @@ jobs:
         with:
           node-version-file: .node-version
           cache: pnpm
-      - if: steps.listo.outputs.si == 'si'
+      - name: ¿Qué cambió?
+        id: que
+        if: steps.listo.outputs.si == 'si'
+        env:
+          A_MANO: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          # A mano (workflow_dispatch) se despliega todo; al mergear, solo lo que tocó el merge.
+          if [ "$A_MANO" = "true" ]; then que=todo; else que=$(git diff --name-only HEAD^1 HEAD | node scripts/que-desplegar.ts); fi
+          echo "Archivos del merge:"; git diff --name-only HEAD^1 HEAD | sed 's/^/  /'
+          echo "::notice::Se despliega: $que"
+          echo "despliegue=$que" >> "$GITHUB_OUTPUT"
+      - if: steps.listo.outputs.si == 'si' && steps.que.outputs.despliegue != 'nada'
         run: pnpm install --frozen-lockfile
-      - if: steps.listo.outputs.si == 'si'
-        run: ./scripts/desplegar.sh todo
+      - if: steps.listo.outputs.si == 'si' && steps.que.outputs.despliegue != 'nada'
+        env:
+          DESPLIEGUE: ${{ steps.que.outputs.despliegue }}
+        run: ./scripts/desplegar.sh "$DESPLIEGUE"
