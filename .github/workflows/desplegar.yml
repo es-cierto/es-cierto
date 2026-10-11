@@ -1,0 +1,55 @@
+name: Desplegar
+
+# Al mergear a main, cuando el CI termina en verde: migraciones de D1, el bot y la landing, en la cuenta de Cloudflare
+# del proyecto. Nadie más necesita acceso a Cloudflare: basta con mergear.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+# Un despliegue a la vez, y nunca se cancela uno a medias.
+concurrency:
+  group: desplegar
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  produccion:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # El entorno guarda el token y la cuenta; solo main puede usarlo (Settings → Environments → produccion).
+    environment: produccion
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: ¿Está configurado el entorno?
+        id: listo
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Falta CLOUDFLARE_API_TOKEN (secreto) o CLOUDFLARE_ACCOUNT_ID (variable) en el entorno produccion. No se despliega."
+            echo "si=no" >> "$GITHUB_OUTPUT"
+          else
+            echo "si=si" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v6
+        if: steps.listo.outputs.si == 'si'
+        with:
+          # Lo que pasó el CI, no lo último de main.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: pnpm/action-setup@v6
+        if: steps.listo.outputs.si == 'si'
+      - uses: actions/setup-node@v6
+        if: steps.listo.outputs.si == 'si'
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - if: steps.listo.outputs.si == 'si'
+        run: pnpm install --frozen-lockfile
+      - if: steps.listo.outputs.si == 'si'
+        run: ./scripts/desplegar.sh todo

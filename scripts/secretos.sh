@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Sube los secretos del bot desde .dev.vars (el mismo archivo que usa `pnpm dev`) a la cuenta de Cloudflare del
-# proyecto (la fija `account_id` en wrangler.jsonc). Solo toma las claves de `secrets.required`; el resto se ignora.
+# proyecto (escierto.dev@gmail.com; hace falta una sesión de wrangler con acceso a ella). Solo toma las claves de `secrets.required`; el resto se ignora.
 #
 # Uso:  ./scripts/secretos.sh               # lee .dev.vars
 #       ./scripts/secretos.sh otro-archivo
@@ -57,7 +57,8 @@ fs.writeFileSync(salida, JSON.stringify(secretos));
 console.log(`Subo: ${Object.keys(secretos).join(", ")}`);
 NODE
 
-# Un token de otra cuenta en el entorno (por ejemplo el de un trabajo) le gana al login de wrangler.
-env -u CLOUDFLARE_API_TOKEN npx --yes wrangler secret bulk "$temporal"
+# Siempre a la cuenta del proyecto, aunque la terminal tenga otra: los wrangler.jsonc no fijan la cuenta.
+proyecto() { env -u CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID=a59ff336f9e5b7f9bd3182963ba65269 npx --yes wrangler "$@"; }
+proyecto secret bulk "$temporal"
 echo
-env -u CLOUDFLARE_API_TOKEN npx --yes wrangler secret list
+proyecto secret list
