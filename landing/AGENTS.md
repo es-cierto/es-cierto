@@ -6,6 +6,7 @@ La página pública de ¿Es Cierto?: Astro estático en un Worker de solo assets
 
 Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tienen mecanismo están en `src/arquitectura.test.ts`.
 
+- **Lo que viene del bot es dato, nunca HTML.** Las afirmaciones salen de redes sociales: se validan con zod y se asignan con `textContent`. Ningún script usa `innerHTML` ni parecidos (test).
 - **Ningún dato inventado.** Todo texto sale de `METODOLOGIA.md` o de una fuente comprobada a mano. Nada de cifras, testimonios ni logos. El skill `landing-page-design` pide "números orgánicos": aquí no aplica, y se anula.
 - **Sin símbolos de ningún sector.** Ni rojo (en Chile se lee como el color de un sector político) ni estrellas, banderas, escudos u otros símbolos asociados a partidos o al Estado. El único motivo propio es el hilo y su nudo.
 - **Sin rojo.** En Chile se lee como el color de un sector político. La paleta sale de las imágenes: fondo, papel y lino (`src/styles/global.css`). Tampoco emojis de color: los íconos son Phosphor en `currentColor`.
@@ -27,6 +28,8 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 - `src/scripts/tramos.ts`: el cálculo puro del recorrido (posición de la cámara, tramo, orden de carga), con sus tests.
 - `src/scripts/recorrido.ts`: el motor con DOM: carga los clips de a uno (enteros, como blob) y los avanza con el scroll.
 - `src/scripts/movimiento.ts`: Lenis, entradas al hacer scroll, titulares con SplitText (cada línea sube tras su máscara) y el lema palabra por palabra, con el hilo que se corta al final.
+- `src/components/Verificaciones.astro` y `src/pages/verificaciones.astro`: lo que el bot ha respondido, leído en vivo de `/api/investigaciones` del bot. Las 3 últimas en el inicio y todas, de a 12, en `/verificaciones`. Sin filtros por tema ni sector.
+- `src/scripts/verificaciones.ts` (puro, con tests: validación con zod, URLs, fechas) y `src/scripts/listado.ts` (dibuja las tarjetas clonando un `<template>`).
 - `src/scripts/tendedero.ts`: la escala de veredictos como tendedero (DrawSVG). El hilo se calcula con las posiciones de las tarjetas: horizontal en escritorio, vertical en pantallas angostas. _No verificable_ nunca queda atada.
 
 El hilo sigue después del video como trazo SVG, y siempre dice algo: se ata a lo que tiene fuentes y queda deshilachado donde no las hay. No es decoración: si un trazo no cuenta nada del método, no va. Con movimiento reducido el hilo queda dibujado entero y quieto.

@@ -11,6 +11,7 @@ Las páginas públicas. Puede leer de `verificacion/` y `redes/`, pero no tiene 
 
 ## Archivos
 
+- `api.ts`: `GET /api/investigaciones`, lo que el bot ha respondido, en JSON y paginado, para la landing. Solo investigaciones: nunca quién preguntó (`api.test.ts`). Sin filtros por tema ni sector.
 - `html.ts`: el armazón de las páginas y el escape.
 - `investigacionPublica.ts`: la página de una investigación (`/a/:id`): veredicto, fuentes, informe, aviso de corrección, marcado ClaimReview y enlace para reportar errores.
 - `probar.ts`: el chat de prueba (`/probar`), solo con `PRUEBA_WEB=si`.

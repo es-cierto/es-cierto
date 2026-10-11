@@ -4,6 +4,7 @@ import Recorrido from '../components/Recorrido.astro';
 import NadaAtado from '../components/NadaAtado.astro';
 import Escala from '../components/Escala.astro';
 import Lema from '../components/Lema.astro';
+import Verificaciones from '../components/Verificaciones.astro';
 import Transparencia from '../components/Transparencia.astro';
 import Preguntas from '../components/Preguntas.astro';
 import Cierre from '../components/Cierre.astro';
@@ -43,6 +44,7 @@ const jsonLd = JSON.stringify(datos).replaceAll('<', '\\u003c');
   <Recorrido />
   <NadaAtado />
   <Escala />
+  <Verificaciones limite={3} encabezado />
   <Lema />
   <Transparencia />
   <Preguntas />

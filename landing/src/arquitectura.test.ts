@@ -62,8 +62,8 @@ test('el video y las imágenes se declaran como generados con IA', () => {
   assert.match(leer('src/components/Pie.astro'), /generados con IA/);
 });
 
-test('hay un clip por tramo, con sus tres variantes, y cada uno pesa menos de 4 MB', () => {
-  const paradas = (leer('src/data/sitio.ts').match(/\{ id: '/g) ?? []).length;
+test('hay un clip por tramo, con sus tres variantes, y cada uno pesa menos de 4 MB', async () => {
+  const paradas = (await import('./data/sitio.ts')).recorrido.length;
   const clips =
     leer('src/components/Recorrido.astro')
       .match(/const clips = \[([^\]]+)\]/)?.[1]
@@ -138,5 +138,15 @@ test('llms.txt sigue el formato de llmstxt.org y llms-full.txt trae la metodolog
   assert.equal(completo.match(/^# /gm)?.length, 1, 'la metodología no agrega otro título de nivel 1');
   for (const [, titulo] of metodologia.matchAll(/^#{2,} (.+)$/gm)) {
     assert.ok(completo.includes(titulo), `llms-full.txt no trae la sección «${titulo}»`);
+  }
+});
+
+test('ningún script inserta HTML: lo que viene del bot se asigna como texto', () => {
+  for (const ruta of fuentes.filter((r) => r.startsWith('src/scripts/'))) {
+    assert.doesNotMatch(
+      leer(ruta),
+      /\.(innerHTML|outerHTML)\s*=|insertAdjacentHTML|document\.write/,
+      `${ruta} inserta HTML`,
+    );
   }
 });

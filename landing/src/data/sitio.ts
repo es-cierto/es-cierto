@@ -4,6 +4,8 @@
 // (siempre "mencionar", "publicación", "el bot", "fuentes"); nada en clave ni en jerga técnica.
 
 export const enlaces = {
+  // El Worker del bot: sirve la página de cada investigación y /api/investigaciones, que lista lo que ha respondido.
+  bot: 'https://escierto.cierto.workers.dev',
   repo: 'https://github.com/es-cierto/es-cierto',
   metodologia: 'https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md',
   issues: 'https://github.com/es-cierto/es-cierto/issues/new',
@@ -44,14 +46,19 @@ export const ejemplo = {
   },
 };
 
-// La escala de METODOLOGIA.md, en palabras simples.
+// La escala de METODOLOGIA.md, en palabras simples. `id` es el valor que usa el bot (bot/verificacion/veredicto.ts).
 export const escala = [
-  { icono: 'check-circle', nombre: 'Verdadero', texto: 'Las fuentes lo confirman.' },
-  { icono: 'check', nombre: 'Mayormente verdadero', texto: 'Correcto, con un detalle errado.' },
-  { icono: 'warning', nombre: 'Engañoso', texto: 'Real, pero fuera de contexto.' },
-  { icono: 'x-circle', nombre: 'Falso', texto: 'Las fuentes lo desmienten.' },
-  { icono: 'question', nombre: 'No verificable', texto: 'No hay fuentes suficientes.' },
-];
+  { id: 'verdadero', icono: 'check-circle', nombre: 'Verdadero', texto: 'Las fuentes lo confirman.' },
+  {
+    id: 'mayormente_verdadero',
+    icono: 'check',
+    nombre: 'Mayormente verdadero',
+    texto: 'Correcto, con un detalle errado.',
+  },
+  { id: 'enganoso', icono: 'warning', nombre: 'Engañoso', texto: 'Real, pero fuera de contexto.' },
+  { id: 'falso', icono: 'x-circle', nombre: 'Falso', texto: 'Las fuentes lo desmienten.' },
+  { id: 'no_verificable', icono: 'question', nombre: 'No verificable', texto: 'No hay fuentes suficientes.' },
+] as const;
 
 export const pasos = [
   {
