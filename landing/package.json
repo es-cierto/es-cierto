@@ -8,7 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "node --test 'src/**/*.test.ts'",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "bash ../scripts/desplegar.sh landing",
     "typecheck": "astro sync && tsc --noEmit"
   },
   "dependencies": {

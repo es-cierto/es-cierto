@@ -19,13 +19,29 @@ Requisitos: Node 24 (ver `.node-version`) y pnpm 10.
 
 ```bash
 pnpm install          # instala el bot y la landing (es un monorepo) y activa los hooks de git
-pnpm types            # tipos de Cloudflare a partir de wrangler.jsonc
-cp .dev.vars.example .dev.vars
+pnpm check            # formato, lint, tipos y tests: no necesita claves ni red
 ```
 
-Para probar el bot sin Bluesky: pon `PRUEBA_WEB=si` en `.dev.vars`, corre `pnpm dev` y abre http://localhost:8787/probar. Para investigar hace falta una clave de Tavily propia (gratis en tavily.com) y una sesión de wrangler en una cuenta tuya de Cloudflare (`npx wrangler login`): Workers AI corre remoto aun en local.
+Con eso ya puedes trabajar en casi todo: la landing (`cd landing && pnpm dev`), el código del bot y sus tests.
 
-Para la landing: `cd landing && pnpm dev`.
+### Probar el bot de punta a punta
+
+Para que el bot investigue de verdad en tu computador necesitas **tus propias cuentas gratis**, nunca las del proyecto:
+
+- **Cloudflare:** Workers AI y Vectorize no tienen simulación local, corren en tu cuenta aun en `pnpm dev`. El plan gratis alcanza para varias investigaciones al día.
+- **Tavily** (la búsqueda web): una clave gratis en tavily.com, 1.000 búsquedas al mes.
+- **Bluesky:** no hace falta. El chat de prueba en `/probar` hace de red social.
+
+```bash
+pnpm exec wrangler login   # con tu cuenta de Cloudflare
+pnpm entorno               # crea tu .dev.vars, el índice de Vectorize en tu cuenta y la base local
+# agrega tu TAVILY_API_KEY en .dev.vars
+pnpm dev                   # y abre http://localhost:8787/probar
+```
+
+`pnpm entorno` se puede correr las veces que haga falta. Si tienes `CLOUDFLARE_ACCOUNT_ID` o `CLOUDFLARE_API_TOKEN` en tu terminal (por ejemplo, de un trabajo), wrangler usa esa cuenta y no la de tu sesión: el script te avisa.
+
+Para correr los evals (`pnpm eval`) hace falta además un token de tu cuenta con permiso de Workers AI (ver `evals/proveedor.ts`). Gastan tu plan, no el del proyecto.
 
 ## Flujo de trabajo
 
@@ -52,7 +68,7 @@ No tienes que hacer nada: el hook `.githooks/prepare-commit-msg` (se activa con 
 
 ## Despliegue
 
-El bot y la página corren en la cuenta de Cloudflare del proyecto. Por ahora despliegan solo las personas que mantienen el proyecto, después de mergear. Nadie necesita acceso a Cloudflare ni a la cuenta de Bluesky para contribuir.
+Al mergear a `main`, cuando el CI termina en verde, se despliega solo: migraciones, bot y página, en la cuenta de Cloudflare del proyecto (`.github/workflows/desplegar.yml`). Nadie necesita acceso a Cloudflare, a la cuenta de Bluesky ni a las claves del proyecto para contribuir, y esas claves no se comparten (ver `GOVERNANCE.md`, «Accesos»).
 
 ## Conducta y seguridad
 

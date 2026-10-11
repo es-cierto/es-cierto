@@ -204,3 +204,26 @@ test("CODEOWNERS solo nombra rutas que existen y cubre lo que define la metodolo
     assert.ok(cubiertas.has(ruta), `${ruta} define metodología y no tiene dueño en CODEOWNERS`);
   }
 });
+
+test("producción solo se despliega en la cuenta del proyecto y los wrangler.jsonc no fijan cuenta", () => {
+  for (const archivo of ["wrangler.jsonc", "landing/wrangler.jsonc"]) {
+    assert.doesNotMatch(
+      leer(archivo),
+      /"account_id"/,
+      `${archivo} fija account_id: en local cada persona usa su cuenta`,
+    );
+  }
+  const script = leer("scripts/desplegar.sh");
+  const proyecto = script.match(/PROYECTO="([0-9a-f]{32})"/)?.[1];
+  assert.ok(proyecto, "scripts/desplegar.sh no define la cuenta del proyecto");
+  assert.match(
+    script,
+    /CLOUDFLARE_ACCOUNT_ID:-\}" != "\$PROYECTO"/,
+    "scripts/desplegar.sh no exige la cuenta del proyecto",
+  );
+  for (const paquete of ["package.json", "landing/package.json"]) {
+    const deploy = (JSON.parse(leer(paquete)) as { scripts: Record<string, string> }).scripts.deploy;
+    assert.match(deploy, /scripts\/desplegar\.sh/, `${paquete}: deploy no pasa por scripts/desplegar.sh`);
+  }
+  assert.match(leer(".github/workflows/desplegar.yml"), /environment: produccion/);
+});

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev --test-scheduled",
-    "deploy": "wrangler deploy",
+    "deploy": "bash scripts/desplegar.sh bot",
     "types": "wrangler types --strict-vars=false",
     "typecheck": "tsc --noEmit",
     "test": "node --test 'bot/**/*.test.ts' 'perfiles/**/*.test.ts'",
@@ -17,7 +17,8 @@
     "format:check": "oxfmt --check",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm --filter escierto-landing typecheck && pnpm --filter escierto-landing test",
     "db:migrar": "wrangler d1 migrations apply escierto",
-    "perfiles": "node scripts/perfiles.ts"
+    "perfiles": "node scripts/perfiles.ts",
+    "entorno": "bash scripts/entorno.sh"
   },
   "dependencies": {
     "zod": "^4.6.5"

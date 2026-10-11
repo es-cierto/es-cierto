@@ -1,8 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "es",
-  // La cuenta de Cloudflare del proyecto (escierto.dev@gmail.com), no una personal. Fijarla evita desplegar en otra.
-  "account_id": "a59ff336f9e5b7f9bd3182963ba65269",
+  // Sin account_id a propósito: en local, wrangler usa la cuenta de quien inició sesión (Workers AI y Vectorize corren
+  // remotos aun en local, así que cada persona gasta su propio plan). A producción se despliega solo con
+  // scripts/desplegar.sh, que exige la cuenta del proyecto.
   "compatibility_date": "2026-10-01",
   // Web estática: Workers sirve el build de Astro sin código de Worker, igual que la landing de midudev.
   "assets": {

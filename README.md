@@ -53,26 +53,18 @@ Cada carpeta tiene su `AGENTS.md` con sus reglas. El repo sigue [context archite
 
 ## Correrlo localmente
 
-Requisitos: Node 24+, pnpm y una cuenta de Cloudflare.
+Requisitos: Node 24+, pnpm, y para que el bot investigue, una cuenta gratis de Cloudflare y una clave gratis de Tavily (las tuyas; nunca hacen falta las del proyecto).
 
 ```bash
 pnpm install
-cp .dev.vars.example .dev.vars        # completa las claves
-pnpm types
-npx wrangler login                    # Workers AI y Vectorize corren remotos aun en local
-npx wrangler vectorize create escierto-afirmaciones --dimensions 1024 --metric cosine   # una vez
-pnpm db:migrar -- --local
-pnpm dev                              # http://localhost:8787
-curl "http://localhost:8787/__scheduled"   # simula el cron
-# o, sin Bluesky: PRUEBA_WEB=si en .dev.vars y abre http://localhost:8787/probar
+pnpm check                 # formato, lint, tipos y tests: sin claves ni red
+pnpm exec wrangler login   # con tu cuenta de Cloudflare
+pnpm entorno               # .dev.vars, índice de Vectorize en tu cuenta y base local
+pnpm dev                   # http://localhost:8787/probar, el chat de prueba sin Bluesky
+pnpm eval                  # calidad del modelo; gasta neuronas y búsquedas de tu plan
 ```
 
-Para la cuenta del bot en Bluesky usa una **contraseña de aplicación** (Ajustes → Privacidad y seguridad → Contraseñas de aplicación), nunca la contraseña principal. Para probar, usa una cuenta aparte y pon su handle en `BSKY_HANDLE=` dentro de `.dev.vars`.
-
-```bash
-pnpm check     # formato, lint, tipos y tests (lo mismo que el CI)
-pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily
-```
+El paso a paso está en [CONTRIBUTING.md](CONTRIBUTING.md#probar-el-bot-de-punta-a-punta).
 
 ## La página pública
 
@@ -82,25 +74,25 @@ pnpm eval      # calidad del modelo; gasta neuronas y búsquedas de Tavily
 cd landing     # la instalación de la raíz ya incluye la landing (workspace de pnpm)
 pnpm typecheck # tipos (astro sync + tsc)
 pnpm test      # cálculo del recorrido y reglas de la página
-pnpm run deploy    # astro build + wrangler deploy
+pnpm dev       # http://localhost:4321
 ```
 
 Después de desplegar, espera unos 30 segundos antes de probar: el HTML nuevo puede llegar a Cloudflare antes que sus estilos.
 
-## Desplegar el bot
+## Desplegar
+
+Al mergear a `main`, cuando el CI termina en verde, `.github/workflows/desplegar.yml` aplica las migraciones y despliega el bot y la página en la cuenta de Cloudflare del proyecto. Usa el entorno `produccion` de GitHub, con el secreto `CLOUDFLARE_API_TOKEN` y la variable `CLOUDFLARE_ACCOUNT_ID`.
+
+Los secretos del bot viven en Cloudflare y se suben una vez, desde `.dev.vars`, con `./scripts/secretos.sh` (solo mantenedores):
 
 ```bash
-npx wrangler d1 create escierto                  # copia el database_id a wrangler.jsonc
-npx wrangler vectorize create escierto-afirmaciones --dimensions 1024 --metric cosine
-npx wrangler vectorize create-metadata-index escierto-afirmaciones --property-name creado_en --type number
-pnpm db:migrar -- --remote
-./scripts/secretos.sh                      # sube los secretos desde .dev.vars; o uno por uno:
 npx wrangler secret put TAVILY_API_KEY      # búsqueda web, plan gratis en tavily.com
 npx wrangler secret put BSKY_APP_PASSWORD
 npx wrangler secret put GOOGLE_FACTCHECK_KEY
-npx wrangler secret put CORRECCIONES_TOKEN     # para publicar correcciones (POST /correcciones); genera uno largo y aleatorio
-pnpm run deploy
+npx wrangler secret put CORRECCIONES_TOKEN     # para publicar correcciones (POST /correcciones)
 ```
+
+Para desplegar a mano (solo mantenedores, con acceso a la cuenta del proyecto): `CLOUDFLARE_ACCOUNT_ID=<cuenta del proyecto> ./scripts/desplegar.sh todo`. Sin esa cuenta, el script se niega.
 
 ## Publicar una corrección
 
