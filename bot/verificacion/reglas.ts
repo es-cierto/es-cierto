@@ -23,15 +23,6 @@ export function decidir(coincidencia: Coincidencia | undefined, ahora: number): 
   return { tipo: "complementar", id: coincidencia.id };
 }
 
-export const INVESTIGACIONES_POR_DIA = 8;
-
-export const diaUTC = (ahora: number) => new Date(ahora).toISOString().slice(0, 10);
-
-export function hastaElDiaSiguiente(ahora: number): number {
-  const d = new Date(ahora);
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1) - ahora;
-}
-
 const sinBarraFinal = (url: string) => url.replace(/\/+$/, "");
 
 export const FUENTES_INDEPENDIENTES_PARA_CONFIANZA_ALTA = 2;

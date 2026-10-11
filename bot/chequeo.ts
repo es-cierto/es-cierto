@@ -6,7 +6,8 @@ import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO } from "./shared/modelo.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
 import { extraerAfirmacion } from "./verificacion/prompts.ts";
-import { decidir, diaUTC, hastaElDiaSiguiente, INVESTIGACIONES_POR_DIA } from "./verificacion/reglas.ts";
+import { decidir } from "./verificacion/reglas.ts";
+import { agotoNeuronas, hastaElDiaSiguiente, SinSaldo } from "./shared/saldo.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
 
@@ -50,7 +51,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
         : { investigacion: null, pagina: null };
     });
 
-    const borrador = await step.do("conversar", CON_REINTENTOS, () => conversar(env.AI, hilo, investigacion));
+    const borrador = await this.conSaldo(mencion, red, step)("conversar", () => conversar(env.AI, hilo, investigacion));
     const respuesta = respuestaPublicable(borrador, investigacion, pagina);
 
     await step.do("responder en el hilo", async () => {
@@ -58,31 +59,35 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     });
   }
 
-  private async reservarCupo(mencion: Mencion, red: Red, step: WorkflowStep) {
-    const env = this.env;
-    for (let intento = 1; ; intento++) {
-      const reservado = await step.do(`reservar cupo ${intento}`, async () => {
-        const fila = await env.DB.prepare(
-          "INSERT INTO cupos (dia, usados) VALUES (?1, 1) ON CONFLICT (dia) DO UPDATE SET usados = usados + 1 WHERE usados < ?2 RETURNING usados",
-        )
-          .bind(diaUTC(Date.now()), INVESTIGACIONES_POR_DIA)
-          .first();
-        return fila !== null;
-      });
-      if (reservado) {
-        return;
-      }
-      if (intento === 1) {
-        await step.do("avisar que espera", async () => {
+  private conSaldo(mencion: Mencion, red: Red, step: WorkflowStep): Paso {
+    const paso = async (nombre: string, fn: () => Promise<Rpc.Serializable<unknown>>) => {
+      for (let intento = 1; ; intento++) {
+        const resultado = await step.do(intento === 1 ? nombre : `${nombre} (${intento})`, CON_REINTENTOS, async () => {
+          try {
+            return await fn();
+          } catch (error) {
+            if (error instanceof SinSaldo || agotoNeuronas(error)) {
+              return null;
+            }
+            throw error;
+          }
+        });
+        if (resultado !== null) {
+          return resultado;
+        }
+        await step.do("avisar que se acabó el saldo", async () => {
           await red.responder(
             mencion,
-            "Hoy ya hice todas las investigaciones que alcanzo a pagar. Esta queda en la fila: te respondo aquí mismo apenas se libere un cupo, normalmente mañana.",
+            "Se me acabó el saldo gratis de hoy. No me olvido: te respondo aquí mismo apenas se renueve, normalmente mañana.",
           );
         });
+        const espera = await step.do(`calcular espera ${nombre} ${intento}`, async () =>
+          hastaElDiaSiguiente(Date.now()),
+        );
+        await step.sleep(`esperar saldo ${nombre} ${intento}`, espera);
       }
-      const espera = await step.do(`calcular espera ${intento}`, async () => hastaElDiaSiguiente(Date.now()));
-      await step.sleep(`esperar el día siguiente ${intento}`, espera);
-    }
+    };
+    return paso as unknown as Paso;
   }
 
   async run(evento: WorkflowEvent<ParamsChequeo>, step: WorkflowStep) {
@@ -107,14 +112,13 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
 
   private async verificar(mencion: Mencion, enRed: Red, step: WorkflowStep) {
     const env = this.env;
+    const paso = this.conSaldo(mencion, enRed, step);
 
     const publicacion = await step.do("leer publicación", async () =>
       mencion.padre ? enRed.textoDePost(mencion.padre.uri) : "",
     );
 
-    const extraida = await step.do("extraer afirmación", CON_REINTENTOS, () =>
-      extraerAfirmacion(env.AI, publicacion, mencion.texto),
-    );
+    const extraida = await paso("extraer afirmación", () => extraerAfirmacion(env.AI, publicacion, mencion.texto));
 
     if (!extraida.verificable) {
       await step.do("responder sin afirmación", async () => {
@@ -126,7 +130,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       return;
     }
 
-    const vector = await step.do("embedding", async () => {
+    const vector = await paso("embedding", async () => {
       const resultado = await env.AI.run("@cf/baai/bge-m3", { text: [extraida.afirmacion] });
       if (!("data" in resultado) || !resultado.data?.[0]) {
         throw new Error("bge-m3 no devolvió embedding");
@@ -159,14 +163,10 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
             })
           : undefined;
 
-      await this.reservarCupo(mencion, enRed, step);
-
-      const verificaciones = await step.do("buscar verificaciones publicadas", CON_REINTENTOS, () =>
+      const verificaciones = await paso("buscar verificaciones publicadas", () =>
         verificacionesPublicadas(env.GOOGLE_FACTCHECK_KEY, extraida.afirmacion),
       );
 
-      const paso = ((nombre: string, fn: () => Promise<string>) =>
-        step.do(nombre, CON_REINTENTOS, fn)) as unknown as Paso;
       const { informe, veredicto } = await investigarAfirmacion(
         paso,
         { ai: env.AI, tavilyApiKey: env.TAVILY_API_KEY },
