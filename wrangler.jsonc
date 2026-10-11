@@ -21,6 +21,8 @@
     "BSKY_HANDLE": "es-cierto.bsky.social",
     "PUBLIC_URL": "https://escierto.cierto.workers.dev",
     "REPO_URL": "https://github.com/es-cierto/es-cierto",
+    // La landing: la raíz del bot redirige ahí, y de ahí salen la tipografía y la lista de verificaciones.
+    "LANDING_URL": "https://es.cierto.workers.dev",
     // "si" activa /probar, un chat de prueba sin Bluesky. Solo en .dev.vars.
     "PRUEBA_WEB": "no",
   },

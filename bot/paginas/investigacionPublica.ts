@@ -1,5 +1,7 @@
 import { ETIQUETAS, Veredicto } from "../verificacion/veredicto.ts";
 import { escapar, pagina } from "./html.ts";
+import { iconos } from "./iconos.ts";
+import { informeHtml } from "./informe.ts";
 
 export interface FilaInvestigacion {
   afirmacion: string;
@@ -44,38 +46,63 @@ export function claimReview(fila: FilaInvestigacion, url: string, nombre: string
 export function avisosDeCorreccion(fila: FilaInvestigacion): { corregida: string; correccion: string } {
   return {
     corregida: fila.corregida_por
-      ? `<p role="alert" style="padding:.75rem;border:2px solid currentColor"><strong>Esta investigación fue corregida.</strong> <a href="/a/${escapar(fila.corregida_por)}">Ver la versión corregida</a>.</p>`
+      ? `<div class="aviso" role="alert">${iconos.alerta}<p><strong>Esta investigación fue corregida.</strong> <a href="/a/${escapar(fila.corregida_por)}">Ver la versión corregida</a>.</p></div>`
       : "",
     correccion: fila.nota_correccion
-      ? `<p style="padding:.75rem;border:1px solid currentColor"><strong>Corrección:</strong> ${escapar(fila.nota_correccion)}${fila.anterior_id ? ` <a href="/a/${escapar(fila.anterior_id)}">Ver la versión anterior</a>.` : ""}</p>`
+      ? `<div class="aviso">${iconos.alerta}<p><strong>Corrección:</strong> ${escapar(fila.nota_correccion)}${fila.anterior_id ? ` <a href="/a/${escapar(fila.anterior_id)}">Ver la versión anterior</a>.` : ""}</p></div>`
       : "",
   };
 }
+
+const sitioDe = (url: string) => new URL(url).hostname.replace(/^www\./, "");
+
+const FECHA = new Intl.DateTimeFormat("es-CL", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "America/Santiago",
+});
+
+const CONFIANZA: Record<string, string> = { alta: "Confianza alta", media: "Confianza media", baja: "Confianza baja" };
 
 export async function verInvestigacion(env: Env, id: string): Promise<Response> {
   const fila = await env.DB.prepare("SELECT * FROM investigaciones WHERE id = ?").bind(id).first<FilaInvestigacion>();
   if (!fila) {
     return new Response("No existe esa investigación", { status: 404 });
   }
-  const fuentes = Veredicto.shape.fuentes.parse(JSON.parse(fila.fuentes));
-  const enlacesSeguros = fuentes.filter((f) => /^https?:\/\//.test(f.url));
+  const fuentes = Veredicto.shape.fuentes.parse(JSON.parse(fila.fuentes)).filter((f) => /^https?:\/\//.test(f.url));
   const nombre = ETIQUETAS[fila.veredicto].replace(/^\S+\s/, "");
   const { corregida, correccion } = avisosDeCorreccion(fila);
+  const url = `${env.PUBLIC_URL}/a/${id}`;
+  const sitios = new Set(fuentes.map((f) => sitioDe(f.url))).size;
+  const reportar = `${env.REPO_URL}/issues/new?template=1-veredicto-equivocado.yml&title=${encodeURIComponent(`Corrección: ${id}`)}`;
   return pagina(
-    `${ETIQUETAS[fila.veredicto]}: ${fila.afirmacion}`,
-    `<script type="application/ld+json">${claimReview(fila, `${env.PUBLIC_URL}/a/${id}`, nombre)}</script>
+    `${nombre}: ${fila.afirmacion} · ¿Es Cierto?`,
+    `<script type="application/ld+json">${claimReview(fila, url, nombre)}</script>
+<header class="cabecera"><a class="marca" href="${escapar(env.LANDING_URL)}">¿Es Cierto?</a><a class="boton secundario" href="${escapar(env.LANDING_URL)}/verificaciones">Más verificaciones</a></header>
 ${corregida}
-<p><a href="/">¿Es Cierto?</a></p>
-<h1>${escapar(ETIQUETAS[fila.veredicto])}</h1>
+<main>
+<p class="antetitulo">Investigación · ${escapar(FECHA.format(fila.creado_en))}</p>
+<h1 class="veredicto">${iconos[fila.veredicto]}<span>${escapar(nombre)}</span></h1>
+<p class="confianza">${escapar(CONFIANZA[fila.confianza] ?? fila.confianza)} · ${fuentes.length === 1 ? "1 fuente" : `${fuentes.length} fuentes`}${sitios > 1 ? ` de ${sitios} sitios distintos` : ""}</p>
 ${correccion}
-<blockquote>${escapar(fila.afirmacion)}</blockquote>
-<p>${escapar(fila.resumen)}</p>
-<p>Confianza: ${escapar(fila.confianza)} · ${new Date(fila.creado_en).toLocaleDateString("es-CL")}</p>
-<h2>Fuentes</h2>
-<ul>${enlacesSeguros.map((f) => `<li><a href="${escapar(f.url)}" rel="nofollow noopener">${escapar(f.titulo)}</a></li>`).join("")}</ul>
-<h2>Informe de evidencia</h2>
-<p style="white-space:pre-wrap">${escapar(fila.informe)}</p>
-${fila.anterior_id && !fila.nota_correccion ? `<p>Actualiza una <a href="/a/${escapar(fila.anterior_id)}">investigación anterior</a>.</p>` : ""}
-<p><small>Investigación automática con IA (${escapar(fila.modelo)}). Lee la <a href="${env.REPO_URL}/blob/main/METODOLOGIA.md">metodología</a> · ¿Encontraste un error? <a href="${env.REPO_URL}/issues/new?title=${encodeURIComponent(`Corrección: ${id}`)}">Repórtalo</a>.</small></p>`,
+<blockquote class="afirmacion">«${escapar(fila.afirmacion.replace(/[\u00A0\u2007\u202F]/g, " "))}»</blockquote>
+<p class="resumen">${escapar(fila.resumen.replace(/[\u00A0\u2007\u202F]/g, " "))}</p>
+<section class="seccion" aria-labelledby="fuentes"><h2 id="fuentes">Fuentes</h2>
+<ul class="fuentes">${fuentes.map((f) => `<li><a class="fuente" href="${escapar(f.url)}" rel="nofollow noopener"><span><span>${escapar(f.titulo)}</span><span class="sitio">${escapar(sitioDe(f.url))}</span></span>${iconos.enlace}</a></li>`).join("")}</ul>
+</section>
+<section class="seccion" aria-labelledby="informe"><h2 id="informe">Informe de evidencia</h2>
+<p class="resumen-informe">Todo lo que encontró la búsqueda: qué confirma la evidencia, qué la contradice y qué no se pudo comprobar.</p>
+<details class="plegable"><summary class="boton secundario">${iconos.informe}Leer el informe completo</summary>
+<div class="informe">${informeHtml(fila.informe)}</div>
+</details>
+</section>
+${fila.anterior_id && !fila.nota_correccion ? `<p class="seccion">Esta investigación actualiza una <a href="/a/${escapar(fila.anterior_id)}">anterior</a>.</p>` : ""}
+</main>
+<footer class="pie">
+<p>Investigación automática con inteligencia artificial (${escapar(fila.modelo)}). Puede equivocarse: por eso muestra todas sus fuentes y el informe completo. <a href="${escapar(env.REPO_URL)}/blob/main/METODOLOGIA.md">Cómo verifica</a>.</p>
+<div class="acciones"><a class="boton principal" href="${escapar(reportar)}">Reportar un error</a><a class="boton secundario" href="${escapar(env.LANDING_URL)}">Qué es ¿Es Cierto?</a></div>
+</footer>`,
+    { descripcion: `${nombre}. ${fila.resumen}`, canonica: url },
   );
 }
