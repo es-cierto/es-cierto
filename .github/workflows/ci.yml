@@ -30,9 +30,9 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
 
-      # Un solo lockfile para todo el workspace (bot y landing).
+      # Un solo lockfile para todo el workspace (bot y landing). Sin un paso aparte de `pnpm types`: la instalación
+      # los genera, igual que para quien clona el repo por primera vez. Si eso se rompe, el CI falla.
       - run: pnpm install --frozen-lockfile
-      - run: pnpm types
       - run: pnpm --dir landing exec astro sync
 
       - run: pnpm check

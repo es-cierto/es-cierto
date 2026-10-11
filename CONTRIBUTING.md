@@ -18,7 +18,7 @@ Gracias por sumarte. ¿Es Cierto? es un verificador de datos abierto y no partid
 Requisitos: Node 24 (ver `.node-version`) y pnpm 10.
 
 ```bash
-pnpm install          # instala el bot y la landing (es un monorepo) y activa los hooks de git
+pnpm install          # instala el bot y la landing (es un monorepo), activa los hooks de git y genera los tipos de Cloudflare
 pnpm check            # formato, lint, tipos y tests: no necesita claves ni red
 ```
 
