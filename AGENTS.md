@@ -49,6 +49,8 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 ## Límites y umbrales a calibrar
 
 - `MENCIONES_POR_HORA` (5 por autor, en `bot/index.ts`) es fijo, contra el uso del bot para acosar. Si hay que ajustarlo seguido, se mueve a `vars` de `wrangler.jsonc`.
+- `INVESTIGACIONES_POR_DIA` (8, en `bot/verificacion/reglas.ts`) es el tope de investigaciones nuevas por día UTC, para no pasarse de las neuronas gratis de Workers AI, que se reinician a las 00:00 UTC. Cada investigación nueva reserva un cupo en D1 (tabla `cupos`) justo antes de buscar, con un `UPDATE ... WHERE usados < tope` atómico; así varios Workflows que despiertan juntos no se pasan. Sin cupo, el bot avisa una vez en el hilo y el Workflow duerme (`step.sleep`) hasta el día siguiente: el Workflow mismo es la fila, sin Queues. El orden al despertar no es estricto, y con muchas en espera la última puede tardar días; si eso pasa seguido, el tope se sube con un plan pago, no con más código. Reciclar una investigación y conversar no reservan cupo. Si el reintento de la reserva repite una escritura ya hecha, se pierde un cupo de ese día: es aceptable.
+- Si un Workflow de `Chequeo` falla después de agotar los reintentos, `run` responde en el hilo que no pudo terminar (su propio `step.do`) y vuelve a lanzar el error, para que la instancia quede como fallida en el panel.
 
 ## Decisiones de arquitectura (no reabrir sin motivo nuevo)
 

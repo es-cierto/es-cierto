@@ -1,7 +1,15 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { PedidoCorreccion } from "./veredicto.ts";
-import { consultasNuevas, decidir, exigirEvidencia, problemaDeCorreccion, textoDeCorreccion } from "./reglas.ts";
+import {
+  consultasNuevas,
+  decidir,
+  diaUTC,
+  exigirEvidencia,
+  hastaElDiaSiguiente,
+  problemaDeCorreccion,
+  textoDeCorreccion,
+} from "./reglas.ts";
 
 const ahora = Date.parse("2026-10-09T12:00:00Z");
 const hace = (dias: number) => ahora - dias * 24 * 60 * 60 * 1000;
@@ -151,4 +159,15 @@ test("una corrección con confianza alta también necesita dos sitios distintos"
   );
   const dosSitios = [...pedido.fuentes, { titulo: "BCN", url: "https://www.bcn.cl/leychile/21751" }];
   assert.equal(problemaDeCorreccion({ ...pedido, confianza: "alta", fuentes: dosSitios }), null);
+});
+
+test("el cupo diario se cuenta por día UTC, que es cuando Workers AI reinicia las neuronas", () => {
+  assert.equal(diaUTC(Date.parse("2026-10-11T23:30:00-03:00")), "2026-10-12");
+  assert.equal(diaUTC(Date.parse("2026-10-11T20:59:59-03:00")), "2026-10-11");
+});
+
+test("sin cupo se espera hasta las 00:00 UTC del día siguiente", () => {
+  assert.equal(hastaElDiaSiguiente(Date.parse("2026-10-11T23:00:00Z")), 60 * 60 * 1000);
+  assert.equal(hastaElDiaSiguiente(Date.parse("2026-12-31T23:59:59Z")), 1000);
+  assert.equal(hastaElDiaSiguiente(Date.parse("2026-10-11T00:00:00Z")), 24 * 60 * 60 * 1000);
 });

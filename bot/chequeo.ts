@@ -6,7 +6,7 @@ import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO } from "./shared/modelo.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
 import { extraerAfirmacion } from "./verificacion/prompts.ts";
-import { decidir } from "./verificacion/reglas.ts";
+import { decidir, diaUTC, hastaElDiaSiguiente, INVESTIGACIONES_POR_DIA } from "./verificacion/reglas.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
 
@@ -58,15 +58,55 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     });
   }
 
+  private async reservarCupo(mencion: Mencion, red: Red, step: WorkflowStep) {
+    const env = this.env;
+    for (let intento = 1; ; intento++) {
+      const reservado = await step.do(`reservar cupo ${intento}`, async () => {
+        const fila = await env.DB.prepare(
+          "INSERT INTO cupos (dia, usados) VALUES (?1, 1) ON CONFLICT (dia) DO UPDATE SET usados = usados + 1 WHERE usados < ?2 RETURNING usados",
+        )
+          .bind(diaUTC(Date.now()), INVESTIGACIONES_POR_DIA)
+          .first();
+        return fila !== null;
+      });
+      if (reservado) {
+        return;
+      }
+      if (intento === 1) {
+        await step.do("avisar que espera", async () => {
+          await red.responder(
+            mencion,
+            "Hoy ya hice todas las investigaciones que alcanzo a pagar. Esta queda en la fila: te respondo aquí mismo apenas se libere un cupo, normalmente mañana.",
+          );
+        });
+      }
+      const espera = await step.do(`calcular espera ${intento}`, async () => hastaElDiaSiguiente(Date.now()));
+      await step.sleep(`esperar el día siguiente ${intento}`, espera);
+    }
+  }
+
   async run(evento: WorkflowEvent<ParamsChequeo>, step: WorkflowStep) {
     const { mencion } = evento.payload;
-    const env = this.env;
-    const enRed = red(env, evento.payload.red);
-
-    if (mencion.razon === "reply") {
-      await this.conversar(mencion, enRed, step);
-      return;
+    const enRed = red(this.env, evento.payload.red);
+    try {
+      if (mencion.razon === "reply") {
+        await this.conversar(mencion, enRed, step);
+      } else {
+        await this.verificar(mencion, enRed, step);
+      }
+    } catch (error) {
+      await step.do("avisar que falló", async () => {
+        await enRed.responder(
+          mencion,
+          "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a mencionarme en un rato.",
+        );
+      });
+      throw error;
     }
+  }
+
+  private async verificar(mencion: Mencion, enRed: Red, step: WorkflowStep) {
+    const env = this.env;
 
     const publicacion = await step.do("leer publicación", async () =>
       mencion.padre ? enRed.textoDePost(mencion.padre.uri) : "",
@@ -118,6 +158,8 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
               return JSON.stringify(fila);
             })
           : undefined;
+
+      await this.reservarCupo(mencion, enRed, step);
 
       const verificaciones = await step.do("buscar verificaciones publicadas", CON_REINTENTOS, () =>
         verificacionesPublicadas(env.GOOGLE_FACTCHECK_KEY, extraida.afirmacion),
