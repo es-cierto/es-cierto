@@ -8,7 +8,7 @@
     "deploy": "bash scripts/desplegar.sh bot",
     "types": "wrangler types --strict-vars=false",
     "typecheck": "tsc --noEmit",
-    "test": "node --test 'bot/**/*.test.ts' 'perfiles/**/*.test.ts'",
+    "test": "node --test 'bot/**/*.test.ts' 'perfiles/**/*.test.ts' 'scripts/**/*.test.ts'",
     "eval": "promptfoo eval -c evals/promptfooconfig.yaml",
     "eval:ver": "promptfoo view",
     "prepare": "git config core.hooksPath .githooks || true; wrangler types --strict-vars=false >/dev/null",
