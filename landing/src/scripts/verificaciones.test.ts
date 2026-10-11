@@ -35,9 +35,8 @@ test('cada tarjeta enlaza a la página de su investigación en el bot', () => {
 });
 
 test('la fecha va en español y en hora de Chile', () => {
-  // 10 de octubre de 2026, 21:30 UTC = 18:30 en Chile.
   assert.equal(fecha(Date.UTC(2026, 9, 10, 21, 30)), '10 de octubre de 2026');
-  // 11 de octubre, 01:00 UTC todavía es 10 de octubre en Chile.
+
   assert.equal(fecha(Date.UTC(2026, 9, 11, 1, 0)), '10 de octubre de 2026');
 });
 

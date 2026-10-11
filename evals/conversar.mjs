@@ -1,4 +1,3 @@
-// Toda respuesta en el hilo cabe en un post (300 caracteres, dejando espacio) y no usa markdown.
 export default function (output) {
   const largo = [...output].length;
   if (largo > 300) {

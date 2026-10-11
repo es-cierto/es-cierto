@@ -37,7 +37,8 @@
           }
         ]
       }
-    ]
+    ],
+    "escierto/sin-comentarios": "error"
   },
   "overrides": [
     {
@@ -47,5 +48,6 @@
         "typescript/no-floating-promises": "off"
       }
     }
-  ]
+  ],
+  "jsPlugins": ["./tools/oxlint-sin-comentarios.mjs"]
 }

@@ -1,9 +1,6 @@
 import type { Turno } from "../shared/hilo.ts";
 import type { Mencion } from "./bluesky.ts";
 
-// Red de prueba: el mismo contrato que bluesky.ts, con el hilo guardado en D1.
-// Una URI es `web:<hilo>:<n>`; el turno 0 es la publicación y el 1 la pregunta.
-
 function partes(uri: string): { hilo: string; n: number } {
   const [, hilo, n] = uri.split(":");
   return { hilo, n: Number(n) };

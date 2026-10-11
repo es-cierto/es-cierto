@@ -1,5 +1,3 @@
-// El texto de /llms.txt y /llms-full.txt (formato de llmstxt.org). Funciones puras: las páginas las sirven y el test
-// las revisa sin levantar Astro.
 import { enlaces, escala, pasos, preguntas, seo } from './sitio.ts';
 
 export function resumenParaModelos(inicio: string): string {
@@ -31,9 +29,7 @@ ${preguntas.map((p) => `### ${p.pregunta}\n\n${p.respuesta}`).join('\n\n')}
 `;
 }
 
-/** El resumen más METODOLOGIA.md completa. */
 export function completoParaModelos(inicio: string, metodologia: string): string {
-  // Sin su título (ya lo da «Metodología completa») y con las secciones un nivel más abajo.
   const bajada = metodologia
     .trim()
     .replace(/^# .*\n+/, '')

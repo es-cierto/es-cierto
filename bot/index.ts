@@ -10,7 +10,6 @@ import { PedidoCorreccion } from "./verificacion/veredicto.ts";
 export { Chequeo } from "./chequeo.ts";
 export { Correccion } from "./correccion.ts";
 
-// ponytail: límite fijo por autor contra el uso del bot para acosar; moverlo a vars si hay que ajustarlo seguido.
 const MENCIONES_POR_HORA = 5;
 
 async function existeInstanciaDe(workflow: Workflow, id: string): Promise<boolean> {
@@ -48,7 +47,7 @@ async function revisarMenciones(env: Env) {
         continue;
       }
     }
-    // `datos` guarda la mención completa: si el veredicto se corrige, el bot vuelve a este hilo a avisar.
+
     await env.DB.prepare(
       "INSERT INTO menciones (uri, autor, creado_en, datos) VALUES (?, ?, ?, ?) ON CONFLICT (uri) DO NOTHING",
     )
@@ -61,13 +60,11 @@ async function revisarMenciones(env: Env) {
   }
 }
 
-// Comparación en tiempo constante: la ruta de correcciones no puede filtrar el token por cuánto tarda en rechazar.
 async function tokenValido(recibido: string, esperado: string): Promise<boolean> {
   const resumen = async (texto: string) => crypto.subtle.digest("SHA-256", new TextEncoder().encode(texto));
   return crypto.subtle.timingSafeEqual(await resumen(recibido), await resumen(esperado));
 }
 
-// Una persona que mantiene el proyecto revisa el reporte y publica la corrección. Solo encola el Workflow.
 async function corregir(request: Request, env: Env): Promise<Response> {
   const token = request.headers.get("authorization")?.replace(/^Bearer /, "") ?? "";
   if (!env.CORRECCIONES_TOKEN || !(await tokenValido(token, env.CORRECCIONES_TOKEN))) {
@@ -82,7 +79,7 @@ async function corregir(request: Request, env: Env): Promise<Response> {
   if (problema) {
     return Response.json({ error: problema }, { status: 400 });
   }
-  // Una sola corrección por investigación: el id de la instancia sale de la investigación corregida.
+
   const id = await idDeInstancia(`correccion:${pedido.data.investigacionId}`);
   try {
     await env.CORRECCION.create({ id, params: pedido.data });

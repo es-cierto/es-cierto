@@ -1,4 +1,3 @@
-// Todo lo que viene de la base pasa por `escapar`; los enlaces que se generan son solo http(s).
 export function escapar(texto: string): string {
   return texto.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }

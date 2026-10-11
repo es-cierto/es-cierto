@@ -3,7 +3,7 @@ import type { Turno } from "../shared/hilo.ts";
 
 const XRPC = "https://bsky.social/xrpc";
 const LARGO_MAXIMO = 300;
-// ponytail: la sesión se cachea en D1 porque createSession tiene límite diario (~300).
+
 const DURACION_SESION_MS = 90 * 60 * 1000;
 
 export interface Sesion {
@@ -136,7 +136,6 @@ const NodoHilo = z.object({
   parent: z.unknown().optional(),
 });
 
-// ponytail: solo la cadena de padres (hasta 20); las ramas laterales del hilo no son parte de la conversación.
 export async function leerHilo(sesion: Sesion, uri: string): Promise<Turno[]> {
   const { thread } = z
     .object({ thread: z.unknown() })

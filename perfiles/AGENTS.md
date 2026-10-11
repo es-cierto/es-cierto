@@ -28,3 +28,10 @@ node scripts/perfiles.ts bluesky    # solo uno
 ```
 
 Bluesky usa `BSKY_APP_PASSWORD` de `.dev.vars`. GitHub usa la sesión de `gh` y necesita permisos de admin en la organización. El avatar de la organización de GitHub se sube a mano (la API no lo permite).
+
+## Por qué está así
+
+- `scripts/perfiles.ts` parte del perfil actual de Bluesky y solo cambia lo suyo (nombre, biografía, avatar, portada), para no borrar lo que no maneja, como una publicación fijada.
+- Las imágenes se generan con el `sharp` que ya instala la landing, cargado desde ahí: así la raíz no suma dependencias. El test lo carga igual.
+- El avatar sale de `avatar-fuente.png` a 1000 px, con un poco más de brillo y nitidez para que el hilo no se apague a 32 px. La portada es la franja central de la ficha sellada, donde está el nudo.
+- El test lee el ancho y el alto de las imágenes sin dependencias: en un PNG están en el encabezado IHDR; en un JPEG, en el primer marcador SOF.

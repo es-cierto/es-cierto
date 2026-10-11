@@ -1,4 +1,3 @@
-// Las reglas de perfiles/AGENTS.md que se pueden comprobar leyendo el repo.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, statSync } from "node:fs";
@@ -9,7 +8,6 @@ import { bluesky, github } from "./datos.ts";
 const raiz = join(import.meta.dirname, "..");
 const grafemas = (texto: string) => [...new Intl.Segmenter("es", { granularity: "grapheme" }).segment(texto)].length;
 
-// PNG: ancho y alto en el encabezado IHDR. JPEG: en el primer marcador SOF.
 function medidas(ruta: string): { ancho: number; alto: number } {
   const b = readFileSync(join(raiz, ruta));
   if (b.readUInt32BE(0) === 0x89504e47) return { ancho: b.readUInt32BE(16), alto: b.readUInt32BE(20) };
@@ -45,7 +43,6 @@ test("una palabra para cada cosa: mencionar (no etiquetar) y publicación (no po
 });
 
 test("el avatar no tiene rojo: menos de 0,5% de píxeles rojizos saturados", async () => {
-  // sharp lo instala la landing; se carga desde ahí para no sumar dependencias a la raíz.
   const sharp = createRequire(join(raiz, "landing/package.json"))("sharp") as (ruta: string) => {
     resize(
       ancho: number,

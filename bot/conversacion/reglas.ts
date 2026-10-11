@@ -1,7 +1,6 @@
 import { enlacesDe } from "../shared/enlaces.ts";
 import type { Turno } from "../shared/hilo.ts";
 
-// ponytail: tope fijo contra discusiones infinitas que gastan API; moverlo a vars si hay que ajustarlo seguido.
 export const MAX_RESPUESTAS_POR_HILO = 5;
 
 export function puedeSeguirConversando(hilo: Turno[]): boolean {
@@ -28,13 +27,10 @@ export function respaldarRespuesta(texto: string, investigacion: string | null, 
   return enlacesDe(texto).every((url) => permitidos.has(url)) ? texto : respuestaDeRespaldo(pagina);
 }
 
-// Bluesky permite 300 grafemas por post; se deja margen.
 export const LARGO_MAXIMO_RESPUESTA = 290;
 
 const grafemas = (texto: string) => [...new Intl.Segmenter("es", { granularity: "grapheme" }).segment(texto)].length;
 
-// El modelo no respeta siempre el largo que pide el prompt. Se corta en el último fin de oración que cabe,
-// para no publicar un enlace partido; si ni la primera oración cabe, se manda a la investigación.
 export function ajustarLargo(texto: string, pagina: string | null): string {
   if (grafemas(texto) <= LARGO_MAXIMO_RESPUESTA) {
     return texto;
@@ -50,7 +46,6 @@ export function ajustarLargo(texto: string, pagina: string | null): string {
   return recortado || respuestaDeRespaldo(pagina);
 }
 
-// Lo que se publica en el hilo: solo enlaces investigados y dentro del largo de un post.
 export function respuestaPublicable(borrador: string, investigacion: string | null, pagina: string | null): string {
   return ajustarLargo(respaldarRespuesta(borrador, investigacion, pagina), pagina);
 }

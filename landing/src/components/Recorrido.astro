@@ -8,10 +8,10 @@ import tirar from '../assets/recorrido/1-tirar.webp';
 import fuentes from '../assets/recorrido/2-fuentes.webp';
 import algoAtado from '../assets/recorrido/3-algo-atado.webp';
 
-// La imagen de cada parada es un cuadro real del video (el primero de su clip; la última, el último del clip C),
-// así el clip entra encima sin que se note el cambio.
+
+
 const imagenes = [inicio, tirar, fuentes, algoAtado];
-// Un clip por tramo: el clip k va de la parada k a la k+1.
+
 const clips = ['A', 'B', 'C'];
 const titulo = 'mt-4 max-w-xl text-5xl text-balance lg:text-7xl';
 const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
@@ -142,8 +142,6 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
 </section>
 
 <style>
-  /* En pantallas verticales la escena 16:9 llenando toda la altura deja ver apenas un cuarto del cuadro y el celular
-     no se reconoce. La escena ocupa la parte de arriba (se ve dos tercios del ancho) y se funde con el fondo. */
   @media (max-aspect-ratio: 3/4) {
     .medio {
       bottom: auto;
@@ -161,7 +159,6 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
     opacity: 1;
   }
 
-  /* Solo se ve el clip del tramo actual; el cambio es instantáneo porque comparten cuadro. */
   .clip {
     object-position: var(--foco) 50%;
     visibility: hidden;
@@ -197,7 +194,6 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
     transform: scale(1.5);
   }
 
-  /* El veredicto del ejemplo cae como un timbre cuando la cámara llega a la respuesta. */
   :global(.js .parada.actual) .sello {
     animation: sellar 650ms 450ms cubic-bezier(0.2, 1.5, 0.4, 1) both;
   }

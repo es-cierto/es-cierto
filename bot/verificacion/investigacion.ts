@@ -3,7 +3,6 @@ import { investigar, planificarBusquedas, redactarVeredicto } from "./prompts.ts
 import { consultasNuevas, exigirEvidencia, MAX_RONDAS_BUSQUEDA } from "./reglas.ts";
 import type { Veredicto } from "./veredicto.ts";
 
-// Cómo se ejecuta cada paso: en el Workflow es `step.do` (durable, con reintentos); en los evals, la función directa.
 export type Paso = <T>(nombre: string, fn: () => Promise<T>) => Promise<T>;
 
 export async function investigarAfirmacion(

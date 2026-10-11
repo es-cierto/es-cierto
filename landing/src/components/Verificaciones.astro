@@ -2,12 +2,12 @@
 import Icono from './Icono.astro';
 import { enlaces, escala } from '../data/sitio';
 
-// Lo que el bot ha respondido, leído en vivo de /api/investigaciones (src/scripts/listado.ts). En el inicio van las
-// últimas 3 con un enlace a /verificaciones; en esa página, de a 12 con "Ver más". Sin filtros: todo, por fecha.
+
+
 interface Props {
   limite: number;
   paginar?: boolean;
-  /** El inicio muestra un encabezado de sección; la página propia lo trae en su <h1>. */
+  
   encabezado?: boolean;
 }
 
@@ -52,7 +52,6 @@ const { limite, paginar = false, encabezado = false } = Astro.props;
     </div>
   </div>
 
-  <!-- Una tarjeta. src/scripts/listado.ts la clona y llena cada [data-campo] con textContent. -->
   <template data-tarjeta>
     <li class="flex flex-col gap-3 rounded-2xl bg-[#1c1a12] p-5 ring-1 ring-papel/10">
       <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
@@ -72,7 +71,6 @@ const { limite, paginar = false, encabezado = false } = Astro.props;
     </li>
   </template>
 
-  <!-- Ícono y nombre de cada veredicto, en el mismo orden que la escala. -->
   {
     escala.map((v) => (
       <template data-icono={v.id}>

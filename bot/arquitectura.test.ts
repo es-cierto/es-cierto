@@ -1,4 +1,3 @@
-// Cada afirmación de los AGENTS.md que se puede comprobar leyendo el repo, atada a una prueba que falla si deja de ser cierta.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
@@ -13,10 +12,9 @@ const codigo = (readdirSync(join(raiz, "bot"), { recursive: true }) as string[])
 const dominios = readdirSync(join(raiz, "bot"), { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name);
-// "bot/verificacion/reglas.ts" → "verificacion"; los archivos sueltos en bot/ (entrada y Workflow) → null.
+
 const dominioDe = (ruta: string) => (ruta.split("/").length > 2 ? ruta.split("/")[1] : null);
 
-// Qué puede importar cada dominio. Los archivos sueltos en bot/ orquestan y pueden importar todo.
 const FRONTERAS: Record<string, string[]> = {
   shared: [],
   verificacion: ["shared"],
@@ -113,8 +111,6 @@ test("cada secreto está en wrangler.jsonc, .dev.vars.example y el README", () =
   assert.deepEqual(readme, requeridos, "los pasos de despliegue del README no coinciden con secrets.required");
 });
 
-// En local compara contra HEAD (protege el commit que se está armando); en CI, contra la base del PR o el push
-// (METODOLOGIA_BASE). Un archivo que no existe en la base (recién creado o movido) no se compara.
 test("cambiar un prompt o un umbral obliga a actualizar METODOLOGIA.md", () => {
   const base = process.env.METODOLOGIA_BASE || "HEAD";
   const enHead = (ruta: string) => {
@@ -140,7 +136,7 @@ test("todo `pnpm <script>` que citan las guías existe", () => {
   for (const guia of guias) {
     const paquete = guia.startsWith("landing/") ? "landing/package.json" : "package.json";
     const scripts = Object.keys((JSON.parse(leer(paquete)) as { scripts: Record<string, string> }).scripts);
-    // En el README, los comandos del bloque que empieza con `cd landing` son de la landing.
+
     const texto = leer(guia);
     const bloque = guia === "README.md" ? (texto.match(/cd landing[\s\S]*?```/)?.[0] ?? "") : "";
     const [antes, despues] = [texto.replace(bloque, ""), bloque];
@@ -177,9 +173,7 @@ test("las migraciones solo se agregan: una ya commiteada no se edita, y van nume
         encoding: "utf8",
         stdio: "pipe",
       });
-    } catch {
-      // Nueva en este cambio.
-    }
+    } catch {}
     if (antes !== null) {
       assert.equal(
         leer(`migrations/${nombre}`),
@@ -200,7 +194,7 @@ test("CODEOWNERS solo nombra rutas que existen y cubre lo que define la metodolo
     assert.ok(duenos.length > 0, `${ruta} no tiene dueño en CODEOWNERS`);
   }
   const cubiertas = new Set(reglas.map(([ruta]) => ruta));
-  // Los prompts y los umbrales son metodología (ver "cambiar un prompt o un umbral obliga a actualizar METODOLOGIA.md").
+
   const metodologia = codigo.filter((ruta) => /system: `|^export const [A-Z_]+ = /m.test(leer(ruta)));
   for (const ruta of ["METODOLOGIA.md", ...metodologia]) {
     assert.ok(cubiertas.has(ruta), `${ruta} define metodología y no tiene dueño en CODEOWNERS`);

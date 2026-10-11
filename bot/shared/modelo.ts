@@ -16,7 +16,7 @@ export async function completar(
     ],
     reasoning_effort: pedido.esfuerzo,
     max_completion_tokens: 8000,
-    // Workers AI ignora response_format con gpt-oss; una función forzada sí devuelve JSON.
+
     ...(pedido.json && {
       tools: [
         {
