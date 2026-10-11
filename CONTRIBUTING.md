@@ -33,13 +33,18 @@ Para que el bot investigue de verdad en tu computador necesitas **tus propias cu
 - **Bluesky:** no hace falta. El chat de prueba en `/probar` hace de red social.
 
 ```bash
-pnpm exec wrangler login   # con tu cuenta de Cloudflare
-pnpm entorno               # crea tu .dev.vars, el índice de Vectorize en tu cuenta y la base local
-# agrega tu TAVILY_API_KEY en .dev.vars
-pnpm dev                   # y abre http://localhost:8787/probar
+pnpm entorno
 ```
 
-`pnpm entorno` se puede correr las veces que haga falta. Si tienes `CLOUDFLARE_ACCOUNT_ID` o `CLOUDFLARE_API_TOKEN` en tu terminal (por ejemplo, de un trabajo), wrangler usa esa cuenta y no la de tu sesión: el script te avisa.
+Un solo comando, y te pide lo que falte:
+
+1. Si no has iniciado sesión en Cloudflare, abre el navegador para que entres con tu cuenta.
+2. Crea tu `.dev.vars` con el chat de prueba activado (`PRUEBA_WEB=si`).
+3. Te pide tu clave de Tavily (se escribe oculta) y la guarda en `.dev.vars`.
+4. Crea el índice de Vectorize en tu cuenta y la base de datos local.
+5. Te ofrece arrancar `pnpm dev`. El chat de prueba queda en http://localhost:8787/probar.
+
+Se puede correr las veces que haga falta: no repite lo que ya está. Si tienes `CLOUDFLARE_ACCOUNT_ID` o `CLOUDFLARE_API_TOKEN` en tu terminal (por ejemplo, de un trabajo), wrangler usa esa cuenta y no la de tu sesión: el script te avisa.
 
 Para correr los evals (`pnpm eval`) hace falta además un token de tu cuenta con permiso de Workers AI (ver `evals/proveedor.ts`). Gastan tu plan, no el del proyecto.
 

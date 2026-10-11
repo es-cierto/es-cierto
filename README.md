@@ -58,9 +58,8 @@ Requisitos: Node 24+, pnpm, y para que el bot investigue, una cuenta gratis de C
 ```bash
 pnpm install
 pnpm check                 # formato, lint, tipos y tests: sin claves ni red
-pnpm exec wrangler login   # con tu cuenta de Cloudflare
-pnpm entorno               # .dev.vars, índice de Vectorize en tu cuenta y base local
-pnpm dev                   # http://localhost:8787/probar, el chat de prueba sin Bluesky
+pnpm entorno               # te pide lo que falte (sesión de Cloudflare, clave de Tavily) y arranca pnpm dev
+                           # el chat de prueba, sin Bluesky, queda en http://localhost:8787/probar
 pnpm eval                  # calidad del modelo; gasta neuronas y búsquedas de tu plan
 ```
 
