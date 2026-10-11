@@ -11,4 +11,5 @@ Lo que usan varios dominios. **No depende de ningún dominio**: si algo de aquí
 ## Por qué está así
 
 - **JSON del modelo:** Workers AI ignora `response_format` con `gpt-oss`; una llamada a función forzada sí devuelve JSON, y eso usa `completar` cuando se le pasa un esquema.
+- **AI Gateway:** toda llamada a Workers AI (el modelo de texto y el embedding) pasa por `pasarela`, la pasarela `default`, que Cloudflare crea sola en la primera llamada de cada cuenta; así funciona igual en producción y en la cuenta de cada colaborador sin configurar nada. Deja en el panel cada llamada con sus tokens, su latencia y su error, para entender un veredicto raro o ver cuánto se gastó. La caché queda apagada: los prompts casi nunca se repiten. Lo exige un test de `bot/arquitectura.test.ts`.
 - **La memoria de una conversación es el hilo** (`Turno[]`), releído en cada turno desde la red: no hay estado guardado.

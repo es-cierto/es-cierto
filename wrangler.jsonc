@@ -7,7 +7,9 @@
   "main": "bot/index.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
-  "observability": { "enabled": true },
+  // Workers Logs (los console.log en JSON) y trazas de cada invocación (fetch a Bluesky, Tavily y Google, con tiempos y
+  // estados), 7 días en el panel. El volumen es bajo, así que se guarda todo. Las llamadas al modelo se ven en AI Gateway.
+  "observability": { "enabled": true, "traces": { "enabled": true } },
 
   // Bluesky no tiene webhooks: se revisan las menciones cada minuto.
   "triggers": { "crons": ["* * * * *"] },

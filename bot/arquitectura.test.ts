@@ -76,6 +76,15 @@ test("solo shared/modelo.ts llama al modelo de texto (el embedding del Workflow 
   }
 });
 
+test("toda llamada a Workers AI pasa por AI Gateway", () => {
+  for (const ruta of codigo) {
+    const texto = leer(ruta);
+    const llamadas = texto.match(/\b(?:ai|AI)\.run\(/g)?.length ?? 0;
+    const conPasarela = texto.match(/,\s*pasarela\s*,?\s*\)/g)?.length ?? 0;
+    assert.equal(conPasarela, llamadas, `${ruta}: ${llamadas} llamadas a Workers AI, ${conPasarela} por la pasarela`);
+  }
+});
+
 test("todo system prompt declara que el contenido de terceros es dato", () => {
   const prompts = codigo.flatMap((ruta) => leer(ruta).match(/system: `[\s\S]*?`,\n/g) ?? []);
   assert.ok(prompts.length > 0);
