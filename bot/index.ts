@@ -1,6 +1,5 @@
 import { idDeInstancia } from "./chequeo.ts";
 import { listarInvestigaciones } from "./paginas/api.ts";
-import { escapar, pagina } from "./paginas/html.ts";
 import { verInvestigacion } from "./paginas/investigacionPublica.ts";
 import { probar } from "./paginas/probar.ts";
 import { marcarLeidas, mencionesSinLeer, sesionBluesky } from "./redes/bluesky.ts";
@@ -114,10 +113,7 @@ export default {
       return verInvestigacion(env, investigacion[1]);
     }
     if (pathname === "/") {
-      return pagina(
-        "¿Es Cierto?",
-        `<h1>¿Es Cierto?</h1><p>Verificador de datos abierto. Menciona a <strong>@${escapar(env.BSKY_HANDLE)}</strong> en una publicación y te responde con evidencia y fuentes.</p><p><a href="${env.REPO_URL}">Código</a> · <a href="${env.REPO_URL}/blob/main/METODOLOGIA.md">Metodología</a></p>`,
-      );
+      return Response.redirect(env.LANDING_URL, 302);
     }
     return new Response("No encontrado", { status: 404 });
   },

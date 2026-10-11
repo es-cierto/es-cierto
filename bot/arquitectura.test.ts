@@ -104,7 +104,6 @@ test("cada secreto está en wrangler.jsonc, .dev.vars.example y el README", () =
   const wrangler = leer("wrangler.jsonc").match(/"required":\s*\[([^\]]*)\]/)?.[1] ?? "";
   const requeridos = [...wrangler.matchAll(/"(\w+)"/g)].map((m) => m[1]).sort();
   const ejemplo = [...leer(".dev.vars.example").matchAll(/^(\w+)=/gm)].map((m) => m[1]).sort();
-  // En el README, los secretos van listados en la sección de despliegue: "- `NOMBRE`: para qué sirve".
   const seccion = leer("README.md").split("## Desplegar")[1]?.split("\n## ")[0] ?? "";
   const readme = [...seccion.matchAll(/^- `([A-Z_]+)`:/gm)].map((m) => m[1]).sort();
   assert.deepEqual(ejemplo, requeridos, ".dev.vars.example no coincide con secrets.required");

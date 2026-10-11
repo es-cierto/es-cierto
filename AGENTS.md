@@ -61,13 +61,22 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 
 El esquema de D1 vive en `migrations/`, con las migraciones de wrangler (`pnpm db:migrar`), sin ORM. Una migración commiteada no se edita: un cambio de esquema es un archivo nuevo con el número siguiente (`0002_algo.sql`).
 
+## Despliegue
+
+Al mergear a `main`, cuando el CI termina en verde, `.github/workflows/desplegar.yml` despliega en la cuenta del proyecto solo lo que el merge cambió. Lo decide `scripts/que-desplegar.ts` con los archivos del merge (`git diff --name-only HEAD^1 HEAD | node scripts/que-desplegar.ts` imprime `bot`, `landing`, `todo` o `nada`):
+
+- **No despliegan** los tests, los `AGENTS.md`/`CLAUDE.md` ni `landing/PROMPTS.md` (aunque estén dentro de `bot/` o `landing/`), ni la documentación, los perfiles, los evals o `.github/`.
+- **El bot** (con sus migraciones): `bot/`, `migrations/`, `wrangler.jsonc` y el `package.json` de la raíz.
+- **La landing:** `landing/` y `METODOLOGIA.md`, porque `llms-full.txt` la incluye entera. Un test exige que todo `.md` que el bot o la landing importan dispare su despliegue.
+- **Los dos:** las dependencias (`pnpm-lock.yaml`, `pnpm-workspace.yaml`).
+
 ## Colaboración
 
 `main` está protegida: se entra por PR, con el CI (`verificar`) en verde y una aprobación. Lo que define la metodología, dónde corre el bot o cómo se presenta en público necesita además la revisión del equipo `mantenedores`, según `.github/CODEOWNERS`; el test de arquitectura exige que todo archivo con prompts o umbrales esté ahí. Cómo contribuir, para personas: `CONTRIBUTING.md`.
 
 ## Secretos y configuración
 
-`wrangler.jsonc` es la fuente de verdad. Producción vive en la **cuenta de Cloudflare del proyecto** y se despliega solo desde `scripts/desplegar.sh`, que exige `CLOUDFLARE_ACCOUNT_ID` con esa cuenta (lo corre el CI al mergear a `main`). Los `wrangler.jsonc` **no** fijan `account_id`: en local, Workers AI y Vectorize corren en la cuenta de quien inició sesión, y cada persona usa la suya (`pnpm entorno`). `PUBLIC_URL` es `https://escierto.cierto.workers.dev` hasta que haya dominio propio (`escierto.org` no está registrado por el proyecto). La cuenta del bot es `es-cierto.bsky.social` (`BSKY_HANDLE`). `escierto.bsky.social`, sin guion, es de otra persona: nunca se enlaza ni se publica como propia. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. `scripts/secretos.sh` sube a la cuenta del proyecto los de `secrets.required`, tomando los valores de `.dev.vars` (que nunca se commitea). Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
+`wrangler.jsonc` es la fuente de verdad. Producción vive en la **cuenta de Cloudflare del proyecto** y se despliega solo desde `scripts/desplegar.sh`, que exige `CLOUDFLARE_ACCOUNT_ID` con esa cuenta (lo corre el CI al mergear a `main`). Los `wrangler.jsonc` **no** fijan `account_id`: en local, Workers AI y Vectorize corren en la cuenta de quien inició sesión, y cada persona usa la suya (`pnpm entorno`). `PUBLIC_URL` es `https://escierto.cierto.workers.dev` hasta que haya dominio propio (`escierto.org` no está registrado por el proyecto). La cuenta del bot es `es-cierto.bsky.social` (`BSKY_HANDLE`). `escierto.bsky.social`, sin guion, es de otra persona: nunca se enlaza ni se publica como propia. Al agregar un secreto, súmalo en tres lugares: `secrets.required`, `.dev.vars.example` y los pasos de despliegue del `README.md`. `scripts/secretos.sh` sube a la cuenta del proyecto los de `secrets.required`, tomando los valores de `.dev.vars` (que nunca se commitea). En el README, los secretos van listados en la sección «Desplegar», uno por línea: «- `NOMBRE`: para qué sirve»; el test de secretos lee esa lista. Después de tocar `wrangler.jsonc`, corre `pnpm types`. Nunca se commitea `.dev.vars`.
 
 ## Verificar
 
