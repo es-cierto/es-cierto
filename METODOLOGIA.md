@@ -92,6 +92,8 @@ La IFCN pide buscar a quien hizo la afirmación antes de publicar. El bot no lo 
 - La búsqueda se limita a 3 rondas de 3 consultas por afirmación: un tema que necesite más evidencia puede terminar como _No verificable_.
 - Por ahora solo se lee texto. Las imágenes, los videos y los posts citados todavía no se analizan.
 - Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el bot se use para acosar.
+- El bot funciona con el plan gratis del modelo y del buscador, que alcanza para unas 8 a 10 investigaciones al día. Cuando se acaba, no descarta lo pedido: avisa en el hilo y responde apenas se renueva el saldo, normalmente al día siguiente.
+- Si una investigación falla por un error del bot, responde en el hilo que no pudo terminarla, en vez de quedarse en silencio.
 
 ## Correcciones
 
