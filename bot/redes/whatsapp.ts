@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Mencion } from "./bluesky.ts";
 
-const GRAPH = "https://graph.facebook.com/v23.0";
+const GRAPH = "https://graph.facebook.com/v26.0";
 
 const Webhook = z.object({
   entry: z.array(
