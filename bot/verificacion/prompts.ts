@@ -3,7 +3,11 @@ import { completar, REGLA_DATO } from "../shared/modelo.ts";
 import { Veredicto } from "./veredicto.ts";
 
 export const Afirmacion = z.object({
-  verificable: z.boolean().describe("false si es pura opinión, chiste, insulto o no contiene un hecho comprobable"),
+  verificable: z
+    .boolean()
+    .describe(
+      "false si es pura opinión, chiste, insulto, no contiene un hecho comprobable o solo describe la publicación misma",
+    ),
   afirmacion: z.string().describe("la afirmación de hecho, reformulada de forma neutra y autocontenida, en español"),
 });
 export type Afirmacion = z.infer<typeof Afirmacion>;
@@ -22,7 +26,7 @@ export async function extraerAfirmacion(ai: Ai, publicacion: string, pregunta: s
   const crudo = await completar(ai, {
     esfuerzo: "low",
     json: Afirmacion,
-    system: `Eres el primer paso de ¿Es Cierto?, un verificador de datos abierto y no partidista. Alguien te etiquetó para preguntar si algo es cierto. Identifica la afirmación de hecho principal que hay que verificar. ${REGLA_DATO}`,
+    system: `Eres el primer paso de ¿Es Cierto?, un verificador de datos abierto y no partidista. Alguien te etiquetó para preguntar si algo es cierto. Identifica la afirmación de hecho principal que hay que verificar. Se verifica lo que la publicación afirma, no la publicación misma: quién la publicó, cuándo o cuántas reacciones tiene no es una afirmación. Si solo tienes eso (por ejemplo, un enlace del que no se pudo leer el contenido), no es verificable. ${REGLA_DATO}`,
     usuario: `<publicacion>${publicacion}</publicacion>\n<pregunta>${pregunta}</pregunta>`,
   });
   return Afirmacion.parse(JSON.parse(crudo));

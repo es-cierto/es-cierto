@@ -92,7 +92,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       await step.do("responder sin afirmación", async () => {
         await enRed.responder(
           mencion,
-          "No encontré un hecho que se pueda verificar: parece opinión. Si hay un dato concreto, etiquétame en la publicación que lo contiene.",
+          "No encontré un hecho que se pueda verificar: parece opinión, o no pude leer qué dice el enlace (pasa con Instagram, TikTok o X). Si hay un dato concreto, escríbemelo o menciónme en la publicación que lo contiene.",
         );
       });
       return;
