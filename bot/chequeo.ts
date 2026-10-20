@@ -4,9 +4,11 @@ import { investigacionDelHilo, puedeSeguirConversando, respuestaPublicable } fro
 import type { Mencion } from "./redes/bluesky.ts";
 import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO, pasarela } from "./shared/modelo.ts";
+import { enlacesDe } from "./shared/enlaces.ts";
+import { leerEnlaces } from "./verificacion/busqueda.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
 import { extraerAfirmacion } from "./verificacion/prompts.ts";
-import { decidir } from "./verificacion/reglas.ts";
+import { decidir, ENLACES_POR_MENSAJE } from "./verificacion/reglas.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
 
@@ -74,9 +76,13 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       return;
     }
 
-    const publicacion = await step.do("leer publicación", async () =>
+    const texto = await step.do("leer publicación", async () =>
       mencion.padre ? enRed.textoDePost(mencion.padre.uri) : "",
     );
+
+    const enlaces = enlacesDe(`${texto} ${mencion.texto}`).slice(0, ENLACES_POR_MENSAJE);
+    const paginas = enlaces.length ? await step.do("leer enlaces", () => leerEnlaces(enlaces)) : "";
+    const publicacion = paginas ? `${texto}\n\nContenido de los enlaces:\n${paginas}` : texto;
 
     const extraida = await step.do("extraer afirmación", CON_REINTENTOS, () =>
       extraerAfirmacion(env.AI, publicacion, mencion.texto),

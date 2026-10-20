@@ -2,6 +2,8 @@ import { enlacesDe } from "../shared/enlaces.ts";
 import type { PlanBusqueda } from "./prompts.ts";
 import { ETIQUETAS, type PedidoCorreccion, type Veredicto } from "./veredicto.ts";
 
+export const ENLACES_POR_MENSAJE = 3;
+
 export interface Coincidencia {
   id: string;
   score: number;
@@ -82,4 +84,34 @@ export function textoDeCorreccion(antes: Veredicto["veredicto"], ahora: Veredict
   const cambio =
     antes === ahora ? `Mantiene: ${ETIQUETAS[ahora]}.` : `Antes: ${ETIQUETAS[antes]}. Ahora: ${ETIQUETAS[ahora]}.`;
   return `Corrección: revisamos esta verificación. ${cambio}\n${nota}`;
+}
+
+const ENTIDADES: Record<string, string> = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
+
+function sinEntidades(texto: string): string {
+  return texto.replace(/&(#x[0-9a-f]+|#\d+|\w+);/gi, (entidad, codigo: string) =>
+    codigo.startsWith("#x") || codigo.startsWith("#X")
+      ? String.fromCodePoint(parseInt(codigo.slice(2), 16))
+      : codigo.startsWith("#")
+        ? String.fromCodePoint(Number(codigo.slice(1)))
+        : (ENTIDADES[codigo.toLowerCase()] ?? entidad),
+  );
+}
+
+export function vistaPrevia(html: string): { titulo: string; descripcion: string } {
+  const meta: Record<string, string> = {};
+  for (const [etiqueta] of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const atributos = Object.fromEntries(
+      [...etiqueta.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)].map(([, nombre, doble, simple]) => [
+        nombre.toLowerCase(),
+        doble ?? simple,
+      ]),
+    );
+    const clave = (atributos.property ?? atributos.name)?.toLowerCase();
+    if (clave && atributos.content) {
+      meta[clave] = sinEntidades(atributos.content.trim());
+    }
+  }
+  const titulo = meta["og:title"] ?? sinEntidades(html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? "");
+  return { titulo, descripcion: meta["og:description"] ?? meta.description ?? "" };
 }
