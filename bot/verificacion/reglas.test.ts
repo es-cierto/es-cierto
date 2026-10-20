@@ -164,14 +164,20 @@ test("la vista previa de un enlace sale de las etiquetas og de la página", () =
   const html = `<head><title>El castigo a Pedro Araya | BioBioChile</title>
 <meta name="description" content="La decisión de reemplazar al senador Pedro Araya en la Comisión de Constitución, dejándolo fuera de su presidencia, abrió un..."/>
 <meta property="og:title" content='El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado' />
-<meta content="Bachelet dijo &quot;no&quot; &#8212; y el PS &amp; el PPD esperan" property="og:description" />`;
+<meta content="Bachelet dijo &quot;no&quot; &#8212; y el PS &amp; el PPD esperan" property="og:description" />
+<meta property="og:image" content="https://scontent-scl3-1.cdninstagram.com/v/t51.82787-15/518531727_n.jpg?stp=dst-jpg&amp;_nc_cat=1" />`;
   assert.deepEqual(vistaPrevia(html), {
     titulo: "El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado",
     descripcion: 'Bachelet dijo "no" — y el PS & el PPD esperan',
+    imagen: "https://scontent-scl3-1.cdninstagram.com/v/t51.82787-15/518531727_n.jpg?stp=dst-jpg&_nc_cat=1",
   });
 });
 
 test("sin etiquetas og, la vista previa usa el título y la descripción de la página", () => {
   const html = `<title>Ley 21.719 &#x2014; Protección de datos</title><meta name="Description" content="Texto de la ley.">`;
-  assert.deepEqual(vistaPrevia(html), { titulo: "Ley 21.719 — Protección de datos", descripcion: "Texto de la ley." });
+  assert.deepEqual(vistaPrevia(html), {
+    titulo: "Ley 21.719 — Protección de datos",
+    descripcion: "Texto de la ley.",
+    imagen: "",
+  });
 });

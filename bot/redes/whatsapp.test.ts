@@ -23,6 +23,13 @@ const webhook = {
                 text: { body: "Reenviado: el sueldo mínimo en Chile sube a 600 mil pesos en enero" },
               },
               { from: "56987654321", id: "wamid.audio", timestamp: "1760990001", type: "audio", audio: { id: "1" } },
+              {
+                from: "56987654321",
+                id: "wamid.imagen",
+                timestamp: "1760990002",
+                type: "image",
+                image: { id: "1321684492734410", mime_type: "image/jpeg", caption: "¿esto es verdad?" },
+              },
             ],
           },
         },
@@ -31,7 +38,7 @@ const webhook = {
   ],
 };
 
-test("cada mensaje de texto del webhook es una mención; el resto se ignora", () => {
+test("cada mensaje de texto o imagen del webhook es una mención; el resto se ignora", () => {
   assert.deepEqual(mencionesDeWebhook(webhook), [
     {
       razon: "mention",
@@ -39,6 +46,14 @@ test("cada mensaje de texto del webhook es una mención; el resto se ignora", ()
       cid: "",
       autorDid: "whatsapp:56987654321",
       texto: "Reenviado: el sueldo mínimo en Chile sube a 600 mil pesos en enero",
+    },
+    {
+      razon: "mention",
+      uri: "whatsapp:106540352242922:56987654321:wamid.imagen",
+      cid: "",
+      autorDid: "whatsapp:56987654321",
+      texto: "¿esto es verdad?",
+      imagenes: ["1321684492734410"],
     },
   ]);
 });

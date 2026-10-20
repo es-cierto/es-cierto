@@ -3,6 +3,8 @@ import type { PlanBusqueda } from "./prompts.ts";
 import { ETIQUETAS, type PedidoCorreccion, type Veredicto } from "./veredicto.ts";
 
 export const ENLACES_POR_MENSAJE = 3;
+export const IMAGENES_POR_MENSAJE = 2;
+export const AVISO_IMAGEN = "Verifiqué lo que dice la imagen, no si es auténtica o fue editada.";
 
 export interface Coincidencia {
   id: string;
@@ -98,7 +100,7 @@ function sinEntidades(texto: string): string {
   );
 }
 
-export function vistaPrevia(html: string): { titulo: string; descripcion: string } {
+export function vistaPrevia(html: string): { titulo: string; descripcion: string; imagen: string } {
   const meta: Record<string, string> = {};
   for (const [etiqueta] of html.matchAll(/<meta\b[^>]*>/gi)) {
     const atributos = Object.fromEntries(
@@ -113,5 +115,5 @@ export function vistaPrevia(html: string): { titulo: string; descripcion: string
     }
   }
   const titulo = meta["og:title"] ?? sinEntidades(html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? "");
-  return { titulo, descripcion: meta["og:description"] ?? meta.description ?? "" };
+  return { titulo, descripcion: meta["og:description"] ?? meta.description ?? "", imagen: meta["og:image"] ?? "" };
 }
