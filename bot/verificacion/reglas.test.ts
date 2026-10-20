@@ -1,7 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { PedidoCorreccion } from "./veredicto.ts";
-import { consultasNuevas, decidir, exigirEvidencia, problemaDeCorreccion, textoDeCorreccion } from "./reglas.ts";
+import {
+  consultasNuevas,
+  decidir,
+  exigirEvidencia,
+  problemaDeCorreccion,
+  textoDeCorreccion,
+  vistaPrevia,
+} from "./reglas.ts";
 
 const ahora = Date.parse("2026-10-09T12:00:00Z");
 const hace = (dias: number) => ahora - dias * 24 * 60 * 60 * 1000;
@@ -151,4 +158,20 @@ test("una corrección con confianza alta también necesita dos sitios distintos"
   );
   const dosSitios = [...pedido.fuentes, { titulo: "BCN", url: "https://www.bcn.cl/leychile/21751" }];
   assert.equal(problemaDeCorreccion({ ...pedido, confianza: "alta", fuentes: dosSitios }), null);
+});
+
+test("la vista previa de un enlace sale de las etiquetas og de la página", () => {
+  const html = `<head><title>El castigo a Pedro Araya | BioBioChile</title>
+<meta name="description" content="La decisión de reemplazar al senador Pedro Araya en la Comisión de Constitución, dejándolo fuera de su presidencia, abrió un..."/>
+<meta property="og:title" content='El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado' />
+<meta content="Bachelet dijo &quot;no&quot; &#8212; y el PS &amp; el PPD esperan" property="og:description" />`;
+  assert.deepEqual(vistaPrevia(html), {
+    titulo: "El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado",
+    descripcion: 'Bachelet dijo "no" — y el PS & el PPD esperan',
+  });
+});
+
+test("sin etiquetas og, la vista previa usa el título y la descripción de la página", () => {
+  const html = `<title>Ley 21.719 &#x2014; Protección de datos</title><meta name="Description" content="Texto de la ley.">`;
+  assert.deepEqual(vistaPrevia(html), { titulo: "Ley 21.719 — Protección de datos", descripcion: "Texto de la ley." });
 });
