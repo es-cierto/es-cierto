@@ -2,7 +2,9 @@ import { idDeInstancia } from "./chequeo.ts";
 import { listarInvestigaciones } from "./paginas/api.ts";
 import { verInvestigacion } from "./paginas/investigacionPublica.ts";
 import { probar } from "./paginas/probar.ts";
-import { marcarLeidas, mencionesSinLeer, sesionBluesky } from "./redes/bluesky.ts";
+import { marcarLeidas, type Mencion, mencionesSinLeer, sesionBluesky } from "./redes/bluesky.ts";
+import type { NombreRed } from "./redes/red.ts";
+import { firmaValida, mencionesDeWebhook } from "./redes/whatsapp.ts";
 import { problemaDeCorreccion } from "./verificacion/reglas.ts";
 import { PedidoCorreccion } from "./verificacion/veredicto.ts";
 
@@ -20,43 +22,65 @@ async function existeInstanciaDe(workflow: Workflow, id: string): Promise<boolea
   }
 }
 
+async function encolar(env: Env, mencion: Mencion, red: NombreRed): Promise<boolean> {
+  const haceUnaHora = Date.now() - 60 * 60 * 1000;
+  const recientes = await env.DB.prepare("SELECT count(*) AS n FROM menciones WHERE autor = ? AND creado_en > ?")
+    .bind(mencion.autorDid, haceUnaHora)
+    .first<number>("n");
+  if ((recientes ?? 0) >= MENCIONES_POR_HORA) {
+    console.warn(JSON.stringify({ evento: "limite_por_autor", autor: mencion.autorDid, uri: mencion.uri }));
+    return true;
+  }
+
+  const id = await idDeInstancia(mencion.uri);
+  try {
+    await env.CHEQUEO.create({ id, params: { mencion, red } });
+  } catch (error) {
+    if (!(await existeInstanciaDe(env.CHEQUEO, id))) {
+      console.error(JSON.stringify({ evento: "no_se_pudo_encolar", uri: mencion.uri, error: String(error) }));
+      return false;
+    }
+  }
+
+  await env.DB.prepare(
+    "INSERT INTO menciones (uri, autor, creado_en, datos) VALUES (?, ?, ?, ?) ON CONFLICT (uri) DO NOTHING",
+  )
+    .bind(mencion.uri, mencion.autorDid, Date.now(), JSON.stringify({ mencion, red }))
+    .run();
+  return true;
+}
+
 async function revisarMenciones(env: Env) {
   const sesion = await sesionBluesky(env);
   const desde = new Date().toISOString();
-  const menciones = await mencionesSinLeer(sesion);
   let todasEncoladas = true;
-
-  for (const mencion of menciones) {
-    const haceUnaHora = Date.now() - 60 * 60 * 1000;
-    const recientes = await env.DB.prepare("SELECT count(*) AS n FROM menciones WHERE autor = ? AND creado_en > ?")
-      .bind(mencion.autorDid, haceUnaHora)
-      .first<number>("n");
-    if ((recientes ?? 0) >= MENCIONES_POR_HORA) {
-      console.warn(JSON.stringify({ evento: "limite_por_autor", autor: mencion.autorDid, uri: mencion.uri }));
-      continue;
-    }
-
-    const id = await idDeInstancia(mencion.uri);
-    try {
-      await env.CHEQUEO.create({ id, params: { mencion, red: "bluesky" } });
-    } catch (error) {
-      if (!(await existeInstanciaDe(env.CHEQUEO, id))) {
-        todasEncoladas = false;
-        console.error(JSON.stringify({ evento: "no_se_pudo_encolar", uri: mencion.uri, error: String(error) }));
-        continue;
-      }
-    }
-
-    await env.DB.prepare(
-      "INSERT INTO menciones (uri, autor, creado_en, datos) VALUES (?, ?, ?, ?) ON CONFLICT (uri) DO NOTHING",
-    )
-      .bind(mencion.uri, mencion.autorDid, Date.now(), JSON.stringify({ mencion, red: "bluesky" }))
-      .run();
+  for (const mencion of await mencionesSinLeer(sesion)) {
+    todasEncoladas = (await encolar(env, mencion, "bluesky")) && todasEncoladas;
   }
-
   if (todasEncoladas) {
     await marcarLeidas(sesion, desde);
   }
+}
+
+async function recibirWhatsapp(request: Request, env: Env): Promise<Response> {
+  const url = new URL(request.url);
+  if (request.method === "GET") {
+    const token = url.searchParams.get("hub.verify_token") ?? "";
+    return url.searchParams.get("hub.mode") === "subscribe" && (await tokenValido(token, env.WHATSAPP_VERIFY_TOKEN))
+      ? new Response(url.searchParams.get("hub.challenge"))
+      : new Response("No autorizado", { status: 403 });
+  }
+  const cuerpo = await request.text();
+  if (!(await firmaValida(cuerpo, request.headers.get("x-hub-signature-256") ?? "", env.WHATSAPP_APP_SECRET))) {
+    return new Response("No autorizado", { status: 401 });
+  }
+  const datos: unknown = await new Response(cuerpo).json().catch(() => null);
+  for (const mencion of mencionesDeWebhook(datos)) {
+    if (!(await encolar(env, mencion, "whatsapp"))) {
+      return new Response("No se pudo encolar", { status: 500 });
+    }
+  }
+  return new Response("ok");
 }
 
 async function tokenValido(recibido: string, esperado: string): Promise<boolean> {
@@ -98,6 +122,9 @@ async function corregir(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
+    if (pathname === "/whatsapp") {
+      return recibirWhatsapp(request, env);
+    }
     if (pathname === "/correcciones" && request.method === "POST") {
       return corregir(request, env);
     }
