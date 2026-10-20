@@ -4,7 +4,7 @@ import { verInvestigacion } from "./paginas/investigacionPublica.ts";
 import { probar } from "./paginas/probar.ts";
 import { marcarLeidas, type Mencion, mencionesSinLeer, sesionBluesky } from "./redes/bluesky.ts";
 import type { NombreRed } from "./redes/red.ts";
-import { firmaValida, mencionesDeWebhook } from "./redes/whatsapp.ts";
+import * as whatsapp from "./redes/whatsapp.ts";
 import { problemaDeCorreccion } from "./verificacion/reglas.ts";
 import { PedidoCorreccion } from "./verificacion/veredicto.ts";
 
@@ -29,6 +29,20 @@ async function encolar(env: Env, mencion: Mencion, red: NombreRed): Promise<bool
     .first<number>("n");
   if ((recientes ?? 0) >= MENCIONES_POR_HORA) {
     console.warn(JSON.stringify({ evento: "limite_por_autor", autor: mencion.autorDid, uri: mencion.uri }));
+    if (red === "whatsapp") {
+      await env.DB.prepare(
+        "INSERT INTO menciones (uri, autor, creado_en) VALUES (?, ?, ?) ON CONFLICT (uri) DO NOTHING",
+      )
+        .bind(mencion.uri, mencion.autorDid, Date.now())
+        .run();
+      if (recientes === MENCIONES_POR_HORA) {
+        await whatsapp.responder(
+          env,
+          mencion,
+          `Recibí muchos mensajes tuyos en la última hora (el máximo es ${MENCIONES_POR_HORA}). Vuelve a enviármelo en un rato y lo verifico.`,
+        );
+      }
+    }
     return true;
   }
 
@@ -71,11 +85,16 @@ async function recibirWhatsapp(request: Request, env: Env): Promise<Response> {
       : new Response("No autorizado", { status: 403 });
   }
   const cuerpo = await request.text();
-  if (!(await firmaValida(cuerpo, request.headers.get("x-hub-signature-256") ?? "", env.WHATSAPP_APP_SECRET))) {
+  if (
+    !(await whatsapp.firmaValida(cuerpo, request.headers.get("x-hub-signature-256") ?? "", env.WHATSAPP_APP_SECRET))
+  ) {
     return new Response("No autorizado", { status: 401 });
   }
   const datos: unknown = await new Response(cuerpo).json().catch(() => null);
-  for (const mencion of mencionesDeWebhook(datos)) {
+  for (const mencion of whatsapp.mencionesDeWebhook(datos)) {
+    await whatsapp.marcarLeidoYEscribiendo(env, mencion).catch((error: unknown) => {
+      console.warn(JSON.stringify({ evento: "no_se_pudo_marcar_leido", uri: mencion.uri, error: String(error) }));
+    });
     if (!(await encolar(env, mencion, "whatsapp"))) {
       return new Response("No se pudo encolar", { status: 500 });
     }

@@ -63,6 +63,12 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     const env = this.env;
     const enRed = red(env, evento.payload.red);
 
+    if (evento.payload.red === "whatsapp") {
+      await step.do("acusar recibo", async () => {
+        await enRed.responder(mencion, "Recibido. Lo estoy verificando y te respondo aquí en unos minutos.");
+      });
+    }
+
     if (mencion.razon === "reply") {
       await this.conversar(mencion, enRed, step);
       return;

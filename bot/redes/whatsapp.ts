@@ -67,20 +67,31 @@ export async function firmaValida(cuerpo: string, firma: string, secreto: string
   return crypto.subtle.verify("HMAC", clave, bytes, new TextEncoder().encode(cuerpo));
 }
 
-export async function responder(env: Env, mencion: Mencion, cuerpo: string, enlace?: string) {
-  const { numeroId, para, mensajeId } = partes(mencion.uri);
+async function enviar(env: Env, uri: string, mensaje: (para: string, mensajeId: string) => object) {
+  const { numeroId, para, mensajeId } = partes(uri);
   const respuesta = await fetch(`${GRAPH}/${numeroId}/messages`, {
     method: "POST",
     headers: { authorization: `Bearer ${env.WHATSAPP_TOKEN}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      messaging_product: "whatsapp",
-      to: para,
-      context: { message_id: mensajeId },
-      type: "text",
-      text: { body: enlace ? `${cuerpo}\n${enlace}` : cuerpo, preview_url: Boolean(enlace) },
-    }),
+    body: JSON.stringify({ messaging_product: "whatsapp", ...mensaje(para, mensajeId) }),
   });
   if (!respuesta.ok) {
     throw new Error(`whatsapp messages ${respuesta.status}: ${await respuesta.text()}`);
   }
+}
+
+export async function marcarLeidoYEscribiendo(env: Env, mencion: Mencion) {
+  await enviar(env, mencion.uri, (_para, mensajeId) => ({
+    status: "read",
+    message_id: mensajeId,
+    typing_indicator: { type: "text" },
+  }));
+}
+
+export async function responder(env: Env, mencion: Mencion, cuerpo: string, enlace?: string) {
+  await enviar(env, mencion.uri, (para, mensajeId) => ({
+    to: para,
+    context: { message_id: mensajeId },
+    type: "text",
+    text: { body: enlace ? `${cuerpo}\n${enlace}` : cuerpo, preview_url: Boolean(enlace) },
+  }));
 }
