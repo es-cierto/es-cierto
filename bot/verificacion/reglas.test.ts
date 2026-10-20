@@ -7,6 +7,8 @@ import {
   exigirEvidencia,
   problemaDeCorreccion,
   textoDeCorreccion,
+  codigoDeInstagram,
+  textoDeInstagram,
   vistaPrevia,
 } from "./reglas.ts";
 
@@ -180,4 +182,75 @@ test("sin etiquetas og, la vista previa usa el título y la descripción de la p
     descripcion: "Texto de la ley.",
     imagen: "",
   });
+});
+
+const paginaInstagram = (codigo: string, texto: string | null) => {
+  const vecina = {
+    node: { code: "DMOzVjgCk2H", caption: { text: "- Jair Bolsonaro responde à carta de @realdonaldtrump ." } },
+  };
+  const datos = {
+    require: [
+      [
+        "ScheduledServerJS",
+        "handle",
+        null,
+        [
+          {
+            __bbox: {
+              require: [
+                [
+                  "RelayPrefetchedStreamCache",
+                  "next",
+                  [],
+                  [
+                    "adp",
+                    {
+                      __bbox: {
+                        result: {
+                          data: {
+                            xig_polaris_media: {
+                              __typename: "XIGPolarisImageMedia",
+                              code: codigo,
+                              if_not_gated_logged_out: {
+                                code: codigo,
+                                caption: texto === null ? null : { text: texto },
+                                user: {
+                                  username: "jairmessiasbolsonaro",
+                                  polaris_ordered_timeline_connection: { edges: [vecina] },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                ],
+              ],
+            },
+          },
+        ],
+      ],
+    ],
+  };
+  return `<html><script type="application/json" data-sjs>{"broken": </script><script type="application/json" data-sjs>${JSON.stringify(datos)}</script></html>`;
+};
+
+test("el texto de una publicación de Instagram sale de su propio bloque, no de las publicaciones vecinas", () => {
+  const carta = "A CASA BRANCA\nWASHINGTON\n\nAo Honorável\nJair Messias Bolsonaro";
+  assert.equal(textoDeInstagram(paginaInstagram("DMOdY7aC8NN", carta), "DMOdY7aC8NN"), carta);
+});
+
+test("una publicación de Instagram sin texto, o que no está en la página, no entrega texto", () => {
+  assert.equal(textoDeInstagram(paginaInstagram("DL2LXoCR4-3", null), "DL2LXoCR4-3"), "");
+  assert.equal(textoDeInstagram(paginaInstagram("DL2LXoCR4-3", "otro"), "DMOzVjgCk2H"), "");
+  assert.equal(textoDeInstagram("<html>Inicia sesión</html>", "DL2LXoCR4-3"), "");
+});
+
+test("el código de una publicación sale de los enlaces de Instagram, con o sin usuario", () => {
+  assert.equal(codigoDeInstagram("https://www.instagram.com/p/DL2LXoCR4-3/?xtok=bGk1ZmZneXhscHZz"), "DL2LXoCR4-3");
+  assert.equal(codigoDeInstagram("https://www.instagram.com/jairmessiasbolsonaro/p/DMOdY7aC8NN/"), "DMOdY7aC8NN");
+  assert.equal(codigoDeInstagram("https://instagram.com/reel/DMOzVjgCk2H/"), "DMOzVjgCk2H");
+  assert.equal(codigoDeInstagram("https://www.instagram.com/jairmessiasbolsonaro/"), null);
+  assert.equal(codigoDeInstagram("https://www.biobiochile.cl/p/DL2LXoCR4-3/"), null);
 });
