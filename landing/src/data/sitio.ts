@@ -3,6 +3,7 @@ export const enlaces = {
   repo: 'https://github.com/es-cierto/es-cierto',
   metodologia: 'https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md',
   issues: 'https://github.com/es-cierto/es-cierto/issues/new',
+  privacidad: '/privacidad',
 };
 
 export const cuentaBluesky: { handle: string; url: string } | null = {

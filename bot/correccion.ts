@@ -5,7 +5,7 @@ import { red } from "./redes/red.ts";
 import { textoDeCorreccion } from "./verificacion/reglas.ts";
 import { type PedidoCorreccion, Veredicto } from "./verificacion/veredicto.ts";
 
-export const DatosMencion = z.object({ mencion: Mencion, red: z.enum(["bluesky", "web"]) });
+export const DatosMencion = z.object({ mencion: Mencion, red: z.enum(["bluesky", "web", "whatsapp"]) });
 
 const CON_REINTENTOS = {
   retries: { limit: 3, delay: "15 seconds", backoff: "exponential" },

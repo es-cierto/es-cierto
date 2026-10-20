@@ -88,6 +88,9 @@ Los secretos del bot viven en Cloudflare, cifrados, y nunca en el repo. Se suben
 - `BSKY_APP_PASSWORD`: la contraseña de aplicación de la cuenta del bot en Bluesky.
 - `GOOGLE_FACTCHECK_KEY`: verificaciones profesionales ya publicadas (opcional: con «ninguna», se salta).
 - `CORRECCIONES_TOKEN`: para publicar correcciones (`POST /correcciones`).
+- `WHATSAPP_TOKEN`: el token de acceso permanente (usuario del sistema) de la app de Meta, para responder por WhatsApp.
+- `WHATSAPP_APP_SECRET`: el secreto de la app de Meta, para comprobar que cada webhook (`POST /whatsapp`) viene de Meta.
+- `WHATSAPP_VERIFY_TOKEN`: el token que se escribe en Meta al suscribir el webhook (`GET /whatsapp`).
 
 Para desplegar a mano (solo mantenedores, con acceso a la cuenta del proyecto): `CLOUDFLARE_ACCOUNT_ID=<cuenta del proyecto> ./scripts/desplegar.sh todo`. Sin esa cuenta, el script se niega.
 

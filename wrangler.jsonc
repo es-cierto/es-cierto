@@ -29,7 +29,15 @@
     "PRUEBA_WEB": "no",
   },
   "secrets": {
-    "required": ["TAVILY_API_KEY", "BSKY_APP_PASSWORD", "GOOGLE_FACTCHECK_KEY", "CORRECCIONES_TOKEN"],
+    "required": [
+      "TAVILY_API_KEY",
+      "BSKY_APP_PASSWORD",
+      "GOOGLE_FACTCHECK_KEY",
+      "CORRECCIONES_TOKEN",
+      "WHATSAPP_TOKEN",
+      "WHATSAPP_APP_SECRET",
+      "WHATSAPP_VERIFY_TOKEN",
+    ],
   },
 
   "d1_databases": [
