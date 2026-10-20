@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { comoDatos } from "../shared/imagen.ts";
 import type { Mencion } from "./bluesky.ts";
 
 const GRAPH = "https://graph.facebook.com/v26.0";
@@ -16,6 +17,7 @@ const Webhook = z.object({
                   from: z.string(),
                   id: z.string(),
                   text: z.object({ body: z.string() }).optional(),
+                  image: z.object({ id: z.string(), caption: z.string().optional() }).optional(),
                 }),
               )
               .optional(),
@@ -39,13 +41,14 @@ export function mencionesDeWebhook(cuerpo: unknown): Mencion[] {
   return webhook.data.entry.flatMap((e) =>
     e.changes.flatMap(({ value }) =>
       (value.messages ?? [])
-        .filter((m) => m.text)
+        .filter((m) => m.text || m.image)
         .map((m) => ({
           razon: "mention" as const,
           uri: `whatsapp:${value.metadata.phone_number_id}:${m.from}:${m.id}`,
           cid: "",
           autorDid: `whatsapp:${m.from}`,
-          texto: m.text?.body ?? "",
+          texto: m.text?.body ?? m.image?.caption ?? "",
+          ...(m.image && { imagenes: [m.image.id] }),
         })),
     ),
   );
@@ -94,4 +97,16 @@ export async function responder(env: Env, mencion: Mencion, cuerpo: string, enla
     type: "text",
     text: { body: enlace ? `${cuerpo}\n${enlace}` : cuerpo, preview_url: Boolean(enlace) },
   }));
+}
+
+const Medio = z.object({ url: z.string() });
+
+export async function imagen(env: Env, id: string): Promise<string> {
+  const autorizacion = { authorization: `Bearer ${env.WHATSAPP_TOKEN}` };
+  const respuesta = await fetch(`${GRAPH}/${id}`, { headers: autorizacion });
+  if (!respuesta.ok) {
+    throw new Error(`whatsapp media ${respuesta.status}: ${await respuesta.text()}`);
+  }
+  const { url } = Medio.parse(await respuesta.json());
+  return comoDatos(await fetch(url, { headers: autorizacion }));
 }

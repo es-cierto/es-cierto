@@ -4,7 +4,8 @@ Lo que usan varios dominios. **No depende de ningún dominio**: si algo de aquí
 
 ## Archivos
 
-- `modelo.ts`: el modelo (Workers AI) y `REGLA_DATO`. Es el único archivo que llama al modelo de texto; los prompts viven en cada dominio.
+- `modelo.ts`: los modelos (Workers AI) y `REGLA_DATO`. Es el único archivo que llama a un modelo: `completar` al de texto y `verImagen` al de visión. Los prompts viven en cada dominio.
+- `imagen.ts`: una imagen descargada como data URL, para el modelo de visión. Rechaza lo que no sea `image/*` (una página de inicio de sesión, por ejemplo) y lo que pase de 4 MB, con su test al lado.
 - `hilo.ts`: un mensaje de un hilo, en cualquier red.
 - `enlaces.ts`: extraer URLs de un texto, con su test al lado.
 

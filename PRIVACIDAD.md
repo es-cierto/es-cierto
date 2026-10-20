@@ -12,7 +12,7 @@ El bot verifica afirmaciones, no personas: si escribes un dato personal en tu me
 
 **Si lo mencionas en Bluesky:** la dirección de tu publicación, tu identificador de Bluesky y el texto de la mención. Tu publicación ya es pública en Bluesky; el bot la guarda para poder volver a ese hilo si corrige un veredicto. Se guarda mientras exista la investigación.
 
-**Si le escribes por WhatsApp:** tu número de teléfono y el texto de tu mensaje. Se borran a las **23 horas**. Ese tiempo sirve para dos cosas: limitar cuántos mensajes por hora puede enviar cada número (para que el bot no se use para acosar) y avisarte si se corrige el veredicto mientras WhatsApp todavía permite escribirte.
+**Si le escribes por WhatsApp:** tu número de teléfono y el texto de tu mensaje. Si envías una imagen, el bot la lee para transcribir su texto y no la guarda. Se borran a las **23 horas**. Ese tiempo sirve para dos cosas: limitar cuántos mensajes por hora puede enviar cada número (para que el bot no se use para acosar) y avisarte si se corrige el veredicto mientras WhatsApp todavía permite escribirte.
 
 El bot no guarda tu nombre, tu foto ni tus contactos, y no guarda la conversación: cada mensaje es una verificación aparte.
 

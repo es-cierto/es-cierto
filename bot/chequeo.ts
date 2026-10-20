@@ -5,10 +5,10 @@ import type { Mencion } from "./redes/bluesky.ts";
 import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO, pasarela } from "./shared/modelo.ts";
 import { enlacesDe } from "./shared/enlaces.ts";
-import { leerEnlaces } from "./verificacion/busqueda.ts";
+import { descargarImagen, leerEnlaces } from "./verificacion/busqueda.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
-import { extraerAfirmacion } from "./verificacion/prompts.ts";
-import { decidir, ENLACES_POR_MENSAJE } from "./verificacion/reglas.ts";
+import { extraerAfirmacion, transcribirImagen } from "./verificacion/prompts.ts";
+import { AVISO_IMAGEN, decidir, ENLACES_POR_MENSAJE, IMAGENES_POR_MENSAJE } from "./verificacion/reglas.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
 
@@ -81,8 +81,35 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     );
 
     const enlaces = enlacesDe(`${texto} ${mencion.texto}`).slice(0, ENLACES_POR_MENSAJE);
-    const paginas = enlaces.length ? await step.do("leer enlaces", () => leerEnlaces(enlaces)) : "";
-    const publicacion = paginas ? `${texto}\n\nContenido de los enlaces:\n${paginas}` : texto;
+    const paginas = enlaces.length
+      ? await step.do("leer enlaces", () => leerEnlaces(enlaces))
+      : { texto: "", imagenes: [] };
+
+    const imagenes = [
+      ...(mencion.imagenes ?? []).map((id) => ({ id, deLaRed: true })),
+      ...paginas.imagenes.map((id) => ({ id, deLaRed: false })),
+    ].slice(0, IMAGENES_POR_MENSAJE);
+    const transcripciones: string[] = [];
+    for (const [i, { id, deLaRed }] of imagenes.entries()) {
+      transcripciones.push(
+        await step.do(`leer imagen ${i + 1}`, CON_REINTENTOS, async () => {
+          const datos = await (deLaRed ? enRed.imagen(id) : descargarImagen(id)).catch((error: unknown) => {
+            console.warn(JSON.stringify({ evento: "no_se_pudo_descargar_imagen", error: String(error) }));
+            return "";
+          });
+          return datos ? transcribirImagen(env.AI, datos) : "";
+        }),
+      );
+    }
+
+    const publicacion = [
+      texto,
+      paginas.texto && `Contenido de los enlaces:\n${paginas.texto}`,
+      ...transcripciones.filter(Boolean).map((t, i) => `Imagen ${i + 1}:\n${t}`),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    const conImagen = transcripciones.some(Boolean);
 
     const extraida = await step.do("extraer afirmación", CON_REINTENTOS, () =>
       extraerAfirmacion(env.AI, publicacion, mencion.texto),
@@ -177,7 +204,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       }
       await enRed.responder(
         mencion,
-        `${ETIQUETAS[fila.veredicto]} · confianza ${fila.confianza}\n${fila.resumen}`,
+        `${ETIQUETAS[fila.veredicto]} · confianza ${fila.confianza}\n${fila.resumen}${conImagen ? `\n${AVISO_IMAGEN}` : ""}`,
         `${env.PUBLIC_URL}/a/${investigacionId}`,
       );
     });
