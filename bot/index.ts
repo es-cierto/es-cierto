@@ -12,6 +12,7 @@ export { Chequeo } from "./chequeo.ts";
 export { Correccion } from "./correccion.ts";
 
 const MENCIONES_POR_HORA = 5;
+const HORAS_WHATSAPP = 23;
 
 async function existeInstanciaDe(workflow: Workflow, id: string): Promise<boolean> {
   try {
@@ -165,6 +166,9 @@ export default {
   },
 
   async scheduled(_controlador, env) {
+    await env.DB.prepare("DELETE FROM menciones WHERE uri LIKE 'whatsapp:%' AND creado_en < ?")
+      .bind(Date.now() - HORAS_WHATSAPP * 60 * 60 * 1000)
+      .run();
     await revisarMenciones(env);
   },
 } satisfies ExportedHandler<Env>;

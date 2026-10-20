@@ -67,7 +67,7 @@ Al mergear a `main`, cuando el CI termina en verde, `.github/workflows/desplegar
 
 - **No despliegan** los tests, los `AGENTS.md`/`CLAUDE.md` ni `landing/PROMPTS.md` (aunque estén dentro de `bot/` o `landing/`), ni la documentación, los perfiles, los evals o `.github/`.
 - **El bot** (con sus migraciones): `bot/`, `migrations/`, `wrangler.jsonc` y el `package.json` de la raíz.
-- **La landing:** `landing/` y `METODOLOGIA.md`, porque `llms-full.txt` la incluye entera. Un test exige que todo `.md` que el bot o la landing importan dispare su despliegue.
+- **La landing:** `landing/`, `METODOLOGIA.md` (porque `llms-full.txt` la incluye entera) y `PRIVACIDAD.md` (es la página `/privacidad`). Un test exige que todo `.md` que el bot o la landing importan dispare su despliegue.
 - **Los dos:** las dependencias (`pnpm-lock.yaml`, `pnpm-workspace.yaml`).
 
 ## Colaboración
