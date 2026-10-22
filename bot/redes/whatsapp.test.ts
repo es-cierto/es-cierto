@@ -53,7 +53,7 @@ test("cada mensaje de texto o imagen del webhook es una mención; el resto se ig
       cid: "",
       autorDid: "whatsapp:56987654321",
       texto: "¿esto es verdad?",
-      imagenes: ["1321684492734410"],
+      imagenes: ["106540352242922:1321684492734410"],
     },
   ]);
 });
@@ -64,10 +64,18 @@ test("un aviso de entrega (sin mensajes) o un cuerpo que no es webhook no trae m
   assert.deepEqual(mencionesDeWebhook({ hola: "mundo" }), []);
 });
 
-test("la firma de Meta se acepta solo si es el HMAC del cuerpo con el secreto", async () => {
+test("la firma se acepta solo si es el HMAC del cuerpo con el secreto, con o sin el prefijo sha256= de Meta", async () => {
   const firma = "sha256=c08122dffceb49d941efaa39bd6dd6be92b790e4c622a270e09140339aeb44e5";
   assert.equal(await firmaValida('{"entry":[]}', firma, "secreto-de-prueba"), true);
   assert.equal(await firmaValida('{"entry":[1]}', firma, "secreto-de-prueba"), false);
   assert.equal(await firmaValida('{"entry":[]}', firma, "otro-secreto"), false);
   assert.equal(await firmaValida('{"entry":[]}', "", "secreto-de-prueba"), false);
+  assert.equal(
+    await firmaValida(
+      '{"entry":[]}',
+      "c08122dffceb49d941efaa39bd6dd6be92b790e4c622a270e09140339aeb44e5",
+      "secreto-de-prueba",
+    ),
+    true,
+  );
 });
