@@ -11,7 +11,7 @@ Si un cambio rompe uno de estos, el cambio está mal aunque compile. Los que tie
 - **Sin símbolos de ningún sector.** Ni rojo (en Chile se lee como el color de un sector político) ni estrellas, banderas, escudos u otros símbolos asociados a partidos o al Estado. El único motivo propio es el hilo y su nudo.
 - **Sin rojo.** En Chile se lee como el color de un sector político. La paleta sale de las imágenes: fondo, papel y lino (`src/styles/global.css`). Tampoco emojis de color: los íconos son Phosphor en `currentColor`.
 - **La cuenta del bot no se inventa.** Es `es-cierto.bsky.social` (`cuentaBluesky`). `escierto.bsky.social`, sin guion, es de otra persona y nunca se enlaza. Si `cuentaBluesky` vuelve a `null`, la página dice "Muy pronto, primero en Bluesky" y no enlaza ninguna cuenta.
-- **Para redes sociales y la web, no solo Bluesky.** Bluesky se nombra como la primera red donde funciona, nunca como la única ("para Bluesky", "bot de Bluesky").
+- **Para redes sociales y la web, ninguna red es la única.** WhatsApp va primero en cada llamado a la acción (es donde circula la mayoría de las cadenas en Chile) y Bluesky como segunda opción; ninguna se presenta como la única ("para Bluesky", "bot de Bluesky"). El número es `whatsapp` en `sitio.ts`.
 - **El texto vive en el HTML.** El video es fondo (`aria-hidden`); sin JS, sin video o con movimiento reducido la página se entiende entera.
 - **Movimiento reducido y ahorro de datos:** no se descarga ningún video; quedan las imágenes de cada parada.
 - **Las imágenes y el video se declaran como generados con IA**, en el recorrido y en el pie.

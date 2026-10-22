@@ -16,7 +16,7 @@ export const whatsapp = { numero: '+56 9 2212 2033', url: 'https://wa.me/5692212
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
   descripcion:
-    'Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Funciona en Bluesky y WhatsApp. Abierto y no partidista.',
+    'Verificador de datos para redes sociales y la web. Le reenvías un mensaje por WhatsApp o lo mencionas en una publicación de Bluesky, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.',
 };
 
 export const recorrido = [
@@ -52,9 +52,9 @@ export const escala = [
 
 export const pasos = [
   {
-    titulo: 'Mencionas al bot',
+    titulo: 'Le mandas el dato',
     texto:
-      'Respondes a la publicación donde viste el dato y escribes la cuenta del bot. No necesitas registrarte en ningún lado.',
+      'Se lo reenvías por WhatsApp, o respondes a la publicación en Bluesky mencionando al bot. No necesitas registrarte en ningún lado.',
   },
   {
     titulo: 'El bot investiga',

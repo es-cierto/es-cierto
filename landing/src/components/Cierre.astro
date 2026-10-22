@@ -8,10 +8,10 @@ import { cuentaBluesky, enlaces, whatsapp } from '../data/sitio';
     {
       cuentaBluesky ? (
         <>
-          <p class="mt-4 text-lg text-papel/80">Responde a la publicación y menciona a @{cuentaBluesky.handle}, o reenvíale el mensaje por WhatsApp al {whatsapp.numero}. El bot busca de dónde sale el dato y te responde ahí mismo.</p>
+          <p class="mt-4 text-lg text-papel/80">Reenvíale el mensaje por WhatsApp al {whatsapp.numero}, o menciona a @{cuentaBluesky.handle} en Bluesky. El bot busca de dónde sale el dato y te responde ahí mismo.</p>
           <div class="mt-8 flex flex-wrap justify-center gap-3">
-            <a href={cuentaBluesky.url} class="boton boton-principal">Menciona a @{cuentaBluesky.handle}</a>
-            <a href={whatsapp.url} class="boton boton-secundario">Escríbele por WhatsApp</a>
+            <a href={whatsapp.url} class="boton boton-principal">Escríbele por WhatsApp</a>
+            <a href={cuentaBluesky.url} class="boton boton-secundario">Menciona a @{cuentaBluesky.handle}</a>
           </div>
         </>
       ) : (
