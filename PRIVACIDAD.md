@@ -20,6 +20,7 @@ El bot no guarda tu nombre, tu foto ni tus contactos, y no guarda la conversaci�
 
 - **Cloudflare** aloja el bot y ejecuta el modelo de lenguaje. Sus registros técnicos (que pueden incluir el texto del mensaje y, en WhatsApp, el número) se borran solos a los pocos días.
 - **Tavily** y **Google Fact Check Tools** reciben las búsquedas sobre la afirmación, nunca tu número ni tu identificador.
+- **Kapso** conecta el bot con WhatsApp: los mensajes pasan por su plataforma, que guarda una copia de las conversaciones según [su propia política](https://kapso.com/privacy). Las 23 horas de arriba son lo que guarda el bot; lo que guarda Kapso no depende de nosotros.
 - **Meta** (WhatsApp) y **Bluesky** transmiten los mensajes, con sus propias políticas de privacidad.
 
 Nada se vende ni se usa para publicidad.

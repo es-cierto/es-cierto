@@ -1,7 +1,7 @@
 export const BYTES_MAXIMOS_IMAGEN = 4 * 1024 * 1024;
 
-export async function comoDatos(respuesta: Response): Promise<string> {
-  const tipo = respuesta.headers.get("content-type")?.split(";")[0].trim() ?? "";
+export async function comoDatos(respuesta: Response, tipoDeclarado?: string): Promise<string> {
+  const tipo = tipoDeclarado ?? respuesta.headers.get("content-type")?.split(";")[0].trim() ?? "";
   if (!respuesta.ok || !tipo.startsWith("image/")) {
     throw new Error(`no es una imagen: ${respuesta.status} ${tipo}`);
   }

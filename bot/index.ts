@@ -78,16 +78,9 @@ async function revisarMenciones(env: Env) {
 }
 
 async function recibirWhatsapp(request: Request, env: Env): Promise<Response> {
-  const url = new URL(request.url);
-  if (request.method === "GET") {
-    const token = url.searchParams.get("hub.verify_token") ?? "";
-    return url.searchParams.get("hub.mode") === "subscribe" && (await tokenValido(token, env.WHATSAPP_VERIFY_TOKEN))
-      ? new Response(url.searchParams.get("hub.challenge"))
-      : new Response("No autorizado", { status: 403 });
-  }
   const cuerpo = await request.text();
   if (
-    !(await whatsapp.firmaValida(cuerpo, request.headers.get("x-hub-signature-256") ?? "", env.WHATSAPP_APP_SECRET))
+    !(await whatsapp.firmaValida(cuerpo, request.headers.get("x-webhook-signature") ?? "", env.KAPSO_WEBHOOK_SECRET))
   ) {
     return new Response("No autorizado", { status: 401 });
   }
@@ -142,7 +135,7 @@ async function corregir(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
-    if (pathname === "/whatsapp") {
+    if (pathname === "/whatsapp" && request.method === "POST") {
       return recibirWhatsapp(request, env);
     }
     if (pathname === "/correcciones" && request.method === "POST") {
