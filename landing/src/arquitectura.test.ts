@@ -112,7 +112,7 @@ test('el texto de lectura no baja de 18 px ni las etiquetas de 14 px', () => {
   }
 });
 
-test('Bluesky es la primera red, no la única', () => {
+test('Bluesky no se presenta como la única red', () => {
   for (const ruta of fuentes) {
     const exclusivo = leer(ruta).match(/(?:para|bot de|solo en) Bluesky/i);
     assert.ok(!exclusivo, `${ruta} dice "${exclusivo?.[0]}": el bot es para redes sociales y la web`);

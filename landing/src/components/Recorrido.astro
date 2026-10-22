@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import Parada from './Parada.astro';
 import Icono from './Icono.astro';
-import { cuentaBluesky, ejemplo, enlaces, recorrido } from '../data/sitio';
+import { cuentaBluesky, ejemplo, enlaces, recorrido, whatsapp } from '../data/sitio';
 import inicio from '../assets/recorrido/0-inicio.webp';
 import tirar from '../assets/recorrido/1-tirar.webp';
 import fuentes from '../assets/recorrido/2-fuentes.webp';
@@ -102,10 +102,13 @@ const cuerpo = 'mt-4 max-w-md text-xl text-papel/90';
           Te decimos si un dato es&nbsp;cierto.
         </span>
       </h1>
-      <p class="mt-4 max-w-md text-xl text-papel/90">Lo mencionas en la publicación y te responde con&nbsp;fuentes.</p>
+      <p class="mt-4 max-w-md text-xl text-papel/90">Se lo reenvías por WhatsApp y te responde con&nbsp;fuentes.</p>
       {
         cuentaBluesky ? (
-          <a href={cuentaBluesky.url} class="boton boton-principal mt-8">Menciona a @{cuentaBluesky.handle}</a>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href={whatsapp.url} class="boton boton-principal">Escríbele por WhatsApp</a>
+            <a href={cuentaBluesky.url} class="boton boton-secundario">También en Bluesky</a>
+          </div>
         ) : (
           <p class="mt-8 inline-flex items-center gap-2 rounded-full bg-fondo/60 px-4 py-2 text-sm text-papel ring-1 ring-papel/20 backdrop-blur-md">
             <span aria-hidden="true" class="size-2 rounded-full bg-lino"></span>

@@ -11,10 +11,12 @@ export const cuentaBluesky: { handle: string; url: string } | null = {
   url: 'https://bsky.app/profile/es-cierto.bsky.social',
 };
 
+export const whatsapp = { numero: '+56 9 2212 2033', url: 'https://wa.me/56922122033' };
+
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
   descripcion:
-    'Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Parte en Bluesky. Abierto y no partidista.',
+    'Verificador de datos para redes sociales y la web. Le reenvías un mensaje por WhatsApp o lo mencionas en una publicación de Bluesky, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.',
 };
 
 export const recorrido = [
@@ -50,9 +52,9 @@ export const escala = [
 
 export const pasos = [
   {
-    titulo: 'Mencionas al bot',
+    titulo: 'Le mandas el dato',
     texto:
-      'Respondes a la publicación donde viste el dato y escribes la cuenta del bot. No necesitas registrarte en ningún lado.',
+      'Se lo reenvías por WhatsApp, o respondes a la publicación en Bluesky mencionando al bot. No necesitas registrarte en ningún lado.',
   },
   {
     titulo: 'El bot investiga',
@@ -74,7 +76,8 @@ export const preguntas = [
   },
   {
     pregunta: '¿En qué redes funciona?',
-    respuesta: 'Parte en Bluesky. La idea es sumar otras redes sociales y cualquier página web.',
+    respuesta:
+      'En Bluesky y en WhatsApp: le reenvías el mensaje al +56 9 2212 2033. La idea es sumar otras redes sociales y cualquier página web.',
   },
   { pregunta: '¿Es neutral?', respuesta: 'Revisa lo que se dice, nunca quién lo dice. La misma regla para todos.' },
   {
