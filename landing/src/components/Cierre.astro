@@ -8,7 +8,7 @@ import { cuentaBluesky, enlaces, whatsapp } from '../data/sitio';
     {
       cuentaBluesky ? (
         <>
-          <p class="mt-4 text-lg text-papel/80">Reenvíale el mensaje por WhatsApp al {whatsapp.numero}, o menciona a @{cuentaBluesky.handle} en Bluesky. El bot busca de dónde sale el dato y te responde ahí mismo.</p>
+          <p class="mt-4 text-lg text-papel/80">Reenvíale el mensaje por WhatsApp al {whatsapp.numero}, o menciona a @{cuentaBluesky.handle} en Bluesky. ¿Es Cierto? busca de dónde sale el dato y te responde ahí mismo.</p>
           <div class="mt-8 flex flex-wrap justify-center gap-3">
             <a href={whatsapp.url} class="boton boton-principal">Escríbele por WhatsApp</a>
             <a href={cuentaBluesky.url} class="boton boton-secundario">Menciona a @{cuentaBluesky.handle}</a>
@@ -16,7 +16,7 @@ import { cuentaBluesky, enlaces, whatsapp } from '../data/sitio';
         </>
       ) : (
         <>
-          <p data-revelar class="mt-4 text-xl text-papel/85">Muy pronto podrás mencionar al bot. Parte en Bluesky y después suma otras&nbsp;redes.</p>
+          <p data-revelar class="mt-4 text-xl text-papel/85">Muy pronto podrás pedirle una verificación. Parte en Bluesky y después suma otras&nbsp;redes.</p>
           <div data-revelar class="mt-8 flex flex-wrap justify-center gap-3">
             <a href={enlaces.metodologia} class="boton boton-principal">Leer cómo verifica</a>
             <a href={enlaces.repo} class="boton boton-secundario">Seguir en GitHub</a>

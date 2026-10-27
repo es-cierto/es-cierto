@@ -20,7 +20,7 @@ ${preguntas.map((p) => `### ${p.pregunta}\n\n${p.respuesta}`).join('\n\n')}
 ## Enlaces
 
 - [Metodología](${enlaces.metodologia}): cómo llega a cada veredicto, la escala y los límites conocidos.
-- [Código abierto](${enlaces.repo}): el bot, los prompts y los evals.
+- [Código abierto](${enlaces.repo}): el código, los prompts y los evals.
 - [Página](${inicio}): esta landing.
 
 ## Optional
@@ -37,7 +37,7 @@ export function completoParaModelos(inicio: string, metodologia: string): string
   return `${resumenParaModelos(inicio)}
 ## Metodología completa
 
-Copia de [METODOLOGIA.md](${enlaces.metodologia}), la fuente de verdad de cómo verifica el bot.
+Copia de [METODOLOGIA.md](${enlaces.metodologia}), la fuente de verdad de cómo verifica ¿Es Cierto?
 
 ${bajada}
 `;
