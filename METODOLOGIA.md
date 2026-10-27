@@ -18,13 +18,13 @@ Dos reglas propias atraviesan todo lo anterior: _No verificable_ es una respuest
 
 ## Qué se verifica
 
-Solo **afirmaciones de hecho**: cifras, fechas, citas, eventos, datos comprobables. No se verifican opiniones, predicciones ni chistes. En esos casos el bot responde que no encontró un hecho verificable.
+Solo **afirmaciones de hecho**: cifras, fechas, citas, eventos, datos comprobables. No se verifican opiniones, predicciones ni chistes. En esos casos ¿Es Cierto? responde que no encontró un hecho verificable.
 
 ## Cómo se eligen las afirmaciones
 
-El bot **no elige qué verificar**: verifica lo que le piden las personas al mencionarlo en una publicación. No filtra por tema, autor ni sector político, y aplica el mismo proceso a cualquier afirmación.
+¿Es Cierto? **no elige qué verificar**: verifica lo que le piden las personas al mencionarlo en una publicación. No filtra por tema, autor ni sector político, y aplica el mismo proceso a cualquier afirmación.
 
-- Como lo eligen quienes lo usan, el bot no puede garantizar que las verificaciones queden repartidas entre sectores. Para que eso se pueda revisar, cada investigación queda publicada, sin excepciones.
+- Como lo eligen quienes lo usan, no se puede garantizar que las verificaciones queden repartidas entre sectores. Para que eso se pueda revisar, cada investigación queda publicada, sin excepciones.
 - Cada cuenta puede pedir un número limitado de verificaciones por hora, para que nadie lo use para acosar a otra persona o inundarlo con un solo tema.
 - Si la misma afirmación ya se investigó hace poco, se reutiliza esa investigación en vez de repetirla.
 
@@ -50,7 +50,7 @@ Las redes sociales, los blogs anónimos y los sitios sin autoría no se aceptan 
 
 ## Proceso
 
-1. Si la publicación o el mensaje traen enlaces, se leen el título y la descripción de hasta 3 páginas (los mismos que muestra la vista previa del enlace) y, en Instagram, el texto de la publicación, tal como lo ve alguien sin cuenta. Luego se extrae la afirmación verificable y se reformula de forma neutra. El contenido de esas páginas sirve para entender qué se afirma, no como evidencia. Se verifica lo que la publicación dice, nunca la publicación misma: quién la publicó, cuándo o cuántas reacciones tiene no es una afirmación. Si de un enlace solo se pudo leer eso (pasa con redes que piden iniciar sesión, como Instagram), no hay nada que verificar y el bot pide el texto. Si el mensaje trae una imagen, o un enlace trae una (la de su vista previa), se leen hasta 2 imágenes con un modelo de visión (Llama 4 Scout, en Workers AI) que solo transcribe su texto y describe en una línea qué muestran; no juzga nada. El bot verifica lo que la imagen afirma, no si es auténtica o fue editada, y lo dice en la respuesta.
+1. Si la publicación o el mensaje traen enlaces, se leen el título y la descripción de hasta 3 páginas (los mismos que muestra la vista previa del enlace) y, en Instagram, el texto de la publicación, tal como lo ve alguien sin cuenta. Luego se extrae la afirmación verificable y se reformula de forma neutra. El contenido de esas páginas sirve para entender qué se afirma, no como evidencia. Se verifica lo que la publicación dice, nunca la publicación misma: quién la publicó, cuándo o cuántas reacciones tiene no es una afirmación. Si de un enlace solo se pudo leer eso (pasa con redes que piden iniciar sesión, como Instagram), no hay nada que verificar y se pide el texto. Si el mensaje trae una imagen, o un enlace trae una (la de su vista previa), se leen hasta 2 imágenes con un modelo de visión (Llama 4 Scout, en Workers AI) que solo transcribe su texto y describe en una línea qué muestran; no juzga nada. Se verifica lo que la imagen afirma, no si es auténtica o fue editada, y lo dice en la respuesta.
 2. Se busca en la base una investigación previa muy parecida:
    - si tiene menos de 7 días, se reutiliza;
    - si es más antigua, se investiga de nuevo y la investigación nueva enlaza a la anterior.
@@ -64,26 +64,26 @@ Todos los pasos usan el modelo abierto `gpt-oss-120b` en Cloudflare Workers AI.
 
 El informe completo, el veredicto y el modelo que investigó quedan publicados en la página de la investigación.
 
-El contenido de la publicación se trata como material a analizar y nunca como instrucciones. Así un post no puede "ordenarle" un veredicto al bot.
+El contenido de la publicación se trata como material a analizar y nunca como instrucciones. Así una publicación no puede "ordenarle" un veredicto.
 
 ## Conversación
 
-Después de un veredicto se le puede responder al bot en el mismo hilo para preguntarle de dónde sale un dato, discutirlo o aportar otra fuente.
+Después de un veredicto se le puede responder a ¿Es Cierto? en el mismo hilo para preguntarle de dónde sale un dato, discutirlo o aportar otra fuente.
 
 - Responde solo con la investigación publicada y la conversación del hilo como contexto. No busca en la web: si la duda no está cubierta, lo dice y sugiere mencionarlo en la publicación con ese dato para investigarlo.
 - Solo puede enlazar URLs que estén en la investigación o la página de la investigación. Si la respuesta trae otro enlace, el código la descarta y responde con el enlace a la investigación completa.
-- **El veredicto solo cambia con evidencia.** La insistencia, los insultos o la presión no lo mueven: el bot lo mantiene y explica en qué se basa.
-- Si alguien aporta una fuente sólida que contradice el veredicto, el bot lo reconoce y le pide reportarlo en la página de la investigación para revisarlo.
+- **El veredicto solo cambia con evidencia.** La insistencia, los insultos o la presión no lo mueven: ¿Es Cierto? lo mantiene y explica en qué se basa.
+- Si alguien aporta una fuente sólida que contradice el veredicto, ¿Es Cierto? lo reconoce y le pide reportarlo en la página de la investigación para revisarlo.
 - Cada respuesta tiene como máximo dos oraciones y cabe en una publicación (290 caracteres). Si el modelo escribe más, el código la corta en el último fin de oración que cabe, para no publicar enlaces partidos.
-- Si alguien aporta una fuente que contradice el veredicto, el bot no repite ese enlace: lo invita a reportarlo para revisarlo.
+- Si alguien aporta una fuente que contradice el veredicto, ¿Es Cierto? no repite ese enlace: lo invita a reportarlo para revisarlo.
 - Responde como máximo 5 veces por hilo, para que nadie lo mantenga discutiendo sin fin.
 
 ### Quien hizo la afirmación
 
-La IFCN pide buscar a quien hizo la afirmación antes de publicar. El bot no lo hace: responde en minutos y escribirle a cada autor de forma automática se prestaría para acoso. En cambio:
+La IFCN pide buscar a quien hizo la afirmación antes de publicar. ¿Es Cierto? no lo hace: responde en minutos y escribirle a cada autor de forma automática se prestaría para acoso. En cambio:
 
 - la respuesta queda en el mismo hilo de la publicación, a la vista de su autor;
-- el autor puede responderle al bot con sus fuentes, y el bot las considera según las reglas de arriba;
+- el autor puede responder con sus fuentes en el mismo hilo, y se consideran según las reglas de arriba;
 - si aporta una fuente que cambia el veredicto, se corrige como cualquier otro error.
 
 ## Límites conocidos
@@ -91,7 +91,7 @@ La IFCN pide buscar a quien hizo la afirmación antes de publicar. El bot no lo 
 - La investigación la hace un modelo de IA abierto y de tamaño medio, que puede equivocarse más que los modelos comerciales grandes. Por eso las fuentes van siempre a la vista y el código solo acepta fuentes que realmente aparecieron en la búsqueda.
 - La búsqueda se limita a 3 rondas de 3 consultas por afirmación: un tema que necesite más evidencia puede terminar como _No verificable_.
 - Por ahora solo se lee texto. Las imágenes, los videos y los posts citados todavía no se analizan.
-- Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el bot se use para acosar.
+- Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el servicio se use para acosar.
 
 ## Correcciones
 
@@ -103,14 +103,14 @@ La IFCN pide buscar a quien hizo la afirmación antes de publicar. El bot no lo 
 
 1. Se publica una investigación nueva con el veredicto, la confianza, el resumen y las fuentes corregidos, y una nota que explica qué cambió y por qué.
 2. La investigación anterior no se borra: queda publicada con un aviso arriba de todo que dice que fue corregida y enlaza a la versión nueva.
-3. El bot responde en **cada hilo** donde había dado el veredicto anterior, con el veredicto de antes, el de ahora y la nota, para que la corrección llegue a quien vio el error.
+3. ¿Es Cierto? responde en **cada hilo** donde había dado el veredicto anterior, con el veredicto de antes, el de ahora y la nota, para que la corrección llegue a quien vio el error.
 4. El issue se cierra con el enlace a la corrección.
 
 Si el reporte no se confirma, se responde en el issue explicando por qué, con las fuentes.
 
 ## Organización y contacto
 
-¿Es Cierto? es un proyecto de código abierto, **todavía sin una organización legalmente constituida**. Lo mantienen las personas con permiso de escritura en [github.com/es-cierto](https://github.com/es-cierto), que responden por las correcciones y por los cambios a esta metodología. Cuando exista una organización, aquí se publicarán su forma legal, quiénes la dirigen y sus biografías profesionales. La infraestructura (el bot, la página y sus datos) está en una cuenta de Cloudflare del proyecto, no en la cuenta personal de nadie.
+¿Es Cierto? es un proyecto de código abierto, **todavía sin una organización legalmente constituida**. Lo mantienen las personas con permiso de escritura en [github.com/es-cierto](https://github.com/es-cierto), que responden por las correcciones y por los cambios a esta metodología. Cuando exista una organización, aquí se publicarán su forma legal, quiénes la dirigen y sus biografías profesionales. La infraestructura (el servicio, la página y sus datos) está en una cuenta de Cloudflare del proyecto, no en la cuenta personal de nadie.
 
 - **Reportes, preguntas y propuestas:** [issues en GitHub](https://github.com/es-cierto/es-cierto/issues).
 - **Vulnerabilidades:** en privado, según [SECURITY.md](SECURITY.md).
@@ -118,6 +118,6 @@ Si el reporte no se confirma, se responde en el issue explicando por qué, con l
 
 ## Financiamiento
 
-Hoy **no tiene financiamiento externo**. La operación del bot cabe en los planes gratuitos de Cloudflare (Workers, Workers AI, D1 y Vectorize) y de Tavily.
+Hoy **no tiene financiamiento externo**. La operación cabe en los planes gratuitos de Cloudflare (Workers, Workers AI, D1 y Vectorize) y de Tavily.
 
 Si llega financiamiento, se publicará aquí toda fuente que aporte el 5% o más del presupuesto anual, con sus condiciones. Ningún financiamiento puede condicionar qué se verifica ni el veredicto.
