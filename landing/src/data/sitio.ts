@@ -54,10 +54,10 @@ export const pasos = [
   {
     titulo: 'Le mandas el dato',
     texto:
-      'Se lo reenvías por WhatsApp, o respondes a la publicación en Bluesky mencionando al bot. No necesitas registrarte en ningún lado.',
+      'Se lo reenvías por WhatsApp, o respondes a la publicación en Bluesky mencionando a ¿Es Cierto? No necesitas registrarte en ningún lado.',
   },
   {
-    titulo: 'El bot investiga',
+    titulo: 'Investiga',
     texto:
       'Separa el dato de las opiniones y lo busca en leyes, datos oficiales, estudios y verificaciones profesionales.',
   },
@@ -94,7 +94,8 @@ export const preguntas = [
   },
   {
     pregunta: '¿Cómo reporto un error?',
-    respuesta: 'Desde la página de cada investigación o en GitHub. La corrección se publica y el bot avisa en el hilo.',
+    respuesta:
+      'Desde la página de cada investigación o en GitHub. La corrección se publica y se avisa en el mismo hilo.',
   },
   {
     pregunta: '¿Sigue algún estándar?',
