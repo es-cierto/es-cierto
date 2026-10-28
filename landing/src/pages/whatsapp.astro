@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icono from '../components/Icono.astro';
+import { paginaWhatsapp, whatsapp } from '../data/sitio';
+---
+
+<Layout
+  titulo="WhatsApp · ¿Es Cierto?"
+  descripcion="Escríbele a ¿Es Cierto? por WhatsApp al +56 9 2212 2033: reenvíale lo que te llegó y te responde con las fuentes."
+  sinIndice
+>
+  <section
+    data-whatsapp
+    data-numero={whatsapp.numero}
+    data-copiado={paginaWhatsapp.copiado}
+    data-sin-copiar={paginaWhatsapp.sinCopiar}
+    class="mx-auto flex min-h-svh max-w-[680px] flex-col items-center justify-center px-4 pt-36 pb-24 text-center"
+  >
+    <h1 class="text-5xl text-balance lg:text-7xl">{paginaWhatsapp.titulo}</h1>
+    <p class="mt-4 text-xl text-papel/90">{paginaWhatsapp.texto}</p>
+    <a data-abrir href={whatsapp.url} class="boton boton-principal mt-10 gap-2">
+      <Icono nombre="whatsapp-logo" class="size-5" />
+      {paginaWhatsapp.abrir}
+    </a>
+    <p class="mt-12 text-4xl font-semibold tracking-wide select-all">{whatsapp.numero}</p>
+    <button data-copiar type="button" class="boton boton-secundario mt-4 gap-2">
+      <Icono nombre="copy" class="size-5" />
+      {paginaWhatsapp.copiar}
+    </button>
+    <p data-estado aria-live="polite" class="mt-4 min-h-7 text-lg text-papel/90"></p>
+    <p data-ayuda class="mt-8 max-w-md text-lg text-papel/70">{paginaWhatsapp.ayuda}</p>
+  </section>
+</Layout>
+
+<script>
+  import '../scripts/abrir-whatsapp';
+</script>
