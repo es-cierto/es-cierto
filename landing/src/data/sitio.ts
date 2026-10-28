@@ -13,6 +13,16 @@ export const cuentaBluesky: { handle: string; url: string } | null = {
 
 export const whatsapp = { numero: '+56 9 2212 2033', url: 'https://wa.me/56922122033' };
 
+export const paginaWhatsapp = {
+  titulo: 'Escríbele por WhatsApp.',
+  texto: 'Reenvíale lo que te llegó y te responde con las fuentes.',
+  abrir: 'Abrir WhatsApp',
+  copiar: 'Copiar número',
+  copiado: 'Número copiado. Pégalo en WhatsApp para escribirle.',
+  sinCopiar: 'No se pudo copiar. Mantén apretado el número para copiarlo.',
+  ayuda: '¿No se abre? Toca los tres puntos de arriba y elige "Abrir en el navegador".',
+};
+
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
   descripcion:
