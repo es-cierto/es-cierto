@@ -92,6 +92,8 @@ La IFCN pide buscar a quien hizo la afirmación antes de publicar. ¿Es Cierto? 
 - La búsqueda se limita a 3 rondas de 3 consultas por afirmación: un tema que necesite más evidencia puede terminar como _No verificable_.
 - Por ahora solo se lee texto. Las imágenes, los videos y los posts citados todavía no se analizan.
 - Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el servicio se use para acosar.
+- ¿Es Cierto? tiene un límite diario de investigaciones. Cuando se alcanza, no descarta lo pedido: avisa en la conversación y responde apenas puede, normalmente al día siguiente.
+- Si una investigación falla por un error propio, ¿Es Cierto? responde en la conversación que no pudo terminarla, en vez de quedarse en silencio.
 
 ## Correcciones
 

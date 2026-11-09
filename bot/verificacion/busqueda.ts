@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { comoDatos } from "../shared/imagen.ts";
+import { agotoBusquedas, SinSaldo } from "../shared/saldo.ts";
 import { codigoDeInstagram, textoDeInstagram, vistaPrevia } from "./reglas.ts";
 
 const AGENTE = "Mozilla/5.0 (compatible; EsCiertoBot/1.0; +https://es.cierto.workers.dev)";
@@ -25,6 +26,9 @@ export async function buscar(apiKey: string, consulta: string): Promise<string> 
     headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
     body: JSON.stringify({ query: consulta, search_depth: "basic", max_results: 5 }),
   });
+  if (agotoBusquedas(respuesta.status)) {
+    throw new SinSaldo("Tavily");
+  }
   if (!respuesta.ok) {
     throw new Error(`tavily ${respuesta.status}: ${await respuesta.text()}`);
   }

@@ -9,6 +9,7 @@ import { descargarImagen, leerEnlaces } from "./verificacion/busqueda.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
 import { extraerAfirmacion, transcribirImagen } from "./verificacion/prompts.ts";
 import { AVISO_IMAGEN, decidir, ENLACES_POR_MENSAJE, IMAGENES_POR_MENSAJE } from "./verificacion/reglas.ts";
+import { agotoNeuronas, hastaElDiaSiguiente, SinSaldo } from "./shared/saldo.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
 
@@ -52,7 +53,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
         : { investigacion: null, pagina: null };
     });
 
-    const borrador = await step.do("conversar", CON_REINTENTOS, () => conversar(env.AI, hilo, investigacion));
+    const borrador = await this.conSaldo(mencion, red, step)("conversar", () => conversar(env.AI, hilo, investigacion));
     const respuesta = respuestaPublicable(borrador, investigacion, pagina);
 
     await step.do("responder en el hilo", async () => {
@@ -60,10 +61,40 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     });
   }
 
+  private conSaldo(mencion: Mencion, red: Red, step: WorkflowStep): Paso {
+    const paso = async (nombre: string, fn: () => Promise<Rpc.Serializable<unknown>>) => {
+      for (let intento = 1; ; intento++) {
+        const resultado = await step.do(intento === 1 ? nombre : `${nombre} (${intento})`, CON_REINTENTOS, async () => {
+          try {
+            return await fn();
+          } catch (error) {
+            if (error instanceof SinSaldo || agotoNeuronas(error)) {
+              return null;
+            }
+            throw error;
+          }
+        });
+        if (resultado !== null) {
+          return resultado;
+        }
+        await step.do("avisar que se acabó el saldo", async () => {
+          await red.responder(
+            mencion,
+            "Hoy llegué a mi límite de verificaciones. No me olvido: te respondo aquí mismo apenas pueda, normalmente mañana.",
+          );
+        });
+        const espera = await step.do(`calcular espera ${nombre} ${intento}`, async () =>
+          hastaElDiaSiguiente(Date.now()),
+        );
+        await step.sleep(`esperar saldo ${nombre} ${intento}`, espera);
+      }
+    };
+    return paso as unknown as Paso;
+  }
+
   async run(evento: WorkflowEvent<ParamsChequeo>, step: WorkflowStep) {
     const { mencion } = evento.payload;
-    const env = this.env;
-    const enRed = red(env, evento.payload.red);
+    const enRed = red(this.env, evento.payload.red);
 
     if (evento.payload.red === "whatsapp") {
       await step.do("acusar recibo", async () => {
@@ -71,10 +102,26 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       });
     }
 
-    if (mencion.razon === "reply") {
-      await this.conversar(mencion, enRed, step);
-      return;
+    try {
+      if (mencion.razon === "reply") {
+        await this.conversar(mencion, enRed, step);
+      } else {
+        await this.verificar(mencion, enRed, step);
+      }
+    } catch (error) {
+      await step.do("avisar que falló", async () => {
+        await enRed.responder(
+          mencion,
+          "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a intentarlo en un rato.",
+        );
+      });
+      throw error;
     }
+  }
+
+  private async verificar(mencion: Mencion, enRed: Red, step: WorkflowStep) {
+    const env = this.env;
+    const paso = this.conSaldo(mencion, enRed, step);
 
     const texto = await step.do("leer publicación", async () =>
       mencion.padre ? enRed.textoDePost(mencion.padre.uri) : "",
@@ -92,7 +139,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     const transcripciones: string[] = [];
     for (const [i, { id, deLaRed }] of imagenes.entries()) {
       transcripciones.push(
-        await step.do(`leer imagen ${i + 1}`, CON_REINTENTOS, async () => {
+        await paso(`leer imagen ${i + 1}`, async () => {
           const datos = await (deLaRed ? enRed.imagen(id) : descargarImagen(id)).catch((error: unknown) => {
             console.warn(JSON.stringify({ evento: "no_se_pudo_descargar_imagen", error: String(error) }));
             return "";
@@ -111,9 +158,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       .join("\n\n");
     const conImagen = transcripciones.some(Boolean);
 
-    const extraida = await step.do("extraer afirmación", CON_REINTENTOS, () =>
-      extraerAfirmacion(env.AI, publicacion, mencion.texto),
-    );
+    const extraida = await paso("extraer afirmación", () => extraerAfirmacion(env.AI, publicacion, mencion.texto));
 
     if (!extraida.verificable) {
       await step.do("responder sin afirmación", async () => {
@@ -125,7 +170,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       return;
     }
 
-    const vector = await step.do("embedding", async () => {
+    const vector = await paso("embedding", async () => {
       const resultado = await env.AI.run("@cf/baai/bge-m3", { text: [extraida.afirmacion] }, pasarela);
       if (!("data" in resultado) || !resultado.data?.[0]) {
         throw new Error("bge-m3 no devolvió embedding");
@@ -158,12 +203,10 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
             })
           : undefined;
 
-      const verificaciones = await step.do("buscar verificaciones publicadas", CON_REINTENTOS, () =>
+      const verificaciones = await paso("buscar verificaciones publicadas", () =>
         verificacionesPublicadas(env.GOOGLE_FACTCHECK_KEY, extraida.afirmacion),
       );
 
-      const paso = ((nombre: string, fn: () => Promise<string>) =>
-        step.do(nombre, CON_REINTENTOS, fn)) as unknown as Paso;
       const { informe, veredicto } = await investigarAfirmacion(
         paso,
         { ai: env.AI, tavilyApiKey: env.TAVILY_API_KEY },
