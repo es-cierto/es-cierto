@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { PedidoCorreccion } from "./veredicto.ts";
 import {
+  busquedaFallida,
+  consultasDeLaRonda,
   consultasNuevas,
   decidir,
   exigirEvidencia,
@@ -112,6 +114,49 @@ test("no se repiten búsquedas ya hechas ni se pasa del tope por ronda", () => {
 
 test("si el modelo solo repite búsquedas, se termina", () => {
   assert.deepEqual(consultasNuevas({ suficiente: false, consultas: ["ipc chile 2025"] }, ["ipc chile 2025"]), []);
+});
+
+test("si el modelo no propone búsquedas y no hay nada reunido, se busca la afirmación misma", () => {
+  assert.deepEqual(consultasDeLaRonda({ suficiente: true, consultas: [] }, [], "La Tierra es plana", ""), [
+    "La Tierra es plana",
+  ]);
+});
+
+test("si las búsquedas no trajeron nada y el modelo solo las repite, se prueba con la afirmación", () => {
+  const plan = { suficiente: false, consultas: ["tierra plana evidencia"] };
+  assert.deepEqual(consultasDeLaRonda(plan, ["tierra plana evidencia"], "La Tierra es plana", ""), [
+    "La Tierra es plana",
+  ]);
+});
+
+test("la afirmación como búsqueda se prueba una sola vez", () => {
+  assert.deepEqual(
+    consultasDeLaRonda({ suficiente: false, consultas: [] }, ["la tierra es plana"], "La Tierra es plana", ""),
+    [],
+  );
+});
+
+test("con resultados reunidos, dejar de buscar es decisión del modelo", () => {
+  const resultados = "- Facts About Earth (https://science.nasa.gov/earth/facts/)\n  Earth is an oblate spheroid.";
+  assert.deepEqual(
+    consultasDeLaRonda({ suficiente: true, consultas: [] }, ["forma de la tierra"], "La Tierra es plana", resultados),
+    [],
+  );
+});
+
+test("sin resultados de búsqueda ni verificaciones publicadas, la búsqueda falló", () => {
+  assert.equal(busquedaFallida("", ""), true);
+  assert.equal(busquedaFallida("  \n", ""), true);
+});
+
+test("una verificación publicada basta para que la búsqueda no cuente como fallida", () => {
+  assert.equal(
+    busquedaFallida(
+      "",
+      '- "La Tierra es plana" → Falso (AFP Factual, 2024-03-01) https://factual.afp.com/tierra-plana',
+    ),
+    false,
+  );
 });
 
 const pedido = {

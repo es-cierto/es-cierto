@@ -69,6 +69,30 @@ export function consultasNuevas(plan: PlanBusqueda, hechas: string[]): string[] 
   return nuevas.slice(0, MAX_CONSULTAS_POR_RONDA);
 }
 
+export function consultasDeLaRonda(
+  plan: PlanBusqueda,
+  hechas: string[],
+  afirmacion: string,
+  resultados: string,
+): string[] {
+  const nuevas = consultasNuevas(plan, hechas);
+  if (nuevas.length > 0 || resultados.trim()) {
+    return nuevas;
+  }
+  return consultasNuevas({ suficiente: false, consultas: [afirmacion] }, hechas);
+}
+
+export class BusquedaFallida extends Error {
+  constructor() {
+    super("la búsqueda no devolvió ningún resultado, ni con otras palabras");
+    this.name = "BusquedaFallida";
+  }
+}
+
+export function busquedaFallida(resultados: string, verificaciones: string): boolean {
+  return !resultados.trim() && !verificaciones.trim();
+}
+
 export function problemaDeCorreccion(pedido: PedidoCorreccion): string | null {
   if (pedido.fuentes.some((f) => !f.url.startsWith("https://"))) {
     return "todas las fuentes tienen que ser enlaces https";

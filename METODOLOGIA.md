@@ -57,6 +57,7 @@ Las redes sociales, los blogs anónimos y los sitios sin autoría no se aceptan 
 3. Se consultan verificaciones profesionales ya publicadas.
 4. Se busca en la web (Tavily) por rondas: el modelo propone hasta 3 búsquedas, revisa lo encontrado y decide si basta o si hacen falta búsquedas distintas. Como máximo 3 rondas; las búsquedas repetidas se descartan.
    Si un dato clave aparece en un solo sitio, la siguiente ronda busca una segunda fuente independiente.
+   Si una ronda no trae nada, la siguiente prueba con otras palabras, y si el modelo no propone búsquedas nuevas, se busca la afirmación tal cual. Si al final no apareció ningún resultado ni verificaciones publicadas, no se emite veredicto: eso es una falla de la búsqueda, no falta de evidencia (ver [Límites conocidos](#límites-conocidos)).
 5. Con esos resultados, y sin agregar datos de memoria, se escribe un informe de evidencia con la URL de cada dato y cuántas fuentes independientes lo respaldan. El informe presenta tanto la evidencia que respalda la afirmación como la que la contradice, pero no da veredicto.
 6. Un segundo paso emite el veredicto usando solo las fuentes del informe. El código descarta toda fuente cuya URL no haya aparecido en los resultados de búsqueda; si no queda ninguna, el veredicto es _No verificable_. Si las fuentes que quedan son de un solo sitio, la confianza no puede ser alta.
 
@@ -93,7 +94,7 @@ La IFCN pide buscar a quien hizo la afirmación antes de publicar. ¿Es Cierto? 
 - Por ahora solo se lee texto. Las imágenes, los videos y los posts citados todavía no se analizan.
 - Cada cuenta puede pedir un número limitado de verificaciones por hora, para evitar que el servicio se use para acosar.
 - ¿Es Cierto? tiene un límite diario de investigaciones. Cuando se alcanza, no descarta lo pedido: avisa en la conversación y responde apenas puede, normalmente al día siguiente.
-- Si una investigación falla por un error propio, ¿Es Cierto? responde en la conversación que no pudo terminarla, en vez de quedarse en silencio.
+- Si una investigación falla por un error propio, o la búsqueda no trae ningún resultado, ¿Es Cierto? no da un veredicto a medias. Avisa en la conversación que hubo un problema y vuelve a intentarlo solo, a los 30 minutos, a las 2 horas y a las 6 horas. Apenas lo logra, responde ahí mismo. Si después de eso sigue fallando, dice que no pudo terminarla, en vez de quedarse en silencio.
 
 ## Correcciones
 

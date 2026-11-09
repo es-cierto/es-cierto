@@ -1,6 +1,12 @@
 import { buscar } from "./busqueda.ts";
 import { investigar, planificarBusquedas, redactarVeredicto } from "./prompts.ts";
-import { consultasNuevas, exigirEvidencia, MAX_RONDAS_BUSQUEDA } from "./reglas.ts";
+import {
+  BusquedaFallida,
+  busquedaFallida,
+  consultasDeLaRonda,
+  exigirEvidencia,
+  MAX_RONDAS_BUSQUEDA,
+} from "./reglas.ts";
 import type { Veredicto } from "./veredicto.ts";
 
 export type Paso = <T>(nombre: string, fn: () => Promise<T>) => Promise<T>;
@@ -18,7 +24,7 @@ export async function investigarAfirmacion(
     const plan = await paso(`planificar búsquedas ${ronda}`, () =>
       planificarBusquedas(servicios.ai, afirmacion, hechas, resultados),
     );
-    const consultas = consultasNuevas(plan, hechas);
+    const consultas = consultasDeLaRonda(plan, hechas, afirmacion, resultados);
     if (consultas.length === 0) {
       break;
     }
@@ -27,6 +33,10 @@ export async function investigarAfirmacion(
     );
     hechas.push(...consultas);
     resultados = [resultados, encontrados].filter(Boolean).join("\n");
+  }
+
+  if (busquedaFallida(resultados, verificaciones)) {
+    throw new BusquedaFallida();
   }
 
   const informe = await paso("investigar", () =>
