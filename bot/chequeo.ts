@@ -80,7 +80,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
         await step.do("avisar que se acabó el saldo", async () => {
           await red.responder(
             mencion,
-            "Se me acabó el saldo gratis de hoy. No me olvido: te respondo aquí mismo apenas se renueve, normalmente mañana.",
+            "Hoy llegué a mi límite de verificaciones. No me olvido: te respondo aquí mismo apenas pueda, normalmente mañana.",
           );
         });
         const espera = await step.do(`calcular espera ${nombre} ${intento}`, async () =>
