@@ -1,5 +1,5 @@
 ---
-import { cuentaBluesky, enlaces } from '../data/sitio';
+import { cuentaBluesky, enlaces, whatsapp } from '../data/sitio';
 
 const navegacion = [
   { href: '/#recorrido', texto: 'Cómo funciona' },
@@ -27,7 +27,7 @@ const navegacion = [
     </nav>
     {
       cuentaBluesky ? (
-        <a href={cuentaBluesky.url} class="boton boton-principal min-h-9 px-4 text-sm">Mencionar al bot</a>
+        <a href={whatsapp.url} class="boton boton-principal min-h-9 px-4 text-sm">Escríbele por WhatsApp</a>
       ) : (
         <a href={enlaces.metodologia} class="boton boton-principal min-h-9 px-4 text-sm">Cómo verifica</a>
       )

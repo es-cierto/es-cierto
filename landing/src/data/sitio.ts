@@ -3,6 +3,7 @@ export const enlaces = {
   repo: 'https://github.com/es-cierto/es-cierto',
   metodologia: 'https://github.com/es-cierto/es-cierto/blob/main/METODOLOGIA.md',
   issues: 'https://github.com/es-cierto/es-cierto/issues/new',
+  privacidad: '/privacidad',
 };
 
 export const cuentaBluesky: { handle: string; url: string } | null = {
@@ -10,10 +11,22 @@ export const cuentaBluesky: { handle: string; url: string } | null = {
   url: 'https://bsky.app/profile/es-cierto.bsky.social',
 };
 
+export const whatsapp = { numero: '+56 9 2212 2033', url: 'https://wa.me/56922122033' };
+
+export const paginaWhatsapp = {
+  titulo: 'Escríbele por WhatsApp.',
+  texto: 'Reenvíale lo que te llegó y te responde con las fuentes.',
+  abrir: 'Abrir WhatsApp',
+  copiar: 'Copiar número',
+  copiado: 'Número copiado. Pégalo en WhatsApp para escribirle.',
+  sinCopiar: 'No se pudo copiar. Mantén apretado el número para copiarlo.',
+  ayuda: '¿No se abre? Toca los tres puntos de arriba y elige "Abrir en el navegador".',
+};
+
 export const seo = {
   titulo: '¿Es Cierto? · Te decimos si un dato es cierto, con las fuentes a la vista',
   descripcion:
-    'Verificador de datos para redes sociales y la web. Lo mencionas en una publicación, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Parte en Bluesky. Abierto y no partidista.',
+    'Verificador de datos para redes sociales y la web. Le reenvías un mensaje por WhatsApp o lo mencionas en una publicación de Bluesky, busca de dónde sale el dato y te responde con las fuentes, o te avisa si no encontró ninguna. Abierto y no partidista.',
 };
 
 export const recorrido = [
@@ -49,12 +62,12 @@ export const escala = [
 
 export const pasos = [
   {
-    titulo: 'Mencionas al bot',
+    titulo: 'Le mandas el dato',
     texto:
-      'Respondes a la publicación donde viste el dato y escribes la cuenta del bot. No necesitas registrarte en ningún lado.',
+      'Se lo reenvías por WhatsApp, o respondes a la publicación en Bluesky mencionando a ¿Es Cierto? No necesitas registrarte en ningún lado.',
   },
   {
-    titulo: 'El bot investiga',
+    titulo: 'Investiga',
     texto:
       'Separa el dato de las opiniones y lo busca en leyes, datos oficiales, estudios y verificaciones profesionales.',
   },
@@ -73,7 +86,8 @@ export const preguntas = [
   },
   {
     pregunta: '¿En qué redes funciona?',
-    respuesta: 'Parte en Bluesky. La idea es sumar otras redes sociales y cualquier página web.',
+    respuesta:
+      'En Bluesky y en WhatsApp: le reenvías el mensaje al +56 9 2212 2033. La idea es sumar otras redes sociales y cualquier página web.',
   },
   { pregunta: '¿Es neutral?', respuesta: 'Revisa lo que se dice, nunca quién lo dice. La misma regla para todos.' },
   {
@@ -90,7 +104,8 @@ export const preguntas = [
   },
   {
     pregunta: '¿Cómo reporto un error?',
-    respuesta: 'Desde la página de cada investigación o en GitHub. La corrección se publica y el bot avisa en el hilo.',
+    respuesta:
+      'Desde la página de cada investigación o en GitHub. La corrección se publica y se avisa en el mismo hilo.',
   },
   {
     pregunta: '¿Sigue algún estándar?',

@@ -6,6 +6,7 @@ bot/verificacion/reglas.ts          @es-cierto/mantenedores
 bot/conversacion/prompt.ts          @es-cierto/mantenedores
 bot/conversacion/reglas.ts          @es-cierto/mantenedores
 bot/shared/modelo.ts                @es-cierto/mantenedores
+bot/shared/imagen.ts                @es-cierto/mantenedores
 wrangler.jsonc                      @es-cierto/mantenedores
 landing/wrangler.jsonc              @es-cierto/mantenedores
 migrations/                         @es-cierto/mantenedores

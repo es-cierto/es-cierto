@@ -4,9 +4,11 @@ import { investigacionDelHilo, puedeSeguirConversando, respuestaPublicable } fro
 import type { Mencion } from "./redes/bluesky.ts";
 import { red, type NombreRed, type Red } from "./redes/red.ts";
 import { MODELO, pasarela } from "./shared/modelo.ts";
+import { enlacesDe } from "./shared/enlaces.ts";
+import { descargarImagen, leerEnlaces } from "./verificacion/busqueda.ts";
 import { investigarAfirmacion, type Paso } from "./verificacion/investigacion.ts";
-import { extraerAfirmacion } from "./verificacion/prompts.ts";
-import { decidir } from "./verificacion/reglas.ts";
+import { extraerAfirmacion, transcribirImagen } from "./verificacion/prompts.ts";
+import { AVISO_IMAGEN, decidir, ENLACES_POR_MENSAJE, IMAGENES_POR_MENSAJE } from "./verificacion/reglas.ts";
 import { agotoNeuronas, hastaElDiaSiguiente, SinSaldo } from "./shared/saldo.ts";
 import { verificacionesPublicadas } from "./verificacion/verificacionesPublicadas.ts";
 import { ETIQUETAS, type Veredicto } from "./verificacion/veredicto.ts";
@@ -93,6 +95,13 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
   async run(evento: WorkflowEvent<ParamsChequeo>, step: WorkflowStep) {
     const { mencion } = evento.payload;
     const enRed = red(this.env, evento.payload.red);
+
+    if (evento.payload.red === "whatsapp") {
+      await step.do("acusar recibo", async () => {
+        await enRed.responder(mencion, "Recibido. Lo estoy verificando y te respondo aquí en unos minutos.");
+      });
+    }
+
     try {
       if (mencion.razon === "reply") {
         await this.conversar(mencion, enRed, step);
@@ -103,7 +112,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       await step.do("avisar que falló", async () => {
         await enRed.responder(
           mencion,
-          "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a mencionarme en un rato.",
+          "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a intentarlo en un rato.",
         );
       });
       throw error;
@@ -114,9 +123,40 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
     const env = this.env;
     const paso = this.conSaldo(mencion, enRed, step);
 
-    const publicacion = await step.do("leer publicación", async () =>
+    const texto = await step.do("leer publicación", async () =>
       mencion.padre ? enRed.textoDePost(mencion.padre.uri) : "",
     );
+
+    const enlaces = enlacesDe(`${texto} ${mencion.texto}`).slice(0, ENLACES_POR_MENSAJE);
+    const paginas = enlaces.length
+      ? await step.do("leer enlaces", () => leerEnlaces(enlaces))
+      : { texto: "", imagenes: [] };
+
+    const imagenes = [
+      ...(mencion.imagenes ?? []).map((id) => ({ id, deLaRed: true })),
+      ...paginas.imagenes.map((id) => ({ id, deLaRed: false })),
+    ].slice(0, IMAGENES_POR_MENSAJE);
+    const transcripciones: string[] = [];
+    for (const [i, { id, deLaRed }] of imagenes.entries()) {
+      transcripciones.push(
+        await paso(`leer imagen ${i + 1}`, async () => {
+          const datos = await (deLaRed ? enRed.imagen(id) : descargarImagen(id)).catch((error: unknown) => {
+            console.warn(JSON.stringify({ evento: "no_se_pudo_descargar_imagen", error: String(error) }));
+            return "";
+          });
+          return datos ? transcribirImagen(env.AI, datos) : "";
+        }),
+      );
+    }
+
+    const publicacion = [
+      texto,
+      paginas.texto && `Contenido de los enlaces:\n${paginas.texto}`,
+      ...transcripciones.filter(Boolean).map((t, i) => `Imagen ${i + 1}:\n${t}`),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    const conImagen = transcripciones.some(Boolean);
 
     const extraida = await paso("extraer afirmación", () => extraerAfirmacion(env.AI, publicacion, mencion.texto));
 
@@ -124,7 +164,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       await step.do("responder sin afirmación", async () => {
         await enRed.responder(
           mencion,
-          "No encontré un hecho que se pueda verificar: parece opinión. Si hay un dato concreto, etiquétame en la publicación que lo contiene.",
+          "No encontré un hecho que se pueda verificar: parece opinión, o no pude leer qué dice el enlace (pasa con Instagram, TikTok o X). Si hay un dato concreto, escríbemelo o menciónme en la publicación que lo contiene.",
         );
       });
       return;
@@ -207,7 +247,7 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       }
       await enRed.responder(
         mencion,
-        `${ETIQUETAS[fila.veredicto]} · confianza ${fila.confianza}\n${fila.resumen}`,
+        `${ETIQUETAS[fila.veredicto]} · confianza ${fila.confianza}\n${fila.resumen}${conImagen ? `\n${AVISO_IMAGEN}` : ""}`,
         `${env.PUBLIC_URL}/a/${investigacionId}`,
       );
     });

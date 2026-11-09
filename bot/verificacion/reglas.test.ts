@@ -1,7 +1,16 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { PedidoCorreccion } from "./veredicto.ts";
-import { consultasNuevas, decidir, exigirEvidencia, problemaDeCorreccion, textoDeCorreccion } from "./reglas.ts";
+import {
+  consultasNuevas,
+  decidir,
+  exigirEvidencia,
+  problemaDeCorreccion,
+  textoDeCorreccion,
+  codigoDeInstagram,
+  textoDeInstagram,
+  vistaPrevia,
+} from "./reglas.ts";
 
 const ahora = Date.parse("2026-10-09T12:00:00Z");
 const hace = (dias: number) => ahora - dias * 24 * 60 * 60 * 1000;
@@ -151,4 +160,97 @@ test("una corrección con confianza alta también necesita dos sitios distintos"
   );
   const dosSitios = [...pedido.fuentes, { titulo: "BCN", url: "https://www.bcn.cl/leychile/21751" }];
   assert.equal(problemaDeCorreccion({ ...pedido, confianza: "alta", fuentes: dosSitios }), null);
+});
+
+test("la vista previa de un enlace sale de las etiquetas og de la página", () => {
+  const html = `<head><title>El castigo a Pedro Araya | BioBioChile</title>
+<meta name="description" content="La decisión de reemplazar al senador Pedro Araya en la Comisión de Constitución, dejándolo fuera de su presidencia, abrió un..."/>
+<meta property="og:title" content='El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado' />
+<meta content="Bachelet dijo &quot;no&quot; &#8212; y el PS &amp; el PPD esperan" property="og:description" />
+<meta property="og:image" content="https://scontent-scl3-1.cdninstagram.com/v/t51.82787-15/518531727_n.jpg?stp=dst-jpg&amp;_nc_cat=1" />`;
+  assert.deepEqual(vistaPrevia(html), {
+    titulo: "El castigo a Pedro Araya que complicaría los planes del PS para presidir el Senado",
+    descripcion: 'Bachelet dijo "no" — y el PS & el PPD esperan',
+    imagen: "https://scontent-scl3-1.cdninstagram.com/v/t51.82787-15/518531727_n.jpg?stp=dst-jpg&_nc_cat=1",
+  });
+});
+
+test("sin etiquetas og, la vista previa usa el título y la descripción de la página", () => {
+  const html = `<title>Ley 21.719 &#x2014; Protección de datos</title><meta name="Description" content="Texto de la ley.">`;
+  assert.deepEqual(vistaPrevia(html), {
+    titulo: "Ley 21.719 — Protección de datos",
+    descripcion: "Texto de la ley.",
+    imagen: "",
+  });
+});
+
+const paginaInstagram = (codigo: string, texto: string | null) => {
+  const vecina = {
+    node: { code: "DMOzVjgCk2H", caption: { text: "- Jair Bolsonaro responde à carta de @realdonaldtrump ." } },
+  };
+  const datos = {
+    require: [
+      [
+        "ScheduledServerJS",
+        "handle",
+        null,
+        [
+          {
+            __bbox: {
+              require: [
+                [
+                  "RelayPrefetchedStreamCache",
+                  "next",
+                  [],
+                  [
+                    "adp",
+                    {
+                      __bbox: {
+                        result: {
+                          data: {
+                            xig_polaris_media: {
+                              __typename: "XIGPolarisImageMedia",
+                              code: codigo,
+                              if_not_gated_logged_out: {
+                                code: codigo,
+                                caption: texto === null ? null : { text: texto },
+                                user: {
+                                  username: "jairmessiasbolsonaro",
+                                  polaris_ordered_timeline_connection: { edges: [vecina] },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                ],
+              ],
+            },
+          },
+        ],
+      ],
+    ],
+  };
+  return `<html><script type="application/json" data-sjs>{"broken": </script><script type="application/json" data-sjs>${JSON.stringify(datos)}</script></html>`;
+};
+
+test("el texto de una publicación de Instagram sale de su propio bloque, no de las publicaciones vecinas", () => {
+  const carta = "A CASA BRANCA\nWASHINGTON\n\nAo Honorável\nJair Messias Bolsonaro";
+  assert.equal(textoDeInstagram(paginaInstagram("DMOdY7aC8NN", carta), "DMOdY7aC8NN"), carta);
+});
+
+test("una publicación de Instagram sin texto, o que no está en la página, no entrega texto", () => {
+  assert.equal(textoDeInstagram(paginaInstagram("DL2LXoCR4-3", null), "DL2LXoCR4-3"), "");
+  assert.equal(textoDeInstagram(paginaInstagram("DL2LXoCR4-3", "otro"), "DMOzVjgCk2H"), "");
+  assert.equal(textoDeInstagram("<html>Inicia sesión</html>", "DL2LXoCR4-3"), "");
+});
+
+test("el código de una publicación sale de los enlaces de Instagram, con o sin usuario", () => {
+  assert.equal(codigoDeInstagram("https://www.instagram.com/p/DL2LXoCR4-3/?xtok=bGk1ZmZneXhscHZz"), "DL2LXoCR4-3");
+  assert.equal(codigoDeInstagram("https://www.instagram.com/jairmessiasbolsonaro/p/DMOdY7aC8NN/"), "DMOdY7aC8NN");
+  assert.equal(codigoDeInstagram("https://instagram.com/reel/DMOzVjgCk2H/"), "DMOzVjgCk2H");
+  assert.equal(codigoDeInstagram("https://www.instagram.com/jairmessiasbolsonaro/"), null);
+  assert.equal(codigoDeInstagram("https://www.biobiochile.cl/p/DL2LXoCR4-3/"), null);
 });

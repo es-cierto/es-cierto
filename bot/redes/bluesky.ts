@@ -19,6 +19,7 @@ export const Mencion = z.object({
   cid: z.string(),
   autorDid: z.string(),
   texto: z.string(),
+  imagenes: z.array(z.string()).optional(),
   padre: Ref.optional(),
   raiz: Ref.optional(),
 });

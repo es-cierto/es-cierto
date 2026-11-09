@@ -22,6 +22,7 @@ test("código de la página: solo la landing", () => {
 
 test("la metodología cambia la página, porque llms-full.txt la incluye entera", () => {
   assert.equal(queDesplegar(["METODOLOGIA.md"]), "landing");
+  assert.equal(queDesplegar(["PRIVACIDAD.md"]), "landing");
   assert.equal(queDesplegar(["METODOLOGIA.md", "bot/verificacion/prompts.ts"]), "todo");
 });
 

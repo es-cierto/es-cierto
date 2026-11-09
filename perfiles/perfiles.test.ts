@@ -42,6 +42,12 @@ test("una palabra para cada cosa: mencionar (no etiquetar) y publicación (no po
   }
 });
 
+test('los perfiles no le dicen "bot" a ¿Es Cierto?', () => {
+  for (const texto of [bluesky.biografia, github.descripcion, github.repo.descripcion]) {
+    assert.doesNotMatch(texto, /\bbots?\b/i, texto);
+  }
+});
+
 test("el avatar no tiene rojo: menos de 0,5% de píxeles rojizos saturados", async () => {
   const sharp = createRequire(join(raiz, "landing/package.json"))("sharp") as (ruta: string) => {
     resize(

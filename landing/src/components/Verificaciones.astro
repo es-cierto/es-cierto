@@ -34,7 +34,7 @@ const { limite, paginar = false, encabezado = false } = Astro.props;
             Lo último que&nbsp;respondió.
           </h2>
           <p data-revelar class="mt-4 max-w-md text-xl text-papel/90">
-            Cada respuesta del bot, con su veredicto y sus&nbsp;fuentes.
+            Cada respuesta, con su veredicto y sus&nbsp;fuentes.
           </p>
         </div>
       )
@@ -43,7 +43,7 @@ const { limite, paginar = false, encabezado = false } = Astro.props;
     <ol data-lista class:list={['grid gap-4 md:grid-cols-2 lg:grid-cols-3', encabezado && 'mt-12']}></ol>
     <p data-estado aria-live="polite" class="mt-6 text-lg text-papel/80">Cargando las últimas verificaciones…</p>
     <noscript>
-      <p class="mt-6 text-lg text-papel/80">Activa JavaScript para ver lo que ha respondido el bot.</p>
+      <p class="mt-6 text-lg text-papel/80">Activa JavaScript para ver las últimas respuestas.</p>
     </noscript>
 
     <div class="mt-10 flex flex-wrap gap-3">

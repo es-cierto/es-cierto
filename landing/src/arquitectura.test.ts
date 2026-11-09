@@ -102,6 +102,12 @@ test('una palabra para cada cosa: mencionar (no etiquetar) y publicación (no po
   }
 });
 
+test('la página no le dice "bot" a ¿Es Cierto?', () => {
+  for (const ruta of [...fuentes, '../PRIVACIDAD.md', '../METODOLOGIA.md']) {
+    assert.ok(!/\b(el|al|del|un|los)(\s|&nbsp;)bots?\b/i.test(leer(ruta)), `${ruta} dice "bot"`);
+  }
+});
+
 test('el texto de lectura no baja de 18 px ni las etiquetas de 14 px', () => {
   for (const ruta of fuentes.filter((r) => r.endsWith('.astro'))) {
     const texto = leer(ruta);
@@ -112,7 +118,7 @@ test('el texto de lectura no baja de 18 px ni las etiquetas de 14 px', () => {
   }
 });
 
-test('Bluesky es la primera red, no la única', () => {
+test('Bluesky no se presenta como la única red', () => {
   for (const ruta of fuentes) {
     const exclusivo = leer(ruta).match(/(?:para|bot de|solo en) Bluesky/i);
     assert.ok(!exclusivo, `${ruta} dice "${exclusivo?.[0]}": el bot es para redes sociales y la web`);

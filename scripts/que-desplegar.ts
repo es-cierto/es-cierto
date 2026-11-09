@@ -3,7 +3,7 @@ const SIN_EFECTO = [/\.test\.ts$/, /(^|\/)(AGENTS|CLAUDE)\.md$/, /^landing\/PROM
 const DEPENDENCIAS = [/^pnpm-lock\.yaml$/, /^pnpm-workspace\.yaml$/];
 
 const BOT = [/^bot\//, /^migrations\//, /^wrangler\.jsonc$/, /^package\.json$/];
-const LANDING = [/^landing\//, /^METODOLOGIA\.md$/];
+const LANDING = [/^landing\//, /^METODOLOGIA\.md$/, /^PRIVACIDAD\.md$/];
 
 export function queDesplegar(archivos: string[]): Despliegue {
   const conEfecto = archivos.filter((a) => a && !SIN_EFECTO.some((r) => r.test(a)));

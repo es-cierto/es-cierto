@@ -8,7 +8,7 @@ Los que tienen mecanismo están en `perfiles.test.ts`.
 
 - **Los textos caben en los límites de cada red** (Bluesky: nombre 64 y biografía 256 grafemas; GitHub: descripción de la organización 160 caracteres).
 - **El bot dice lo que es.** La biografía declara que responde de forma automática con IA y que las imágenes son generadas con IA.
-- **Mismo vocabulario que la landing:** _mencionar_ (no etiquetar), _publicación_ (no post).
+- **Mismo vocabulario que la landing:** _mencionar_ (no etiquetar), _publicación_ (no post), _¿Es Cierto?_ o _verificador_ (nunca "bot").
 - **Sin rojo ni símbolos de un sector.** El avatar no tiene píxeles rojos, y su prompt no pide estrellas, banderas, escudos ni nada asociable a un partido o al Estado: el motivo es el nudo del hilo.
 - **Imágenes que las redes aceptan:** avatar cuadrado, portada 3:1, cada una bajo 1 MB.
 

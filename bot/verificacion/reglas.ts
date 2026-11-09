@@ -1,6 +1,11 @@
+import { z } from "zod";
 import { enlacesDe } from "../shared/enlaces.ts";
 import type { PlanBusqueda } from "./prompts.ts";
 import { ETIQUETAS, type PedidoCorreccion, type Veredicto } from "./veredicto.ts";
+
+export const ENLACES_POR_MENSAJE = 3;
+export const IMAGENES_POR_MENSAJE = 2;
+export const AVISO_IMAGEN = "Verifiqué lo que dice la imagen, no si es auténtica o fue editada.";
 
 export interface Coincidencia {
   id: string;
@@ -82,4 +87,74 @@ export function textoDeCorreccion(antes: Veredicto["veredicto"], ahora: Veredict
   const cambio =
     antes === ahora ? `Mantiene: ${ETIQUETAS[ahora]}.` : `Antes: ${ETIQUETAS[antes]}. Ahora: ${ETIQUETAS[ahora]}.`;
   return `Corrección: revisamos esta verificación. ${cambio}\n${nota}`;
+}
+
+const ENTIDADES: Record<string, string> = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
+
+function sinEntidades(texto: string): string {
+  return texto.replace(/&(#x[0-9a-f]+|#\d+|\w+);/gi, (entidad, codigo: string) =>
+    codigo.startsWith("#x") || codigo.startsWith("#X")
+      ? String.fromCodePoint(parseInt(codigo.slice(2), 16))
+      : codigo.startsWith("#")
+        ? String.fromCodePoint(Number(codigo.slice(1)))
+        : (ENTIDADES[codigo.toLowerCase()] ?? entidad),
+  );
+}
+
+export function vistaPrevia(html: string): { titulo: string; descripcion: string; imagen: string } {
+  const meta: Record<string, string> = {};
+  for (const [etiqueta] of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const atributos = Object.fromEntries(
+      [...etiqueta.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g)].map(([, nombre, doble, simple]) => [
+        nombre.toLowerCase(),
+        doble ?? simple,
+      ]),
+    );
+    const clave = (atributos.property ?? atributos.name)?.toLowerCase();
+    if (clave && atributos.content) {
+      meta[clave] = sinEntidades(atributos.content.trim());
+    }
+  }
+  const titulo = meta["og:title"] ?? sinEntidades(html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim() ?? "");
+  return { titulo, descripcion: meta["og:description"] ?? meta.description ?? "", imagen: meta["og:image"] ?? "" };
+}
+
+export function codigoDeInstagram(url: string): string | null {
+  return url.match(/^https:\/\/(?:www\.)?instagram\.com\/(?:[\w.]+\/)?(?:p|reel|reels|tv)\/([\w-]+)/)?.[1] ?? null;
+}
+
+const PublicacionInstagram = z.object({
+  code: z.string(),
+  if_not_gated_logged_out: z.object({ caption: z.object({ text: z.string() }).nullable() }),
+});
+
+function* objetosDe(valor: unknown): Generator<Record<string, unknown>> {
+  if (Array.isArray(valor)) {
+    for (const v of valor) yield* objetosDe(v);
+  } else if (valor && typeof valor === "object") {
+    yield valor as Record<string, unknown>;
+    for (const v of Object.values(valor)) yield* objetosDe(v);
+  }
+}
+
+function jsonDe(texto: string): unknown {
+  try {
+    const valor: unknown = JSON.parse(texto);
+    return valor;
+  } catch {
+    return null;
+  }
+}
+
+export function textoDeInstagram(html: string, codigo: string): string {
+  for (const [, bloque] of html.matchAll(/<script type="application\/json"[^>]*>([\s\S]*?)<\/script>/g)) {
+    if (!bloque.includes("xig_polaris_media")) continue;
+    for (const objeto of objetosDe(jsonDe(bloque))) {
+      const publicacion = PublicacionInstagram.safeParse(objeto.xig_polaris_media);
+      if (publicacion.success && publicacion.data.code === codigo) {
+        return publicacion.data.if_not_gated_logged_out.caption?.text ?? "";
+      }
+    }
+  }
+  return "";
 }

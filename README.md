@@ -88,6 +88,8 @@ Los secretos del bot viven en Cloudflare, cifrados, y nunca en el repo. Se suben
 - `BSKY_APP_PASSWORD`: la contraseña de aplicación de la cuenta del bot en Bluesky.
 - `GOOGLE_FACTCHECK_KEY`: verificaciones profesionales ya publicadas (opcional: con «ninguna», se salta).
 - `CORRECCIONES_TOKEN`: para publicar correcciones (`POST /correcciones`).
+- `KAPSO_API_KEY`: la clave del proyecto en Kapso, para responder por WhatsApp y descargar las imágenes.
+- `KAPSO_WEBHOOK_SECRET`: el secreto con que Kapso firma cada webhook (`POST /whatsapp`); lo elige el proyecto al crear el webhook.
 
 Para desplegar a mano (solo mantenedores, con acceso a la cuenta del proyecto): `CLOUDFLARE_ACCOUNT_ID=<cuenta del proyecto> ./scripts/desplegar.sh todo`. Sin esa cuenta, el script se niega.
 

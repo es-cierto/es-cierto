@@ -17,17 +17,18 @@ export const github = {
   organizacion: "es-cierto",
   nombre: "¿Es Cierto?",
   descripcion:
-    "Verificador de datos abierto y no partidista para redes sociales. Mencionas al bot y te responde con fuentes.",
+    "Verificador de datos abierto y no partidista. Le reenvías un mensaje por WhatsApp o lo mencionas en Bluesky y te responde con fuentes.",
   sitio: PAGINA,
   repo: {
     nombre: "es-cierto/es-cierto",
     descripcion:
-      "Bot que verifica datos en redes sociales: lo mencionas en una publicación y te responde con el veredicto y sus fuentes.",
+      "Verificador de datos abierto y no partidista: le reenvías un mensaje por WhatsApp o lo mencionas en Bluesky, y te responde con el veredicto y sus fuentes.",
     temas: [
       "fact-checking",
       "verificacion",
       "desinformacion",
       "bluesky",
+      "whatsapp",
       "cloudflare-workers",
       "workers-ai",
       "espanol",

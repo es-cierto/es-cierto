@@ -86,6 +86,16 @@ tests:
         value: file://verificar.mjs
         config: { noVerificable: true, veredictos: [no_verificable] }
 
+  - description: "enlace sin contenido: se verifica lo que la publicación dice, no la publicación misma"
+    vars:
+      modo: verificar
+      publicacion: "\n\nContenido de los enlaces:\n- https://www.instagram.com/p/DL2LXoCR4-3/\n  Jair M. Bolsonaro on Instagram\n  53K likes, 2,225 comments - jairmessiasbolsonaro on July 8, 2025"
+      pregunta: "https://www.instagram.com/p/DL2LXoCR4-3/"
+    assert:
+      - type: javascript
+        value: file://verificar.mjs
+        config: { noVerificable: true, veredictos: [no_verificable] }
+
   # ── Conversación ──────────────────────────────────────────────────────────
   - description: "conversar: piden la fuente de un dato"
     vars:
