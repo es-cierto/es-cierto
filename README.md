@@ -95,22 +95,15 @@ Para desplegar a mano (solo mantenedores, con acceso a la cuenta del proyecto): 
 
 ## Publicar una corrección
 
-Cuando un reporte se confirma (ver [Correcciones](METODOLOGIA.md#correcciones)), quien mantiene el proyecto publica la versión corregida. El bot la guarda, marca la anterior como corregida y avisa en cada hilo donde había respondido:
+Cuando un reporte se confirma (ver [Correcciones](METODOLOGIA.md#correcciones)), quien mantiene el proyecto publica la versión corregida. El bot la guarda, marca la anterior como corregida y avisa en cada hilo donde había respondido. Con `CORRECCIONES_TOKEN` en `.dev.vars`:
 
 ```bash
-curl -X POST "$PUBLIC_URL/correcciones" \
-  -H "authorization: Bearer $CORRECCIONES_TOKEN" \
-  -d '{
-    "investigacionId": "<id de la investigación equivocada>",
-    "veredicto": "mayormente_verdadero",
-    "confianza": "media",
-    "resumen": "El monto es correcto, pero rige desde mayo.",
-    "fuentes": [{ "titulo": "Ministerio del Trabajo", "url": "https://www.mintrab.gob.cl/..." }],
-    "nota": "Qué cambió y por qué, en una o dos oraciones."
-  }'
+pnpm corregir https://escierto.cierto.workers.dev/a/<id>
 ```
 
-Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sitios distintos, igual que en una investigación. Cada investigación se corrige una sola vez: para volver a corregir, se corrige la versión nueva.
+El comando muestra la investigación, pregunta el veredicto nuevo, la confianza, el resumen, las fuentes (revisa que cada enlace responda y propone su título) y una nota sobre qué cambió y por qué. Valida todo con las mismas reglas del bot, muestra el aviso que va a llegar y pide confirmación antes de publicar. Para no responder preguntas, el pedido puede ir en un archivo: `pnpm corregir <enlace> --archivo pedido.json`, con `veredicto`, `confianza`, `resumen`, `fuentes` (`[{ "titulo", "url" }]`) y `nota`.
+
+Las fuentes tienen que ser `https`, y la confianza alta exige fuentes de dos sitios distintos, igual que en una investigación. Cada investigación se corrige una sola vez: para volver a corregir, se corrige la versión nueva. En WhatsApp, el aviso solo llega si la persona escribió en las últimas 23 horas; después, la página se corrige igual.
 
 ## Pendientes
 

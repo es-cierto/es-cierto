@@ -18,6 +18,7 @@
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm --filter escierto-landing typecheck && pnpm --filter escierto-landing test",
     "db:migrar": "wrangler d1 migrations apply escierto",
     "perfiles": "node scripts/perfiles.ts",
+    "corregir": "node scripts/corregir.ts",
     "entorno": "bash scripts/entorno.sh"
   },
   "dependencies": {
