@@ -28,7 +28,7 @@ Los archivos sueltos en `bot/` orquestan y pueden importar cualquier dominio:
 
 - `bot/index.ts`: punto de entrada (cron y rutas). Solo encola trabajo y entrega páginas.
 - `bot/chequeo.ts`: el Workflow. Una mención inicia una verificación y una respuesta al bot inicia un turno de conversación (rama `conversar`). Para seguir cualquiera de las dos de punta a punta, empieza aquí.
-- `bot/correccion.ts`: el Workflow de correcciones. Una persona que mantiene el proyecto publica la corrección (`POST /correcciones`, con token) y el bot avisa en cada hilo donde había dado el veredicto anterior.
+- `bot/correccion.ts`: el Workflow de correcciones. Una persona que mantiene el proyecto publica la corrección con `pnpm corregir <enlace>` (`scripts/corregir.ts`, que valida con las mismas reglas del bot y llama a `POST /correcciones` con el token) y el bot avisa en cada hilo donde había dado el veredicto anterior.
 
 Es un monorepo con un workspace de pnpm: el bot vive en la raíz y `landing/` es un paquete del workspace. Hay un solo lockfile y una sola instalación, y `pnpm check` revisa los dos. Las reglas de instalación (plazo de 24 horas para versiones nuevas, qué paquetes pueden correr scripts) están en `pnpm-workspace.yaml`.
 
