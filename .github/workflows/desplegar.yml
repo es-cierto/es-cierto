@@ -38,7 +38,7 @@ jobs:
           else
             echo "si=si" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         if: steps.listo.outputs.si == 'si'
         with:
           # Lo que pasó el CI, no lo último de main. Con el commit anterior, para saber qué cambió.
