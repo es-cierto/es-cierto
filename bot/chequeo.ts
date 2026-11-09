@@ -23,6 +23,28 @@ const CON_REINTENTOS = {
   timeout: "15 minutes",
 } as const;
 
+const ESPERAS_ANTES_DE_REINTENTAR = ["30 minutes", "2 hours", "6 hours"] as const;
+
+function nombreDePaso(nombre: string, intento: number): string {
+  return intento === 1 ? nombre : `${nombre} · intento ${intento}`;
+}
+
+function conIntento(step: WorkflowStep, intento: number): WorkflowStep {
+  if (intento === 1) {
+    return step;
+  }
+  return new Proxy(step, {
+    get(objetivo, propiedad) {
+      const original: unknown = Reflect.get(objetivo, propiedad);
+      if (typeof original !== "function") {
+        return original;
+      }
+      return (nombre: string, ...resto: unknown[]) =>
+        Reflect.apply(original, objetivo, [nombreDePaso(nombre, intento), ...resto]);
+    },
+  });
+}
+
 export async function idDeInstancia(uri: string): Promise<string> {
   const hash = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(uri));
   return [...new Uint8Array(hash)]
@@ -102,20 +124,39 @@ export class Chequeo extends WorkflowEntrypoint<Env, ParamsChequeo> {
       });
     }
 
-    try {
-      if (mencion.razon === "reply") {
-        await this.conversar(mencion, enRed, step);
-      } else {
-        await this.verificar(mencion, enRed, step);
+    for (let intento = 1; ; intento++) {
+      const etapa = conIntento(step, intento);
+      try {
+        if (mencion.razon === "reply") {
+          await this.conversar(mencion, enRed, etapa);
+        } else {
+          await this.verificar(mencion, enRed, etapa);
+        }
+        return;
+      } catch (error) {
+        console.error(JSON.stringify({ evento: "fallo_el_chequeo", uri: mencion.uri, intento, error: String(error) }));
+        const espera = ESPERAS_ANTES_DE_REINTENTAR[intento - 1];
+        if (!espera) {
+          await etapa.do("avisar que falló", async () => {
+            await enRed.responder(
+              mencion,
+              "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a intentarlo en un rato.",
+            );
+          });
+          throw error;
+        }
+        if (intento === 1) {
+          await etapa.do("avisar que hubo un problema", async () => {
+            await enRed.responder(
+              mencion,
+              mencion.razon === "reply"
+                ? "Hubo un problema en el proceso y prefiero no responderte a medias. Estoy trabajando en eso y te respondo aquí mismo apenas se reanude el servicio."
+                : "Hubo un problema en el proceso y prefiero no darte un veredicto a medias. Estoy trabajando en eso y te mando los resultados aquí mismo apenas se reanude el servicio.",
+            );
+          });
+        }
+        await etapa.sleep("esperar para reintentar", espera);
       }
-    } catch (error) {
-      await step.do("avisar que falló", async () => {
-        await enRed.responder(
-          mencion,
-          "No pude terminar esta respuesta por un error de mi lado. Quedó registrado para revisarlo; puedes volver a intentarlo en un rato.",
-        );
-      });
-      throw error;
     }
   }
 

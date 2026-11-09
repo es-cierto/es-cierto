@@ -41,6 +41,7 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 - Cada efecto externo (publicar en la red, insertar en D1, upsert en Vectorize) va en su propio `step.do`. Así un reintento no duplica una respuesta ya publicada.
 - Lo no determinista (IDs, `Date.now()`) se genera dentro de un step, nunca suelto en `run`. Al rehidratar, el Workflow reejecuta `run` desde arriba.
 - Lo que devuelve un step tiene que ser serializable.
+- **Reintentos ante fallas** (`bot/chequeo.ts`): si la verificación o la conversación fallan (un step que agotó sus reintentos, o `BusquedaFallida`), el bot no responde a medias. Avisa una vez que hubo un problema, espera (`ESPERAS_ANTES_DE_REINTENTAR`: 30 minutos, 2 horas y 6 horas) y vuelve a intentar desde el principio. Cada intento renombra sus steps (`conIntento` les suma «· intento N»), porque un step con el mismo nombre devolvería el resultado guardado del intento fallido. Si un intento falló después de guardar la investigación, el siguiente la encuentra en Vectorize y la reutiliza, así no se duplica. Las esperas suman menos de 23 horas, para que la respuesta siga entrando en la ventana de WhatsApp.
 - El id de la instancia se deriva de la URI de la mención (`idDeInstancia`). Esa derivación es lo que impide responder dos veces la misma mención; no se reemplaza por un id aleatorio.
 - En `bot/chequeo.ts`, el `step.do` se pasa a `investigarAfirmacion` con un cast a `Paso`: `step.do` exige tipos serializables y `Paso` es genérico. Es seguro porque todo lo que devuelve `investigarAfirmacion` es serializable.
 - **Correcciones** (`bot/correccion.ts`): la corrección llega a quien vio el error (principio 5 de la IFCN). Se guarda una investigación nueva que reemplaza a la anterior, y el bot responde en cada hilo donde había dado el veredicto equivocado; cada respuesta es su propio `step.do`, así un hilo ya avisado no recibe el aviso dos veces. Las dos escrituras en D1 (la nueva y la marca en la anterior) van en un `batch`. Para volver a un hilo, `bot/index.ts` guarda la mención completa en `menciones.datos` al encolarla. El id de la instancia sale de la investigación corregida, así cada una se corrige una sola vez; una corrección posterior se hace sobre la versión nueva.
@@ -50,6 +51,7 @@ Las fronteras entre dominios están en `FRONTERAS` de `bot/arquitectura.test.ts`
 
 ## Límites y umbrales a calibrar
 
+- `ESPERAS_ANTES_DE_REINTENTAR` (30 minutos, 2 horas, 6 horas, en `bot/chequeo.ts`) se fijó a ojo: cubre una caída de Workers AI o de Tavily sin salir de la ventana de 24 horas de WhatsApp.
 - `MENCIONES_POR_HORA` (5 por autor, en `bot/index.ts`) es fijo, contra el uso del bot para acosar. Si hay que ajustarlo seguido, se mueve a `vars` de `wrangler.jsonc`.
 
 ## Decisiones de arquitectura (no reabrir sin motivo nuevo)
